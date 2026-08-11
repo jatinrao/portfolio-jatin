@@ -1,74 +1,172 @@
-import {UserIcon} from '@sanity/icons'
-import {defineField, defineType} from 'sanity'
-import type {Person} from '../../../sanity.types'
-
-/**
- * Person schema.  Define and edit the fields for the 'person' content type.
- * Learn more: https://www.sanity.io/docs/studio/schema-types
- */
+import { defineType, defineField } from 'sanity'
+import { UserIcon } from '@sanity/icons'
 
 export const person = defineType({
   name: 'person',
   title: 'Person',
-  icon: UserIcon,
   type: 'document',
-  fields: [
-    defineField({
-      name: 'firstName',
-      title: 'First Name',
-      type: 'string',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: 'lastName',
-      title: 'Last Name',
-      type: 'string',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: 'picture',
-      title: 'Picture',
-      type: 'image',
-      fields: [
-        defineField({
-          name: 'alt',
-          type: 'string',
-          title: 'Alternative text',
-          description: 'Important for SEO and accessibility.',
-          validation: (rule) => {
-            // Custom validation to ensure alt text is provided if the image is present. https://www.sanity.io/docs/validation
-            return rule.custom((alt, context) => {
-              const document = context.document as Person
-              if (document?.picture?.asset?._ref && !alt) {
-                return 'Required'
-              }
-              return true
-            })
-          },
-        }),
-      ],
-      options: {
-        hotspot: true,
-        aiAssist: {
-          imageDescriptionField: 'alt',
-        },
-      },
-      validation: (rule) => rule.required(),
-    }),
+  icon: UserIcon,
+  groups: [
+    { name: 'identity', title: 'Identity', default: true },
+    { name: 'hero', title: 'Hero Section' },
+    { name: 'media', title: 'Media' },
+    { name: 'contact', title: 'Contact' },
+    { name: 'seo', title: 'SEO & Schema' },
+    { name: 'page', title: 'Page contents' },
   ],
-  // List preview configuration. https://www.sanity.io/docs/previews-list-views
+  fields: [
+    defineField({ name: 'name', title: 'Full name', type: 'localeString', group: 'identity', validation: (R) => R.required() }),
+    defineField({ name: 'slug', title: 'Slug', type: 'slug', group: 'identity', options: { source: 'name' }, validation: (R) => R.required() }),
+    defineField({ name: 'headline', title: 'Headline / Tagline', type: 'localeString', group: 'identity', description: 'e.g. "Full-Stack Developer & Product Designer"' }),
+    defineField({ name: 'bio_short', title: 'Short Bio', type: 'localeBlockContent', group: 'identity' }),
+    defineField({ name: 'bio', title: 'Bio', type: 'localeBlockContent', group: 'identity' }),
+
+   defineField({
+      name: 'greeting',
+      title: 'Greeting text',
+      type: 'localeString',
+      group: 'hero',
+      description: 'Small eyebrow line above the name. e.g. "Hi, my name is"',
+    }),
+    defineField({
+      name: 'header_title',
+      title: 'Header title',
+      type: 'localeString',
+      group: 'hero',
+      description: 'Text shown in Header. e.g. "Full-Stack Developer & Product Designer"',
+    }),
+    defineField({ name: 'logoImage',  title: 'header logo/image',   type: 'customImage', group: 'hero',description: 'Wide banner shown at the top of the portfolio page.' }),
+      defineField({
+      name: 'headerCta',
+      title: 'Header CTA button',
+      type: 'ctaButton',
+      group: 'hero',
+      description: 'Optional button shown in the header.',
+    }),
+    defineField({
+      name: "channels",
+      title: "Channels",
+      type: "array",
+      group:"hero",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "label",
+              title: "Label",
+              type: "localeString",
+              validation: (Rule) => Rule.required(),
+            }),
+
+            defineField({
+              name: "icon",
+              title: "Icon",
+              type: "svg",
+              description:
+                "Material Symbols icon name (phone, mail, work, calendar_month, etc.)",
+              validation: (Rule) => Rule.required(),
+            }),
+
+            defineField({
+              name: "url",
+              title: "URL",
+              type: "string",
+              validation: (Rule) => Rule.required(),
+            }),
+
+            defineField({
+              name: "openInNewTab",
+              title: "Open in new tab",
+              type: "boolean",
+              initialValue: true,
+            }),
+          ],
+        }
+        ]
+        }),
+
+    defineField({
+      name: 'openToWork',
+      title: 'Open to work',
+      type: 'boolean',
+      group: 'hero',
+      initialValue: false,
+      description: 'Shows the badge on the avatar when enabled.',
+    }),
+    
+    defineField({
+      name: 'openToWorkLabel',
+      title: 'Open to work label',
+      type: 'localeString',
+      group: 'hero',
+      description: 'Text inside the badge. e.g. "Open to Work"',
+      hidden: ({ parent }) => !(parent as { openToWork?: boolean })?.openToWork,
+    }),
+    defineField({
+      name: 'stats',
+      title: 'Stats',
+      type: 'array',
+      group: 'hero',
+      description: 'Key numbers shown below the bio (e.g. "5+ Years Experience").',
+      of: [
+        {
+          type: 'object',
+          name: 'stat',
+          fields: [
+            defineField({ name: 'value', title: 'Value', type: 'string', description: 'e.g. "5+"', validation: (R) => R.required() }),
+            defineField({ name: 'label', title: 'Label', type: 'localeString', description: 'e.g. "Years Experience"' }),
+          ],
+          preview: { select: { title: 'value', subtitle: 'label.en' } },
+        },
+      ],
+    }),
+    defineField({
+      name: 'primaryCta',
+      title: 'Primary CTA button',
+      type: 'object',
+      group: 'hero',
+      fields: [
+        defineField({ name: 'text', title: 'Button text', type: 'localeString' }),
+        defineField({ name: 'href', title: 'Link',        type: 'string', description: 'e.g. "#projects" or "/projects"' }),
+      ],
+    }),
+    defineField({
+      name: 'secondaryCta',
+      title: 'Secondary CTA button',
+      type: 'object',
+      group: 'hero',
+      fields: [
+        defineField({ name: 'text', title: 'Button text', type: 'localeString' }),
+        defineField({ name: 'href', title: 'Link',        type: 'string' }),
+      ],
+    }),
+
+    // ── Media ─────────────────────────────────────────────────────────
+    defineField({ name: 'avatar',      title: 'Profile picture',        type: 'customImage', group: 'media' }),
+    defineField({ name: 'coverImage',  title: 'Cover / Hero image',   type: 'customImage', group: 'media', description: 'Profile image shown in Hero Section .' }),
+    defineField({ name: 'resumeImage',  title: 'Resume image',   type: 'customImage', group: 'media',description: 'Profile image shown in resume .' }),
+
+    // ── Contact ────────────────────────────────────────────────────────
+    defineField({ name: 'email', title: 'Email', type: 'string', group: 'contact', validation: (R) => R.email() }),
+    defineField({ name: 'phone', title: 'Phone', type: 'string', group: 'contact' }),
+    defineField({ name: 'location', title: 'Location', type: 'localeString', group: 'contact' }),
+    defineField({ name: 'skills', title: 'Skills', type: 'array', of: [{ type: 'reference', to: [{ type: 'skill' }] }] }),
+    defineField({ name: 'socialProfiles', title: 'Social profiles', type: 'array', of: [{ type: 'socialProfile' }] }),
+
+    defineField({
+  name: 'sections',
+  title: 'Sections',
+  group:'page',
+  type: 'array',
+  of: [{ type: 'reference', to: [{ type: 'section' }] }],
+  description: 'Drag to reorder. Controls section order on the page.',
+}),
+    // ── SEO & Schema ───────────────────────────────────────────────────
+    defineField({ name: 'seo', title: 'SEO metadata', type: 'seoMetadata', group: 'seo' }),
+    defineField({ name: 'structuredData', title: 'Structured data', type: 'webSchema', group: 'seo' }),
+  ],
   preview: {
-    select: {
-      firstName: 'firstName',
-      lastName: 'lastName',
-      picture: 'picture',
-    },
-    prepare(selection) {
-      return {
-        title: `${selection.firstName} ${selection.lastName}`,
-        subtitle: 'Person',
-        media: selection.picture,
-      }
-    },
+    select: { title: 'name.en', subtitle: 'headline.en', media: 'avatar' },
   },
 })

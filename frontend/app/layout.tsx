@@ -1,55 +1,83 @@
 import './globals.css'
-
-import {SpeedInsights} from '@vercel/speed-insights/next'
 import type {Metadata} from 'next'
 import {Inter, IBM_Plex_Mono} from 'next/font/google'
-import {draftMode} from 'next/headers'
-import {toPlainText} from 'next-sanity'
-import {VisualEditing} from 'next-sanity/visual-editing'
-import {Toaster} from 'sonner'
-
-import DraftModeToast from '@/app/components/DraftModeToast'
-import Footer from '@/app/components/Footer'
-import Header from '@/app/components/Header'
-import * as demo from '@/sanity/lib/demo'
-import {sanityFetch, SanityLive} from '@/sanity/lib/live'
-import {settingsQuery} from '@/sanity/lib/queries'
-import {resolveOpenGraphImage} from '@/sanity/lib/utils'
-import {handleError} from '@/app/client-utils'
+import {sanityFetch, } from '@/sanity/lib/live'
+import {METADATA_QUERY} from '@/sanity/lib/queries'
+import {defaultLocale} from '@/i18n/config'
+import { isRtlLocale, localize } from '@/lib/locale'
+import GoogleAnalytics from '@/components/shared/GoogleAnalytics'
 
 /**
  * Generate metadata for the page.
  * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
+ *
+ * Not locale-aware yet: this lives on the true root layout (above
+ * app/[lang]/**), so it has no `lang` param to key off of. If `settings`
+ * ever becomes localized in Sanity, move this into app/[lang]/layout.tsx
+ * (which does receive `params`) so it can fetch/return per-locale copy.
  */
-export async function generateMetadata(): Promise<Metadata> {
-  const {data: settings} = await sanityFetch({
-    query: settingsQuery,
+export async function generateMetadata({params}:any): Promise<Metadata> {
+  const { lang, slug } = params;
+  
+  const res = await sanityFetch({
+    query: METADATA_QUERY,
     // Metadata should never contain stega
     stega: false,
   })
-  const title = settings?.title || demo.title
-  const description = settings?.description || demo.description
+  const seo = res.data?.seo
+  if (!seo) {
+    return {
+      title: "Jatin Kumar | Software Engineer",
+      
+    };
+  }
 
-  const ogImage = resolveOpenGraphImage(settings?.ogImage)
-  let metadataBase: URL | undefined = undefined
-  try {
-    metadataBase = settings?.ogImage?.metadataBase
-      ? new URL(settings.ogImage.metadataBase)
-      : undefined
-  } catch {
-    // ignore
-  }
+  const title = localize(seo.metaTitle,lang) ?? "Jatin Kumar | Software Engineer";
+  const description = localize(seo.metaDescription,lang) ?? "Desc";
+  const ogImageUrl = seo.ogImage?.asset?.url;
+  const twitterImageUrl = seo.twitterImage?.asset?.url ?? ogImageUrl;
+
   return {
-    metadataBase,
-    title: {
-      template: `%s | ${title}`,
-      default: title,
+    title,
+    description,
+    keywords: seo.keywords ?? undefined,
+    robots: {
+      index: !seo.noIndex,
+      follow: !seo.noFollow,
     },
-    description: toPlainText(description),
     openGraph: {
-      images: ogImage ? [ogImage] : [],
+      title: seo.ogTitle?.en ?? title,
+      description: seo.ogDescription?.en ?? description,
+      siteName: seo.ogSiteName ?? "Jatin Kumar — Portfolio",
+      type: (seo.ogType as "website" | "profile" | "article") ?? "website",
+      images: ogImageUrl
+        ? [
+            {
+              url: ogImageUrl,
+              width: seo.ogImage?.asset?.metadata?.dimensions?.width ?? 1200,
+              height: seo.ogImage?.asset?.metadata?.dimensions?.height ?? 630,
+              alt: seo.ogImage?.alt?.en ?? title,
+            },
+          ]
+        : undefined,
     },
-  }
+    twitter: {
+      card: (seo.twitterCard as "summary" | "summary_large_image") ?? "summary_large_image",
+      title: seo.twitterTitle?.en ?? title,
+      description: seo.twitterDescription?.en ?? description,
+      images: twitterImageUrl ? [twitterImageUrl] : undefined,
+    },
+    alternates: {
+      canonical: `https://jatin.getresume.dev/${lang}/${slug}`,
+      languages: {
+        "en": `https://jatin.getresume.dev/en/${slug}`,
+        "en-US": `https://jatin.getresume.dev/en/${slug}`,
+        "es": `https://jatin.getresume.dev/es/${slug}`,
+        "fr": `https://jatin.getresume.dev/fr/${slug}`,
+        "x-default": `https://jatin.getresume.dev/en/${slug}`, // fallback for unmatched locales
+      },
+    },
+  };
 }
 
 const inter = Inter({
@@ -57,7 +85,6 @@ const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
 })
-
 const ibmPlexMono = IBM_Plex_Mono({
   variable: '--font-ibm-plex-mono',
   weight: ['400'],
@@ -65,29 +92,27 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: 'swap',
 })
 
-export default async function RootLayout({children}: LayoutProps<'/'>) {
-  const {isEnabled: isDraftMode} = await draftMode()
+
+ export default async function RootLayout({children}: LayoutProps<'/'>) {
 
   return (
-    <html lang="en" className={`${inter.variable} ${ibmPlexMono.variable} bg-white text-black`}>
+    // `lang` is kept at the build-time default here on purpose — this
+    // layout is the ONE place <html> can be declared (nested layouts can't
+    // redeclare it), but it sits above app/[lang]/**, so it has no `lang`
+    // param yet. app/[lang]/layout.tsx renders <LocaleHtmlSync> to correct
+    // `document.documentElement.lang` client-side once the real locale is
+    // known — see that file for why draftMode() here doesn't interfere
+    // with static generation of the [lang] routes.
+    <html
+      lang={defaultLocale}
+      dir={isRtlLocale(defaultLocale) ? 'rtl' : 'ltr'}
+      className={`${inter.variable} bg-white text-black`}
+    >
       <body>
-        <section className="min-h-screen pt-24">
-          {/* The <Toaster> component is responsible for rendering toast notifications used in /app/client-utils.ts and /app/components/DraftModeToast.tsx */}
-          <Toaster />
-          {isDraftMode && (
-            <>
-              <DraftModeToast />
-              {/*  Enable Visual Editing, only to be rendered when Draft Mode is enabled */}
-              <VisualEditing />
-            </>
-          )}
-          {/* The <SanityLive> component is responsible for making all sanityFetch calls in your application live, so should always be rendered. */}
-          <SanityLive onError={handleError} />
-          <Header />
+        <section className="min-h-screen">
           <main className="">{children}</main>
-          <Footer />
         </section>
-        <SpeedInsights />
+        <GoogleAnalytics/>
       </body>
     </html>
   )

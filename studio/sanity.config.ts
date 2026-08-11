@@ -16,6 +16,7 @@ import {
   type DocumentLocation,
 } from 'sanity/presentation'
 import {assist} from '@sanity/assist'
+import { categoryI18nBundles } from './src/utils/categoryBundles'
 
 // Environment variables for project configuration
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || 'your-projectID'
@@ -127,7 +128,12 @@ export default defineConfig({
     assist(),
     visionTool(),
   ],
-
+  i18n: {
+    bundles: [
+      ...categoryI18nBundles,
+      // ... any other bundles you already had here
+    ],
+  },
   // Schema configuration, imported from ./src/schemaTypes/index.ts
   schema: {
     types: schemaTypes,

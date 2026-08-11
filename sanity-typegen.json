@@ -1,0 +1,6 @@
+{
+  "$schema": "https://raw.githubusercontent.com/sanity-io/sanity/refs/heads/next/packages/sanity/typegen-schema.json",
+  "path": "{app,lib}/**/*.{ts,tsx}",
+  "schema": "schema.json",
+  "generates": "sanity.types.ts"
+}

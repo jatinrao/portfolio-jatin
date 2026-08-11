@@ -15,27 +15,77 @@
 export declare const internalGroqTypeReferenceTo: unique symbol
 
 // Source: ../sanity.schema.json
-export type PageReference = {
+export type SkillCategoryLabels = {
+  _id: string
+  _type: 'skillCategoryLabels'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  technical?: LocaleString
+  framework?: LocaleString
+  library?: LocaleString
+  tool?: LocaleString
+  platform?: LocaleString
+  design?: LocaleString
+  language?: LocaleString
+  cloudDevops?: LocaleString
+  database?: LocaleString
+  softSkill?: LocaleString
+  other?: LocaleString
+  all?: LocaleString
+  frontend?: LocaleString
+  backend?: LocaleString
+  ai?: LocaleString
+}
+
+export type LocaleString = {
+  _type: 'localeString'
+  en?: string
+  es?: string
+  zh?: string
+  hi?: string
+  fr?: string
+  ar?: string
+}
+
+export type PersonReference = {
   _ref: string
   _type: 'reference'
   _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'page'
+  [internalGroqTypeReferenceTo]?: 'person'
 }
 
-export type PostReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'post'
+export type Navigation = {
+  _id: string
+  _type: 'navigation'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  person: PersonReference
+  logoText?: string
+  navItems?: Array<
+    {
+      _key: string
+    } & NavItem
+  >
+  ctaButton?: NavItem
 }
 
-export type Link = {
-  _type: 'link'
-  linkType?: 'href' | 'page' | 'post'
-  href?: string
-  page?: PageReference
-  post?: PostReference
+export type NavItem = {
+  _type: 'navItem'
+  label: LocaleString
+  linkType: 'anchor' | 'internal' | 'external'
+  anchorId?: string
+  externalUrl?: string
   openInNewTab?: boolean
+  highlight?: boolean
+}
+
+export type ProjectReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'project'
 }
 
 export type SanityImageAssetReference = {
@@ -45,51 +95,40 @@ export type SanityImageAssetReference = {
   [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
 }
 
-export type CallToAction = {
-  _type: 'callToAction'
-  eyebrow?: string
-  heading: string
-  body?: BlockContentTextOnly
-  button?: Button
-  image?: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    _type: 'image'
-  }
-  theme?: 'light' | 'dark'
-  contentAlignment?: 'textFirst' | 'imageFirst'
-}
-
-export type InfoSection = {
-  _type: 'infoSection'
-  heading?: string
-  subheading?: string
-  content?: BlockContent
-}
-
-export type BlockContentTextOnly = Array<{
-  children?: Array<{
-    marks?: Array<string>
-    text?: string
-    _type: 'span'
-    _key: string
-  }>
-  style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
-  listItem?: 'bullet' | 'number'
-  markDefs?: Array<{
-    href?: string
-    _type: 'link'
-    _key: string
-  }>
-  level?: number
-  _type: 'block'
-  _key: string
-}>
-
-export type BlockContent = Array<
-  | {
+export type Portfolio = {
+  _id: string
+  _type: 'portfolio'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: LocaleString
+  slug: Slug
+  owner: PersonReference
+  featuredProjects?: Array<
+    {
+      _key: string
+    } & ProjectReference
+  >
+  sections?: Array<{
+    sectionType:
+      | 'about'
+      | 'experience'
+      | 'education'
+      | 'projects'
+      | 'skills'
+      | 'certifications'
+      | 'awards'
+      | 'publications'
+      | 'testimonials'
+      | 'contact'
+      | 'custom'
+    sectionId: Slug
+    internalTitle?: string
+    showInNav?: boolean
+    navLabel?: LocaleString
+    heading?: LocaleString
+    subheading?: LocaleText
+    content?: Array<{
       children?: Array<{
         marks?: Array<string>
         text?: string
@@ -99,72 +138,88 @@ export type BlockContent = Array<
       style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
       listItem?: 'bullet' | 'number'
       markDefs?: Array<{
-        linkType?: 'href' | 'page' | 'post'
         href?: string
-        page?: PageReference
-        post?: PostReference
-        openInNewTab?: boolean
         _type: 'link'
         _key: string
       }>
       level?: number
       _type: 'block'
       _key: string
-    }
-  | {
-      asset?: SanityImageAssetReference
-      media?: unknown
-      hotspot?: SanityImageHotspot
-      crop?: SanityImageCrop
-      _type: 'image'
-      _key: string
-    }
->
-
-export type Button = {
-  _type: 'button'
-  buttonText?: string
-  link?: Link
-}
-
-export type Settings = {
-  _id: string
-  _type: 'settings'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title: string
-  description?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
     }>
-    style?: 'normal'
-    listItem?: never
-    markDefs?: Array<{
-      linkType?: 'href' | 'page' | 'post'
-      href?: string
-      page?: PageReference
-      post?: PostReference
-      openInNewTab?: boolean
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
+    order?: number
+    _type: 'section'
     _key: string
   }>
+  favicon?: Icon
+  appleTouchIcon?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  themeColor?: string
+  seo?: SeoMetadata
+  websiteSchema?: WebSchema
+}
+
+export type WebSchema = {
+  _type: 'webSchema'
+  schemaType?: 'Person' | 'WebSite' | 'WebPage' | 'CreativeWork' | 'Organization'
+  personJobTitle?: string
+  personDescription?: LocaleText
+  personSameAs?: Array<string>
+  personAlumniOf?: string
+  personWorksFor?: string
+  websiteName?: LocaleString
+  websiteUrl?: string
+  websiteDescription?: LocaleText
+  pageName?: LocaleString
+  pageUrl?: string
+  pageBreadcrumb?: Array<{
+    name?: string
+    url?: string
+    _type: 'breadcrumbItem'
+    _key: string
+  }>
+  workName?: LocaleString
+  workDescription?: LocaleText
+  workUrl?: string
+  workDateCreated?: string
+  customJsonLd?: string
+}
+
+export type SeoMetadata = {
+  _type: 'seoMetadata'
+  metaTitle?: LocaleString
+  metaDescription?: LocaleText
+  keywords?: Array<string>
+  canonicalUrl?: string
+  ogTitle?: LocaleString
+  ogDescription?: LocaleText
   ogImage?: {
     asset?: SanityImageAssetReference
     media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
-    alt?: string
-    metadataBase?: string
+    alt?: LocaleString
     _type: 'image'
   }
+  ogType?: 'website' | 'profile' | 'article'
+  twitterCard?: 'summary' | 'summary_large_image'
+  twitterTitle?: LocaleString
+  ogSiteName?: string
+  twitterDescription?: LocaleText
+  twitterImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: LocaleString
+    _type: 'image'
+  }
+  noIndex?: boolean
+  noFollow?: boolean
 }
 
 export type SanityImageCrop = {
@@ -183,53 +238,375 @@ export type SanityImageHotspot = {
   width: number
 }
 
-export type Page = {
-  _id: string
-  _type: 'page'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  name: string
-  slug: Slug
-  heading: string
-  subheading?: string
-  pageBuilder?: Array<
-    | ({
-        _key: string
-      } & CallToAction)
-    | ({
-        _key: string
-      } & InfoSection)
-  >
+export type Icon = {
+  _type: 'icon'
+  asset?: SanityImageAssetReference
+  media?: unknown
+  hotspot?: SanityImageHotspot
+  crop?: SanityImageCrop
+  alt?: LocaleString
 }
 
-export type PersonReference = {
+export type Slug = {
+  _type: 'slug'
+  current: string
+  source?: string
+}
+
+export type OrganizationReference = {
   _ref: string
   _type: 'reference'
   _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'person'
+  [internalGroqTypeReferenceTo]?: 'organization'
 }
 
-export type Post = {
+export type SkillReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'skill'
+}
+
+export type Project = {
   _id: string
-  _type: 'post'
+  _type: 'project'
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
+  title: LocaleString
   slug: Slug
-  content?: BlockContent
-  excerpt?: string
-  coverImage?: {
+  description?: LocaleText
+  body?: LocaleBlockContent
+  projectUrl?: string
+  repositoryUrl?: string
+  startDate?: string
+  endDate?: string
+  isFeatured?: boolean
+  coverImage?: CustomImage
+  gallery?: Array<
+    {
+      _key: string
+    } & CustomImage
+  >
+  thumbnail?: Icon
+  contributors?: Array<
+    {
+      _key: string
+    } & PersonReference
+  >
+  organization?: OrganizationReference
+  skills?: Array<
+    {
+      _key: string
+    } & SkillReference
+  >
+  seo?: SeoMetadata
+  structuredData?: WebSchema
+}
+
+export type CustomImage = {
+  _type: 'customImage'
+  asset?: SanityImageAssetReference
+  media?: unknown
+  hotspot?: SanityImageHotspot
+  crop?: SanityImageCrop
+  alt?: LocaleString
+  caption?: LocaleString
+  credit?: string
+}
+
+export type LocaleBlockContent = {
+  _type: 'localeBlockContent'
+  en?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  es?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  zh?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  hi?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  fr?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  ar?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+}
+
+export type LocaleText = {
+  _type: 'localeText'
+  en?: string
+  es?: string
+  zh?: string
+  hi?: string
+  fr?: string
+  ar?: string
+}
+
+export type Testimonial = {
+  _id: string
+  _type: 'testimonial'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  person: PersonReference
+  organization?: OrganizationReference
+  relationship?: string
+  quote: LocaleText
+  rating?: number
+  date?: string
+}
+
+export type Publication = {
+  _id: string
+  _type: 'publication'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  person: PersonReference
+  coAuthors?: Array<
+    {
+      _key: string
+    } & PersonReference
+  >
+  title: LocaleString
+  publisher?: string
+  description?: LocaleText
+  url?: string
+  publishedDate: string
+}
+
+export type Award = {
+  _id: string
+  _type: 'award'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  person: PersonReference
+  title: LocaleString
+  issuer?: OrganizationReference
+  description?: LocaleText
+  date: string
+  url?: string
+}
+
+export type Certification = {
+  _id: string
+  _type: 'certification'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  person: PersonReference
+  issuer: OrganizationReference
+  title: LocaleString
+  credentialId?: string
+  credentialUrl?: string
+  issueDate: string
+  expiryDate?: string
+}
+
+export type Education = {
+  _id: string
+  _type: 'education'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  person: PersonReference
+  institution?: OrganizationReference
+  degree: LocaleString
+  fieldOfStudy?: string
+  description?: LocaleText
+  startDate?: string
+  endDate?: string
+  isCurrent?: boolean
+  grade?: string
+}
+
+export type Experience = {
+  _id: string
+  _type: 'experience'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  person: PersonReference
+  organization?: OrganizationReference
+  role: LocaleString
+  employmentType?: 'full-time' | 'part-time' | 'contract' | 'freelance' | 'internship'
+  location?: string
+  startDate: string
+  endDate?: string
+  isCurrent?: boolean
+  description?: LocaleText
+  skills?: Array<
+    {
+      _key: string
+    } & SkillReference
+  >
+}
+
+export type Organization = {
+  _id: string
+  _type: 'organization'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: LocaleString
+  slug: Slug
+  description?: LocaleText
+  website?: string
+  industry?: string
+  location?: string
+  logo?: CustomImage
+  logoMark?: Icon
+  coverImage?: CustomImage
+  seo?: SeoMetadata
+  structuredData?: WebSchema
+}
+
+export type Skill = {
+  _id: string
+  _type: 'skill'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: LocaleString
+  slug: Slug
+  proficiency: number
+  experience: number
+  category?:
+    | 'technical'
+    | 'framework'
+    | 'library'
+    | 'tool'
+    | 'platform'
+    | 'design'
+    | 'language'
+    | 'cloud-devops'
+    | 'database'
+    | 'soft-skill'
+    | 'other'
+  filter_category?: 'all' | 'frontend' | 'backend' | 'ai' | 'others'
+  icon?: {
     asset?: SanityImageAssetReference
     media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
-    alt?: string
     _type: 'image'
   }
-  date?: string
-  author?: PersonReference
+  svg_icon?: Svg
+}
+
+export type Svg = {
+  _type: 'svg'
+  sourceSvg: InlineSvg
+  strokeColor?: string
+  fillColor?: string
+  size?: string
+  strokeWidth?: string
+  strokeLinecap?: string
+  strokeLinejoin?: string
+  svg?: string
+}
+
+export type SectionReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'section'
 }
 
 export type Person = {
@@ -238,23 +615,138 @@ export type Person = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  firstName: string
-  lastName: string
-  picture: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
+  name: LocaleString
+  slug: Slug
+  headline?: LocaleString
+  bio_short?: LocaleBlockContent
+  bio?: LocaleBlockContent
+  greeting?: LocaleString
+  header_title?: LocaleString
+  logoImage?: CustomImage
+  headerCta?: CtaButton
+  channels?: Array<{
+    label: LocaleString
+    icon: Svg
+    url: string
+    openInNewTab?: boolean
+    _key: string
+  }>
+  openToWork?: boolean
+  openToWorkLabel?: LocaleString
+  stats?: Array<{
+    value: string
+    label?: LocaleString
+    _type: 'stat'
+    _key: string
+  }>
+  primaryCta?: {
+    text?: LocaleString
+    href?: string
   }
+  secondaryCta?: {
+    text?: LocaleString
+    href?: string
+  }
+  avatar?: CustomImage
+  coverImage?: CustomImage
+  resumeImage?: CustomImage
+  email?: string
+  phone?: string
+  location?: LocaleString
+  skills?: Array<
+    {
+      _key: string
+    } & SkillReference
+  >
+  socialProfiles?: Array<
+    {
+      _key: string
+    } & SocialProfile
+  >
+  sections?: Array<
+    {
+      _key: string
+    } & SectionReference
+  >
+  seo?: SeoMetadata
+  structuredData?: WebSchema
 }
 
-export type Slug = {
-  _type: 'slug'
-  current: string
-  source?: string
+export type CtaButton = {
+  _type: 'ctaButton'
+  text: LocaleString
+  href: string
+  openInNewTab?: boolean
+  isDownload?: boolean
+  downloadFilename?: string
+  rel?: Array<string>
+  ariaLabel?: LocaleString
+  ariaDescribedBy?: string
+  title?: LocaleString
 }
+
+export type Section = {
+  _id: string
+  _type: 'section'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  sectionType:
+    | 'about'
+    | 'experience'
+    | 'education'
+    | 'projects'
+    | 'skills'
+    | 'certifications'
+    | 'awards'
+    | 'publications'
+    | 'testimonials'
+    | 'contact'
+    | 'custom'
+  sectionId: Slug
+  internalTitle?: string
+  showInNav?: boolean
+  navLabel?: LocaleString
+  heading?: LocaleString
+  subheading?: LocaleText
+  content?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  order?: number
+}
+
+export type SocialProfile = {
+  _type: 'socialProfile'
+  platform:
+    | 'linkedin'
+    | 'github'
+    | 'twitter'
+    | 'instagram'
+    | 'dribbble'
+    | 'behance'
+    | 'youtube'
+    | 'website'
+    | 'other'
+  url: string
+  username?: string
+}
+
+export type InlineSvg = string
 
 export type SanityAssistInstructionTask = {
   _type: 'sanity.assist.instructionTask'
@@ -491,23 +983,41 @@ export type Geopoint = {
 }
 
 export type AllSanitySchemaTypes =
-  | PageReference
-  | PostReference
-  | Link
+  | SkillCategoryLabels
+  | LocaleString
+  | PersonReference
+  | Navigation
+  | NavItem
+  | ProjectReference
   | SanityImageAssetReference
-  | CallToAction
-  | InfoSection
-  | BlockContentTextOnly
-  | BlockContent
-  | Button
-  | Settings
+  | Portfolio
+  | WebSchema
+  | SeoMetadata
   | SanityImageCrop
   | SanityImageHotspot
-  | Page
-  | PersonReference
-  | Post
-  | Person
+  | Icon
   | Slug
+  | OrganizationReference
+  | SkillReference
+  | Project
+  | CustomImage
+  | LocaleBlockContent
+  | LocaleText
+  | Testimonial
+  | Publication
+  | Award
+  | Certification
+  | Education
+  | Experience
+  | Organization
+  | Skill
+  | Svg
+  | SectionReference
+  | Person
+  | CtaButton
+  | Section
+  | SocialProfile
+  | InlineSvg
   | SanityAssistInstructionTask
   | SanityAssistTaskStatus
   | SanityAssistSchemaTypeAnnotations

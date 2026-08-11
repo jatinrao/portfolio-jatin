@@ -10,7 +10,13 @@
     "lint:fix": "eslint . --fix",
     "sanity:typegen": "cd ../studio && sanity schema extract --enforce-required-fields --path ../sanity.schema.json && cd ../frontend && sanity typegen generate",
     "start": "next start",
-    "type-check": "next typegen && tsc --noEmit"
+    "type-check": "next typegen && tsc --noEmit",
+    "typegen": "sanity typegen generate",
+    "postinstall": "playwright install --with-deps chromium",
+    "build:cf-static": "next build && node scripts/extract-static-for-cloudflare.ts",
+  "clean:cf": "rm -rf .next cf-static",
+  "deploy:cf": "npm run clean:cf && npm run build:cf-static && wrangler pages deploy cf-static --project-name=jatin-portfolio"
+
   },
   "dependencies": {
     "@sanity/client": "^7.22.1",
@@ -23,6 +29,7 @@
     "date-fns": "^4.4.0",
     "next": "^16.2.7",
     "next-sanity": "^13.0.8",
+    "playwright": "^1.61.1",
     "postcss": "^8.5.15",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
@@ -37,6 +44,7 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.7",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.110.0"
   }
 }

@@ -1,45 +1,229 @@
 @import 'tailwindcss';
 
-@plugin "@tailwindcss/typography";
+/*
+ * ICON FONT
+ * =========
+ * `.material-symbols-outlined` has been used as a literal class across
+ * multiple components this session (Header's location pin, various
+ * mockups) on the assumption that it already existed — it didn't. Without
+ * this import, those spans just render their text content ("location_on")
+ * as plain text instead of becoming an icon glyph.
+ *
+ * This loads it from Google Fonts directly. For production you may prefer
+ * self-hosting (avoids a third-party request, works if Google Fonts is
+ * blocked) — ask and I'll set up a next/font-based version instead, which
+ * would replace this whole block.
+ */
 
-@layer base {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-medium tracking-tight;
-  }
-}
-
-@utility container {
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-@custom-variant dark (&:where(.dark, .dark *));
+/*
+ * DESIGN TOKENS
+ * =============
+ * Single source of truth for every color/typography/spacing name used as a
+ * Tailwind utility across the app (bg-surface, text-on-surface-variant,
+ * font-headline-lg, px-margin-desktop, etc). Written for Tailwind v4's
+ * CSS-first config — if this project is actually on Tailwind v3, these
+ * become `theme.extend.{colors,fontFamily,fontSize,spacing}` entries in
+ * tailwind.config.js instead; ask and I'll convert this to that shape.
+ *
+ * Naming follows Material Design 3's role-based token system (surface,
+ * on-surface, on-surface-variant, primary, on-primary, primary-fixed,
+ * secondary, on-secondary, outline, outline-variant, inverse-surface,
+ * etc.) since that's the pattern already in use across every component
+ * built this session — plus a few custom additions (heading-ink,
+ * muted-body, margin-mobile/desktop, gutter) that were introduced
+ * alongside it in the original mockups but aren't standard M3 names.
+ *
+ * VALUES BELOW ARE PLACEHOLDERS. I don't have your actual brand palette —
+ * these are reasonable, harmonious defaults (the warm cream/ink/gold/green
+ * scheme visible across the mockups you pasted this session) so every
+ * class resolves to *something* sensible rather than nothing. Swap the hex
+ * values for your real brand colors; the token *names* are what matters
+ * for the components to keep working.
+ */
 
 @theme {
-  --shadow-layer: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+  /* ---------------------------------------------------------------------
+   * COLOR — light (default) values.
+   * ------------------------------------------------------------------- */
+  --color-surface: #fcf9f3;
+  --color-on-surface: #1c1c18;
+  --color-surface-container: #f3ede0;
+  --color-surface-container-low: #f7f2e8;
 
-  --color-framework: #000;
-  --color-black: #0b0b0b;
-  --color-white: #fff;
-  --color-brand: #f50;
-  --color-blue: #0052ff;
-  --color-yellow: #cdea19;
-  --color-gray-50: #f6f6f8;
-  --color-gray-100: #eeeef1;
-  --color-gray-200: #e3e4e8;
-  --color-gray-300: #bbbdc9;
-  --color-gray-400: #9499ad;
-  --color-gray-500: #727892;
-  --color-gray-600: #515870;
-  --color-gray-700: #383d51;
-  --color-gray-800: #252837;
-  --color-gray-900: #1b1d27;
-  --color-gray-950: #13141b;
+  --color-primary: #3b684a;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #dcebe0;
+  --color-on-primary-container: #14261a;
+  /* M3 "fixed" roles: intentionally the SAME value in both light and dark
+     — used when a color needs to stay legible/consistent regardless of
+     theme (e.g. Header's title text). Not redeclared under .dark below. */
+  --color-primary-fixed: #3b684a;
+  --color-on-primary-fixed: #ffffff;
 
-  --default-transition-duration: 250ms;
+  --color-secondary: #755b00;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #f3e4b8;
+  --color-on-secondary-container: #241a00;
+  --color-secondary-fixed: #c9a84c;
+  --color-on-secondary-fixed: #1c1c18;
+--color-on-surface-variant: #5c5c4f; /* was #6b6b5e → 4.62:1, now ~5.8–6.4:1 */
+--color-on-secondary-fixed-variant: #3d3200; /* was #4d3f00 → 4.53:1, now ~5.55:1 */
+  --color-outline: #7e7665;
+  --color-outline-variant: #d0c5b2;
+
+  --color-inverse-surface: #1c1c18;
+  --color-inverse-on-surface: #fcf9f3;
+  --color-inverse-primary: #9bd4ab;
+
+  --color-error: #b3261e;
+  --color-on-error: #ffffff;
+
+  /* Custom additions used across components — not standard M3 names, but
+     established by the mockups this session (headline color, deemphasized
+     body copy). */
+  --color-heading-ink: #1a1a1a;
+  --color-muted-body: #55554a;
+
+  /* ---------------------------------------------------------------------
+   * TYPOGRAPHY
+   * `font-*` (family) and `text-*` (size/line-height) are separate
+   * Tailwind theme namespaces — components combine both on one element
+   * (e.g. `font-headline-lg text-headline-lg`) the same way Material 3's
+   * type scale pairs a typeface with a size per role.
+   * ------------------------------------------------------------------- */
+
+  /* Base families — set via next/font in the root layout as CSS vars;
+     referenced here rather than hardcoding a font-family string so this
+     file doesn't fight next/font's loading strategy. Adjust names if your
+     next/font variable names differ from --font-inter/--font-ibm-plex-mono. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+  /* The feedback-section mockup used a serif body face not loaded via
+     next/font in any layout built this session — add a next/font (or
+     @import) entry for it if you want this to be a real loaded font
+     rather than a system-serif fallback. */
+  --font-serif: 'Source Serif 4', ui-serif, Georgia, serif;
+
+  --font-headline-xl: var(--font-sans);
+  --font-headline-lg: var(--font-sans);
+  --font-headline-md: var(--font-sans);
+  --font-body-lg: var(--font-serif);
+  --font-body-md: var(--font-serif);
+  --font-label-caps: var(--font-mono);
+
+  --text-headline-xl: 3rem;
+  --text-headline-xl--line-height: 1.05;
+  --text-headline-xl--letter-spacing: -0.03em;
+
+  --text-headline-lg: 2rem;
+  --text-headline-lg--line-height: 1.1;
+  --text-headline-lg--letter-spacing: -0.02em;
+
+  --text-headline-md: 1.5rem;
+  --text-headline-md--line-height: 1.2;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+
+  --text-body-md: 1rem;
+  --text-body-md--line-height: 1.6;
+
+  --text-label-caps: 0.75rem;
+  --text-label-caps--line-height: 1.2;
+  --text-label-caps--letter-spacing: 0.08em;
+
+  /* ---------------------------------------------------------------------
+   * SPACING — custom named values, used with any spacing-scale utility
+   * (p-, px-, gap-, space-x-, etc) since Tailwind v4 shares one spacing
+   * namespace across all of them.
+   * ------------------------------------------------------------------- */
+  --spacing-margin-mobile: 1.25rem;
+  --spacing-margin-desktop: 3.5rem;
+  --spacing-gutter: 2.5rem;
+}
+
+/* ---------------------------------------------------------------------
+ * DARK MODE — overrides for the base (non-"fixed") color roles only.
+ * Uses a `.dark` class on <html> rather than prefers-color-scheme, since
+ * Header.tsx uses explicit `dark:` utilities (implying a manual toggle,
+ * not just OS preference). If you're doing OS-preference-only dark mode
+ * instead, replace this block with an `@media (prefers-color-scheme:
+ * dark)` block redefining the same variables under `:root`.
+ * ------------------------------------------------------------------- */
+@custom-variant dark (&:where(.dark, .dark *));
+
+.dark {
+  --color-surface: #1c1c18;
+  --color-on-surface: #fcf9f3;
+  --color-on-surface-variant: #b8b2a0;
+  --color-surface-container: #2a2a24;
+  --color-surface-container-low: #232320;
+
+  --color-primary: #9bd4ab;
+  --color-on-primary: #0a1f10;
+  --color-primary-container: #14261a;
+  --color-on-primary-container: #dcebe0;
+
+  --color-secondary: #e8c96b;
+  --color-on-secondary: #241a00;
+  --color-secondary-container: #4d3f00;
+  --color-on-secondary-container: #f3e4b8;
+
+  --color-outline: #948c78;
+  --color-outline-variant: #4a453a;
+
+  --color-inverse-surface: #fcf9f3;
+  --color-inverse-on-surface: #1c1c18;
+  --color-inverse-primary: #3b684a;
+
+  --color-heading-ink: #fcf9f3;
+  --color-muted-body: #b8b2a0;
+}
+
+/*
+ * COMPONENT-LEVEL UTILITY CLASSES
+ * ================================
+ * A few literal (non-utility-generated) class names that components still
+ * reference directly alongside Tailwind utilities on the same element —
+ * kept here rather than as Tailwind theme entries since they bundle
+ * multiple properties/pseudo-states that don't fit a single token.
+ */
+@layer components {
+  /* TextFieldInput / TextAreaFieldInput (feedback section): most of the
+     visual is already Tailwind utilities on the element itself — this
+     class only needs to exist so the literal className doesn't reference
+     nothing. Safe to delete this rule and drop the className from those
+     two components if you'd rather have zero non-utility classes. */
+  .form-input-custom {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* SkillCard: same situation — the hover/offset/shadow behavior is fully
+     implemented via Tailwind utilities + the `group` pattern already;
+     this class is a styling hook for anything you want to target
+     app-wide (e.g. print styles) without touching the component. */
+  .skill-card {
+    /* intentionally empty — see comment above */
+  }
+
+  /* FeedbackFormHeader's heading: tightened tracking for large display
+     text, kept as a named class since "how tight" is a design decision
+     that's easier to tune in one place than repeated as an arbitrary
+     Tailwind value on every headline. */
+  .tight-heading {
+    letter-spacing: -0.04em;
+  }
+  .connect-icon{
+   color:var(--color-secondary);
+   font-size: medium;
+  }
+  .scroll-hide::-webkit-scrollbar {
+    display: none;
+}
+}
+
+@media print {
+  .pdf-hide {
+    display: none !important;
+  }
 }

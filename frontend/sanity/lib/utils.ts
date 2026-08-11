@@ -1,4 +1,3 @@
-import {Link} from '@/sanity.types'
 import {dataset, projectId, studioUrl} from '@/sanity/lib/api'
 import {createDataAttribute, CreateDataAttributeProps} from 'next-sanity'
 import {createImageUrlBuilder, type SanityImageSource} from '@sanity/image-url'
@@ -11,7 +10,7 @@ const builder = createImageUrlBuilder({
 
 // Create an image URL builder using the client
 // Export a function that can be used to get image URLs
-function urlForImage(source: SanityImageSource) {
+export function urlForImage(source: SanityImageSource) {
   return builder.image(source)
 }
 
@@ -26,8 +25,8 @@ export function resolveOpenGraphImage(
   return {url, alt: (image as {alt?: string})?.alt || '', width, height}
 }
 
-// Depending on the type of link, we need to fetch the corresponding page, post, or URL.  Otherwise return null.
-export function linkResolver(link: Link | DereferencedLink | undefined) {
+// Depending on the type of link, we need to fetch the corresponding page, post, or URL.  Otherwise return null. TO-DO: This is a temporary solution until we can implement a more robust link resolver that can handle all types of links in a more flexible way.
+export function linkResolver(link: any | DereferencedLink | undefined) {
   if (!link) return null
 
   // If linkType is not set but href is, lets set linkType to "href".  This comes into play when pasting links into the portable text editor because a link type is not assumed.
