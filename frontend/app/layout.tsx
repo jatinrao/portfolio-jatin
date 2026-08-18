@@ -67,16 +67,16 @@ export async function generateMetadata({params}:any): Promise<Metadata> {
       description: seo.twitterDescription?.en ?? description,
       images: twitterImageUrl ? [twitterImageUrl] : undefined,
     },
-    alternates: {
-      canonical: `https://jatin.getresume.dev/${lang}/${slug}`,
-      languages: {
-        "en": `https://jatin.getresume.dev/en/${slug}`,
-        "en-US": `https://jatin.getresume.dev/en/${slug}`,
-        "es": `https://jatin.getresume.dev/es/${slug}`,
-        "fr": `https://jatin.getresume.dev/fr/${slug}`,
-        "x-default": `https://jatin.getresume.dev/en/${slug}`, // fallback for unmatched locales
-      },
-    },
+    // alternates: {
+    //   canonical: `https://jatin.getresume.dev/${lang}/${slug}`,
+    //   languages: {
+    //     "en": `https://jatin.getresume.dev/en/${slug}`,
+    //     "en-US": `https://jatin.getresume.dev/en/${slug}`,
+    //     "es": `https://jatin.getresume.dev/es/${slug}`,
+    //     "fr": `https://jatin.getresume.dev/fr/${slug}`,
+    //     "x-default": `https://jatin.getresume.dev/en/${slug}`, // fallback for unmatched locales
+    //   },
+    // },
   };
 }
 
