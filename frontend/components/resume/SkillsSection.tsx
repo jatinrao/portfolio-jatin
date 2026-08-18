@@ -1,10 +1,16 @@
 
+import { Icon } from '@web-portfolio/icons';
 import type { ResumeSkillEntry } from '@/lib/resume/types';
 import { SectionHeading } from './SectionHeading';
 import { LangId, localize } from '@/lib/locale';
 import { LocaleString } from '@/sanity.types';
 import { SkillFilterOption } from '../molecules/SkillFilterBar';
 import SvgIcon from '../atoms/SvgIcon';
+
+function SkillGlyph({ skill }: { skill: ResumeSkillEntry }) {
+  if (skill.iconName) return <Icon name={skill.iconName} size={12} />;
+  return <SvgIcon src={skill.svg_icon as any} width={12} />;
+}
 
 interface SkillsSectionProps {
   skills: ResumeSkillEntry[];
@@ -85,7 +91,7 @@ export function SkillsSection({ skills, locale, categoryLabels }: SkillsSectionP
           fontWeight: 700,
           textTransform: 'uppercase',
           letterSpacing: '0.5pt',
-          color: '#755b00',
+          color: 'var(--color-secondary)',
           marginBottom: '4px',
         }}
       >
@@ -97,9 +103,9 @@ export function SkillsSection({ skills, locale, categoryLabels }: SkillsSectionP
             key={skill._id ?? 'key' + i}
             style={{
               fontSize: '9pt',
-              border: '1px solid #c9a84c',
+              border: '1px solid var(--color-secondary-fixed)',
               borderRadius: '3px',
-              color: '#1a1a1a',
+              color: 'var(--color-heading-ink)',
               display: 'flex',
               flexDirection: 'row',
               gap: '4px',
@@ -113,7 +119,7 @@ export function SkillsSection({ skills, locale, categoryLabels }: SkillsSectionP
                 alignItems: 'center',
               }}
             >
-              <SvgIcon src={skill.svg_icon as any} width={12} />
+              <SkillGlyph skill={skill} />
             </div>
             <div style={{ display: 'flex' }}>{localize(skill.name, locale)}</div>
           </span>
@@ -130,7 +136,7 @@ export function SkillsSection({ skills, locale, categoryLabels }: SkillsSectionP
           fontWeight: 700,
           textTransform: 'uppercase',
           letterSpacing: '0.5pt',
-          color: '#6b6b5e',
+          color: 'var(--color-on-surface-variant)',
           marginBottom: '4px',
         }}
       >
@@ -142,9 +148,9 @@ export function SkillsSection({ skills, locale, categoryLabels }: SkillsSectionP
             key={skill._id ?? 'key' + i}
             style={{
               fontSize: '9pt',
-              border: '1px solid #c9a84c',
+              border: '1px solid var(--color-secondary-fixed)',
               borderRadius: '3px',
-              color: '#1a1a1a',
+              color: 'var(--color-heading-ink)',
               display: 'flex',
               flexDirection: 'row',
               gap: '4px',
@@ -158,7 +164,7 @@ export function SkillsSection({ skills, locale, categoryLabels }: SkillsSectionP
                 alignItems: 'center',
               }}
             >
-              <SvgIcon src={skill.svg_icon as any} width={12} />
+              <SkillGlyph skill={skill} />
             </div>
             <div style={{ display: 'flex' }}>{localize(skill.name, locale)}</div>
           </span>

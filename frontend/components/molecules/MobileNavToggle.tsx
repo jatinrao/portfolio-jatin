@@ -1,7 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { Icon } from '@web-portfolio/icons';
 import { useDisclosure } from '@/hooks/use-disclousre';
+import { GlassButton } from '@/components/atoms/GlassButton';
+import Button from '@/components/atoms/Button';
 
 interface NavItem {
   label: string;
@@ -19,22 +22,17 @@ export function MobileNavToggle({ navItems, activeHref, contactHref }: MobileNav
 
   return (
     <div className="md:hidden bg-surface">
-      <button
-        type="button"
+      <GlassButton
         onClick={toggle}
         aria-expanded={isOpen}
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
-        className="flex h-9 w-9 items-center justify-center border-2 border-heading-ink bg-white"
+        className="hig-circle-button h-9 w-9 min-h-9 min-w-9 p-0"
       >
-        <span className="text-heading-ink">{isOpen ? <svg className="w-full h-auto" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg> : <svg className="w-full h-auto" focusable="false" aria-hidden="true" viewBox="0 0 24 24" tabIndex={-1} ><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg>}</span>
-      </button>
+        <span className="text-heading-ink">{isOpen ? <Icon name="close" size={20} /> : <Icon name="menu" size={20} />}</span>
+      </GlassButton>
 
       {isOpen && (
-        // top-[var(--header-height)] reads a CSS var set on <header> itself
-        // (see Header.tsx) rather than a guessed pixel offset, so this
-        // always sits flush against the real header, even if its height
-        // changes later.
-        <div className="fixed inset-x-0 top-[var(--header-height)] z-[99] border-b-4 border-heading-ink bg-white px-margin-mobile py-6 shadow-lg">
+        <div className="liquid-glass-surface fixed inset-x-0 top-[var(--header-height)] z-[99] border-b-[0.5px] border-heading-ink px-margin-mobile py-6 shadow-lg">
           <nav className="flex flex-col gap-5">
             {navItems.map((item, index) => (
               <Link
@@ -49,13 +47,9 @@ export function MobileNavToggle({ navItems, activeHref, contactHref }: MobileNav
                 {String(index + 1).padStart(2, '0')}_{item.label}
               </Link>
             ))}
-            <Link
-              href={contactHref}
-              onClick={close}
-              className="mt-2 inline-flex w-fit items-center gap-2 border-2 border-heading-ink bg-secondary px-4 py-2 font-label-caps text-label-caps text-white shadow-[4px_4px_0px_0px_#1a1a1a]"
-            >
+            <Button href={contactHref} onClick={close} className="mt-2 w-fit">
               Contact
-            </Link>
+            </Button>
           </nav>
         </div>
       )}

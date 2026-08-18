@@ -8,33 +8,35 @@ interface SVGIconProps {
   size?: number;
 }
 
+function tintSvgMarkup(svg: string, color: string): string {
+  return svg
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/\son\w+=(["']).*?\1/gi, "")
+    .replace(/fill=(["'])(?!none|url\()[^"']*\1/gi, `fill=$1${color}$1`)
+    .replace(/stroke=(["'])(?!none|url\()[^"']*\1/gi, `stroke=$1${color}$1`)
+    .replace(/fill:\s*(?!none|url\()[^;}]+/gi, `fill:${color}`)
+    .replace(/stroke:\s*(?!none|url\()[^;}]+/gi, `stroke:${color}`);
+}
+
 export default function SvgIcon({ src, alt = "Icon", width = 300, accentColor }: SVGIconProps) {
-  // 1. Clean the CMS string and convert it into a safe SVG Data URI
-  // We use standard utf-8 encoding instead of base64 for SVGs because it produces shorter strings
-  if(src === undefined || src === null) {
+  if (src === undefined || src === null) {
     return null;
-  } 
+  }
 
-  const cleanedSvg = typeof src.svg === 'string' ? 
-      src.svg.replace(/"/g, "'") // Swap double quotes to single quotes to prevent breaking HTML attributes
-    .replace(/%/g, '%25')
-    .replace(/#/g, '%23')
-    .replace(/{/g, '%7B')
-    .replace(/}/g, '%7D')
-    .replace(/</g, '%3C')
-    .replace(/>/g, '%3E') :"nf";
+  const raw = typeof src.svg === "string" ? src.svg : "";
+  if (!raw) {
+    return null;
+  }
 
-  const svgDataUri = `data:image/svg+xml;utf8,${cleanedSvg}`;
+  const paint = accentColor ?? "currentColor";
+  const markup = tintSvgMarkup(raw, paint);
 
-  // 2. Render as a native SVG via a standard img source tag
   return (
-    <img 
+    <span
       aria-hidden="true"
-      className="flex h-7 w-7 items-center justify-center text-lg font-bold"
-      src={svgDataUri} 
-      alt={alt} 
-      style={{ width: `${width}px`, height: 'auto',color: accentColor }}
-      loading="lazy"
+      className="inline-flex items-center justify-center"
+      style={{ width: `${width}px`, height: "auto", color: paint }}
+      dangerouslySetInnerHTML={{ __html: markup }}
     />
   );
 }

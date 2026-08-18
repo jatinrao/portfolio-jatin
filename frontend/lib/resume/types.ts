@@ -56,6 +56,8 @@ export interface ResumeSkillEntry {
   filter_category?: string;
   icon?: SanityImage;
   svg_icon?: string;
+  /** Icon-registry name from @web-portfolio/icons-sanity's picker — preferred over svg_icon when set. */
+  iconName?: string;
   /** 0–100 */
   proficiency?: number;
   /** Years */

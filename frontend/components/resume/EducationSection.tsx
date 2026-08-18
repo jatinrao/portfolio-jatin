@@ -19,14 +19,14 @@ function EducationEntry({ entry, lang }: EducationEntryProps) {
   return (
     <article style={{ breakInside: 'avoid', pageBreakInside: 'avoid'}}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '8px' }}>
-        <span style={{ fontSize: '10.5pt', fontWeight: 700, color: '#1a1a1a' }}>
+        <span style={{ fontSize: '10.5pt', fontWeight: 700, color: 'var(--color-heading-ink)' }}>
           {institutionName}
         </span>
-        <span style={{ fontSize: '9pt', color: '#555555', whiteSpace: 'nowrap' }}>
+        <span style={{ fontSize: '9pt', color: 'var(--color-muted-body)', whiteSpace: 'nowrap' }}>
           {formatDateRange(entry.startDate, entry.endDate, lang)}
         </span>
       </div>
-      <div style={{ fontSize: '10pt', color: '#6b6b5e' }}>
+      <div style={{ fontSize: '10pt', color: 'var(--color-on-surface-variant)' }}>
         {degree}
         {fieldOfStudy ? `, ${fieldOfStudy}` : ''}
       </div>

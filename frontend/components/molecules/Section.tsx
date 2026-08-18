@@ -20,7 +20,7 @@ export function SectionComponent<T>({ section, data, component: Component, local
   return (
     <section
       id={section.sectionId?.current}
-      className={`bg-surface ${ !isOdd ?"bg-[radial-gradient(#d0c5b2_1px,transparent_1px)] bg-[length:24px_24px]" :''} scroll-mt-24 py-10 md:py-16  border-secondary-fixed border-b-[3px] relative flex min-h-screen flex-col items-center justify-center overflow-hidden`}
+      className={`bg-surface ${ !isOdd ?"bg-[radial-gradient(var(--color-outline-variant)_1px,transparent_1px)] bg-[length:24px_24px]" :''} scroll-mt-24 py-10 md:py-16  border-secondary-fixed border-b-[3px] relative flex min-h-screen flex-col items-center justify-center overflow-hidden`}
       aria-labelledby={heading ? `${section.sectionId?.current}-heading` : undefined}
     >
       {(heading || subheading) && (

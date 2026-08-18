@@ -1,14 +1,19 @@
-import { HeroStat } from "@/types";
+interface StatItemProps {
+  value?: string
+  number?: string
+  label: string
+}
 
-export default function StatItem({ number, label }: HeroStat) {
+export default function StatItem({ value, number, label }: StatItemProps) {
+  const display = value ?? number ?? ''
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-[28px] font-extrabold text-[#2d5a3d] leading-none">
-        {number}
+    <div className="hero-stat">
+      <span className="hero-private">
+        <span className="hero-stat-value hero-private-live">{display}</span>
       </span>
-      <span className="text-[12px] text-[#6b6b5e] font-medium tracking-[0.5px]">
-        {label}
+      <span className="hero-private">
+        <span className="hero-stat-label hero-private-live">{label}</span>
       </span>
     </div>
-  );
+  )
 }

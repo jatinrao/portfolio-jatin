@@ -16,7 +16,7 @@ export const PRINT_STYLES = /* css */ `
   @page {
     size: A4;
     padding: 0mm 8mm 0mm;
-    background:#fcf9f3;
+    background: var(--color-surface);
   }
 
   @media print {

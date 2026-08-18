@@ -10,7 +10,7 @@ interface ContactItemProps { children: React.ReactNode; href?: string }
 function ContactItem({ children, href }: ContactItemProps) {
   const style: React.CSSProperties = {
     fontSize: '9pt',
-    color:    '#333333',
+    color:    'var(--color-muted-body)',
   }
   if (href) {
     return (
@@ -46,7 +46,7 @@ export function ResumeHeader({ resume, lang }: ResumeHeaderProps) {
       gap: '3.17mm', // was 12px
       justifyContent: 'space-between',
       marginBottom: '4.76mm', // was 18px
-      borderBottom: '0.53mm solid #2d5a3d', // was 2px
+      borderBottom: '0.53mm solid var(--color-primary)', // was 2px
       paddingBottom: '2.65mm', // was 10px
       breakInside: 'avoid',
     }}
@@ -60,7 +60,7 @@ export function ResumeHeader({ resume, lang }: ResumeHeaderProps) {
             width={78}
             height={78}
             style={{
-              border: '0.53mm solid #2d5a3d', // was 2px — border-primary border-2
+              border: '0.53mm solid var(--color-primary)', // was 2px — border-primary border-2
               height: 'auto',
             }}
             // openToWork={resume.openToWork}
@@ -80,7 +80,7 @@ export function ResumeHeader({ resume, lang }: ResumeHeaderProps) {
             fontSize: '22pt',
             fontWeight: 900,
             letterSpacing: '-0.13mm', // was -0.5px
-            color: '#1a1a1a',
+            color: 'var(--color-heading-ink)',
             margin: '0 0 0mm',
           }}
         >
@@ -91,7 +91,7 @@ export function ResumeHeader({ resume, lang }: ResumeHeaderProps) {
           <p
             style={{
               fontSize: '11pt',
-              color: '#2d5a3d',
+              color: 'var(--color-primary)',
               fontWeight: 600,
               margin: '0 0 0.53mm', // was 2px
             }}

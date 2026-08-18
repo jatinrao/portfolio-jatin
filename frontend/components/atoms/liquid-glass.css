@@ -1,0 +1,123 @@
+.liquid-glass-root {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--color-heading-ink);
+  border-radius: inherit;
+  box-shadow: var(--glass-shadow);
+}
+
+.liquid-glass-root--disabled {
+  box-shadow: none;
+}
+
+.liquid-glass-shadow,
+.liquid-glass-illumination,
+.liquid-glass-highlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.liquid-glass-shadow {
+  box-shadow: var(--glass-shadow);
+}
+
+.liquid-glass-illumination {
+  z-index: 0;
+}
+
+.liquid-glass-frost {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--glass-fill-strong);
+  border: 0.5px solid var(--glass-hairline);
+  backdrop-filter: blur(calc(var(--glass-blur) * var(--glass-enabled)))
+    saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * var(--glass-enabled)))
+    saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
+}
+
+.liquid-glass-root--clear .liquid-glass-frost {
+  background: var(--glass-fill);
+}
+
+.liquid-glass-root--clear .liquid-glass-frost::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--glass-clear-dim, rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+}
+
+.liquid-glass-root--disabled .liquid-glass-frost {
+  background: var(--color-surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.liquid-glass-webgl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+}
+
+.liquid-glass-highlight {
+  z-index: 1;
+  box-shadow: inset 0 1px 0 var(--glass-highlight), inset 0 -18px 28px rgba(0, 0, 0, 0.08);
+}
+
+.liquid-glass-root--clear .liquid-glass-highlight {
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+
+.liquid-glass-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* CSS-only surface for small chrome that should not spin up WebGL.
+   `.frosted-panel` is the legacy alias — do not name a selector `.glass`. */
+.liquid-glass-surface,
+.frosted-panel {
+  position: relative;
+  background: var(--glass-fill-strong);
+  border-color: var(--glass-hairline);
+  box-shadow: var(--shadow-card-resting), inset 0 1px 0 var(--glass-highlight);
+  backdrop-filter: blur(calc(var(--glass-blur) * var(--glass-enabled)))
+    saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * var(--glass-enabled)))
+    saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
+}
+
+.liquid-glass-surface--clear {
+  background: var(--glass-fill);
+}
+
+.liquid-glass-surface--clear::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--glass-clear-dim, rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .liquid-glass-frost,
+  .liquid-glass-surface {
+    background: var(--color-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .liquid-glass-root--clear .liquid-glass-frost::before,
+  .liquid-glass-surface--clear::before {
+    display: none;
+  }
+}

@@ -588,7 +588,10 @@ export type Skill = {
     _type: 'image'
   }
   svg_icon?: Svg
+  iconName?: IconRef
 }
+
+export type IconRef = string
 
 export type Svg = {
   _type: 'svg'
@@ -1011,6 +1014,7 @@ export type AllSanitySchemaTypes =
   | Experience
   | Organization
   | Skill
+  | IconRef
   | Svg
   | SectionReference
   | Person
@@ -1082,7 +1086,7 @@ export type PagesSlugsResult = Array<never>
 
 // Source: sanity/lib/queries.ts
 // Variable: RESUME_BY_SLUG_QUERY
-// Query: *[_type == "person" && slug.current == $slug][0]{_id,_updatedAt,slug,  "header":{  header_title,  location,  logoImage {      asset->{ _id, url, metadata { lqip, dimensions } },      alt,  },   headerCta{    text,    ariaLabel,    href  },    },    "hero_section": {    name,    greeting,    headline,    bio_short,    channels[],    avatar {      asset->{        _id,        url,        metadata {          lqip,          dimensions        }      },      alt,      caption,      credit    },    resumeImage{      asset->{        _id,        url,        metadata {          lqip,          dimensions        }      },      alt,      caption,      credit    }},"category_labels": *[_type == "skillCategoryLabels"][0],  skills[]->{    _id,    name,    slug,    category,    filter_category,    icon {      asset->{        _id,        url,        metadata {          lqip,          dimensions        }      }    },    svg_icon,    proficiency,    experience  },  "experience": *[    _type == "experience" &&    person._ref == ^._id  ] | order(startDate desc) {    _id,    role,    employmentType,    location,    startDate,    endDate,    isCurrent,    description,    organization->{      _id,      name,      slug,      logo {        asset->{          _id,          url,          metadata {            lqip,            dimensions          }        },        alt      },      website    },    skills[]->{      _id,      name,      slug,      category,      filter_category,      icon {        asset->{          _id,          url,          metadata {            lqip,            dimensions          }        }      },      svg_icon    }  },  "sections": sections[]->{    _id,    sectionType,    sectionId,    internalTitle,    heading,    subheading,    content,    showInNav,    navLabel  },  "projects": *[_type == "project" ]{    title,     slug,  description,  projectUrl,  repositoryUrl,  startDate,  endDate,  isFeatured,  coverImage{      asset->{        _id,        url,        metadata {          lqip,          dimensions        }        }      },    },  "education": *[  _type == "education" &&  person._ref == ^._id] | order(startDate asc) {  _id, institution->{ name },  degree,  fieldOfStudy,  description,  startDate,  endDate,  isCurrent}        }
+// Query: *[_type == "person" && slug.current == $slug][0]{_id,_updatedAt,slug,  "header":{  header_title,  location,  logoImage {      asset->{ _id, url, metadata { lqip, dimensions } },      alt,  },   headerCta{    text,    ariaLabel,    href  },    },    "hero_section": {    name,    greeting,    headline,    bio_short,    channels[],    "stats": stats[]{ value, label },    openToWork,    openToWorkLabel,    "primaryCta":   { "href": primaryCta.href,   "text": primaryCta.text   },    "secondaryCta": { "href": secondaryCta.href, "text": secondaryCta.text },    avatar {      asset->{        _id,        url,        metadata {          lqip,          dimensions        }      },      alt,      caption,      credit    },    resumeImage{      asset->{        _id,        url,        metadata {          lqip,          dimensions        }      },      alt,      caption,      credit    }},"category_labels": *[_type == "skillCategoryLabels"][0],  skills[]->{    _id,    name,    slug,    category,    filter_category,    icon {      asset->{        _id,        url,        metadata {          lqip,          dimensions        }      }    },    svg_icon,    iconName,    proficiency,    experience  },  "experience": *[    _type == "experience" &&    person._ref == ^._id  ] | order(startDate desc) {    _id,    role,    employmentType,    location,    startDate,    endDate,    isCurrent,    description,    organization->{      _id,      name,      slug,      logo {        asset->{          _id,          url,          metadata {            lqip,            dimensions          }        },        alt      },      website    },    skills[]->{      _id,      name,      slug,      category,      filter_category,      icon {        asset->{          _id,          url,          metadata {            lqip,            dimensions          }        }      },      svg_icon,      iconName    }  },  "sections": sections[]->{    _id,    sectionType,    sectionId,    internalTitle,    heading,    subheading,    content,    showInNav,    navLabel  },  "projects": *[_type == "project" ]{    title,     slug,  description,  projectUrl,  repositoryUrl,  startDate,  endDate,  isFeatured,  coverImage{      asset->{        _id,        url,        metadata {          lqip,          dimensions        }        }      },    },  "education": *[  _type == "education" &&  person._ref == ^._id] | order(startDate asc) {  _id, institution->{ name },  degree,  fieldOfStudy,  description,  startDate,  endDate,  isCurrent}        }
 export type RESUME_BY_SLUG_QUERY_RESULT = {
   _id: string
   _updatedAt: string
@@ -1119,6 +1123,20 @@ export type RESUME_BY_SLUG_QUERY_RESULT = {
       openInNewTab?: boolean
       _key: string
     }> | null
+    stats: Array<{
+      value: string
+      label: LocaleString | null
+    }> | null
+    openToWork: boolean | null
+    openToWorkLabel: LocaleString | null
+    primaryCta: {
+      href: string | null
+      text: LocaleString | null
+    }
+    secondaryCta: {
+      href: string | null
+      text: LocaleString | null
+    }
     avatar: {
       asset: {
         _id: string
@@ -1197,6 +1215,7 @@ export type RESUME_BY_SLUG_QUERY_RESULT = {
       } | null
     } | null
     svg_icon: Svg | null
+    iconName: IconRef | null
     proficiency: number
     experience: number
   }> | null
@@ -1255,6 +1274,7 @@ export type RESUME_BY_SLUG_QUERY_RESULT = {
         } | null
       } | null
       svg_icon: Svg | null
+      iconName: IconRef | null
     }> | null
   }>
   sections: Array<{
@@ -1332,7 +1352,7 @@ export type RESUME_BY_SLUG_QUERY_RESULT = {
 
 // Source: sanity/lib/queries.ts
 // Variable: PORTFOLIO_BY_SLUG_QUERY
-// Query: *[_type == "person" && slug.current == $slug][0]{  "header":{  header_title,  location,  logoImage {      asset->{ _id, url, metadata { lqip, dimensions } },      alt,  },   headerCta{    text,    ariaLabel,    href  },  "navItems": (  sections[]->{    sectionId,    sectionType,    showInNav,    navLabel  })[showInNav != false]{  "anchorId": sectionId.current,  "label": navLabel  }    },      "hero_section": {    name,    greeting,    headline,    bio_short,    avatar {      asset->{        _id,        url,        metadata {          lqip,          dimensions        }      },      alt,      caption,      credit    }  },  skills[]->{    _id,    name,    slug,    category,    filter_category,    icon {      asset->{        _id,        url,        metadata {          lqip,          dimensions        }      }    },    svg_icon,    proficiency,    experience  },  "experience": *[    _type == "experience" &&    person._ref == ^._id  ] | order(startDate desc) {    _id,    role,    employmentType,    location,    startDate,    endDate,    isCurrent,    description,    organization->{      _id,      name,      slug,      logo {        asset->{          _id,          url,          metadata {            lqip,            dimensions          }        },        alt      },      website    },    skills[]->{      _id,      name,      slug,      category,      filter_category,      icon {        asset->{          _id,          url,          metadata {            lqip,            dimensions          }        }      },      svg_icon    }  },  "sections": sections[]->{    _id,    sectionType,    sectionId,    internalTitle,    heading,    subheading,    content,    showInNav,    navLabel  },        }
+// Query: *[_type == "person" && slug.current == $slug][0]{  "header":{  header_title,  location,  logoImage {      asset->{ _id, url, metadata { lqip, dimensions } },      alt,  },   headerCta{    text,    ariaLabel,    href  },  "navItems": (  sections[]->{    sectionId,    sectionType,    showInNav,    navLabel  })[showInNav != false]{  "anchorId": sectionId.current,  "label": navLabel  }    },      "hero_section": {    name,    greeting,    headline,    bio_short,    channels[],    "stats": stats[]{ value, label },    openToWork,    openToWorkLabel,    "primaryCta":   { "href": primaryCta.href,   "text": primaryCta.text   },    "secondaryCta": { "href": secondaryCta.href, "text": secondaryCta.text },    avatar {      asset->{        _id,        url,        metadata {          lqip,          dimensions        }      },      alt,      caption,      credit    }  },  skills[]->{    _id,    name,    slug,    category,    filter_category,    icon {      asset->{        _id,        url,        metadata {          lqip,          dimensions        }      }    },    svg_icon,    iconName,    proficiency,    experience  },  "experience": *[    _type == "experience" &&    person._ref == ^._id  ] | order(startDate desc) {    _id,    role,    employmentType,    location,    startDate,    endDate,    isCurrent,    description,    organization->{      _id,      name,      slug,      logo {        asset->{          _id,          url,          metadata {            lqip,            dimensions          }        },        alt      },      website    },    skills[]->{      _id,      name,      slug,      category,      filter_category,      icon {        asset->{          _id,          url,          metadata {            lqip,            dimensions          }        }      },      svg_icon,      iconName    }  },  "sections": sections[]->{    _id,    sectionType,    sectionId,    internalTitle,    heading,    subheading,    content,    showInNav,    navLabel  },        }
 export type PORTFOLIO_BY_SLUG_QUERY_RESULT = {
   header: {
     header_title: LocaleString | null
@@ -1363,6 +1383,27 @@ export type PORTFOLIO_BY_SLUG_QUERY_RESULT = {
     greeting: LocaleString | null
     headline: LocaleString | null
     bio_short: LocaleBlockContent | null
+    channels: Array<{
+      label: LocaleString
+      icon: Svg
+      url: string
+      openInNewTab?: boolean
+      _key: string
+    }> | null
+    stats: Array<{
+      value: string
+      label: LocaleString | null
+    }> | null
+    openToWork: boolean | null
+    openToWorkLabel: LocaleString | null
+    primaryCta: {
+      href: string | null
+      text: LocaleString | null
+    }
+    secondaryCta: {
+      href: string | null
+      text: LocaleString | null
+    }
     avatar: {
       asset: {
         _id: string
@@ -1406,6 +1447,7 @@ export type PORTFOLIO_BY_SLUG_QUERY_RESULT = {
       } | null
     } | null
     svg_icon: Svg | null
+    iconName: IconRef | null
     proficiency: number
     experience: number
   }> | null
@@ -1464,6 +1506,7 @@ export type PORTFOLIO_BY_SLUG_QUERY_RESULT = {
         } | null
       } | null
       svg_icon: Svg | null
+      iconName: IconRef | null
     }> | null
   }>
   sections: Array<{
@@ -1563,8 +1606,8 @@ declare module '@sanity/client' {
     '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
     '\n  *[_type == "post" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
-    '\n*[_type == "person" && slug.current == $slug][0]{\n_id,\n_updatedAt,\nslug,  \n"header":{\n  header_title,\n  location,\n  logoImage {\n      asset->{ _id, url, metadata { lqip, dimensions } },\n      alt,\n  }, \n  headerCta{\n    text,\n    ariaLabel,\n    href\n  },\n  \n  },\n  \n  "hero_section": {\n    name,\n    greeting,\n    headline,\n    bio_short,\n    channels[],\n    avatar {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    },\n    resumeImage{\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    }},\n"category_labels": *[_type == "skillCategoryLabels"][0],\n  skills[]->{\n    _id,\n    name,\n    slug,\n    category,\n    filter_category,\n    icon {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      }\n    },\n    svg_icon,\n    proficiency,\n    experience\n  },\n\n  "experience": *[\n    _type == "experience" &&\n    person._ref == ^._id\n  ] | order(startDate desc) {\n    _id,\n    role,\n    employmentType,\n    location,\n    startDate,\n    endDate,\n    isCurrent,\n    description,\n\n    organization->{\n      _id,\n      name,\n      slug,\n      logo {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        },\n        alt\n      },\n      website\n    },\n\n    skills[]->{\n      _id,\n      name,\n      slug,\n      category,\n      filter_category,\n      icon {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        }\n      },\n      svg_icon\n    }\n  },\n  "sections": sections[]->{\n    _id,\n    sectionType,\n    sectionId,\n    internalTitle,\n    heading,\n    subheading,\n    content,\n    showInNav,\n    navLabel\n  },\n  "projects": *[_type == "project" ]{\n    title,\n     slug,\n  description,\n  projectUrl,\n  repositoryUrl,\n  startDate,\n  endDate,\n  isFeatured,\n  coverImage{\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n        }\n      },\n  \n\n  },\n  "education": *[\n  _type == "education" &&\n  person._ref == ^._id\n] | order(startDate asc) {\n  _id,\n institution->{\n name\n },\n  degree,\n  fieldOfStudy,\n  description,\n  startDate,\n  endDate,\n  isCurrent\n}\n  \n    \n  }': RESUME_BY_SLUG_QUERY_RESULT
-    '\n*[_type == "person" && slug.current == $slug][0]{\n  "header":{\n  header_title,\n  location,\n  logoImage {\n      asset->{ _id, url, metadata { lqip, dimensions } },\n      alt,\n  }, \n  headerCta{\n    text,\n    ariaLabel,\n    href\n  },\n  "navItems": (\n  sections[]->{\n    sectionId,\n    sectionType,\n    showInNav,\n    navLabel\n  }\n)[showInNav != false]{\n  "anchorId": sectionId.current,\n  "label": navLabel\n  }\n  \n  },\n  \n    "hero_section": {\n    name,\n    greeting,\n    headline,\n    bio_short,\n    avatar {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    }\n  },\n\n  skills[]->{\n    _id,\n    name,\n    slug,\n    category,\n    filter_category,\n    icon {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      }\n    },\n    svg_icon,\n    proficiency,\n    experience\n  },\n\n  "experience": *[\n    _type == "experience" &&\n    person._ref == ^._id\n  ] | order(startDate desc) {\n    _id,\n    role,\n    employmentType,\n    location,\n    startDate,\n    endDate,\n    isCurrent,\n    description,\n\n    organization->{\n      _id,\n      name,\n      slug,\n      logo {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        },\n        alt\n      },\n      website\n    },\n\n    skills[]->{\n      _id,\n      name,\n      slug,\n      category,\n      filter_category,\n      icon {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        }\n      },\n      svg_icon\n    }\n  },\n  "sections": sections[]->{\n    _id,\n    sectionType,\n    sectionId,\n    internalTitle,\n    heading,\n    subheading,\n    content,\n    showInNav,\n    navLabel\n  },\n  \n    \n  }': PORTFOLIO_BY_SLUG_QUERY_RESULT
+    '\n*[_type == "person" && slug.current == $slug][0]{\n_id,\n_updatedAt,\nslug,  \n"header":{\n  header_title,\n  location,\n  logoImage {\n      asset->{ _id, url, metadata { lqip, dimensions } },\n      alt,\n  }, \n  headerCta{\n    text,\n    ariaLabel,\n    href\n  },\n  \n  },\n  \n  "hero_section": {\n    name,\n    greeting,\n    headline,\n    bio_short,\n    channels[],\n    "stats": stats[]{ value, label },\n    openToWork,\n    openToWorkLabel,\n    "primaryCta":   { "href": primaryCta.href,   "text": primaryCta.text   },\n    "secondaryCta": { "href": secondaryCta.href, "text": secondaryCta.text },\n    avatar {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    },\n    resumeImage{\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    }},\n"category_labels": *[_type == "skillCategoryLabels"][0],\n  skills[]->{\n    _id,\n    name,\n    slug,\n    category,\n    filter_category,\n    icon {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      }\n    },\n    svg_icon,\n    iconName,\n    proficiency,\n    experience\n  },\n\n  "experience": *[\n    _type == "experience" &&\n    person._ref == ^._id\n  ] | order(startDate desc) {\n    _id,\n    role,\n    employmentType,\n    location,\n    startDate,\n    endDate,\n    isCurrent,\n    description,\n\n    organization->{\n      _id,\n      name,\n      slug,\n      logo {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        },\n        alt\n      },\n      website\n    },\n\n    skills[]->{\n      _id,\n      name,\n      slug,\n      category,\n      filter_category,\n      icon {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        }\n      },\n      svg_icon,\n      iconName\n    }\n  },\n  "sections": sections[]->{\n    _id,\n    sectionType,\n    sectionId,\n    internalTitle,\n    heading,\n    subheading,\n    content,\n    showInNav,\n    navLabel\n  },\n  "projects": *[_type == "project" ]{\n    title,\n     slug,\n  description,\n  projectUrl,\n  repositoryUrl,\n  startDate,\n  endDate,\n  isFeatured,\n  coverImage{\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n        }\n      },\n  \n\n  },\n  "education": *[\n  _type == "education" &&\n  person._ref == ^._id\n] | order(startDate asc) {\n  _id,\n institution->{\n name\n },\n  degree,\n  fieldOfStudy,\n  description,\n  startDate,\n  endDate,\n  isCurrent\n}\n  \n    \n  }': RESUME_BY_SLUG_QUERY_RESULT
+    '\n*[_type == "person" && slug.current == $slug][0]{\n  "header":{\n  header_title,\n  location,\n  logoImage {\n      asset->{ _id, url, metadata { lqip, dimensions } },\n      alt,\n  }, \n  headerCta{\n    text,\n    ariaLabel,\n    href\n  },\n  "navItems": (\n  sections[]->{\n    sectionId,\n    sectionType,\n    showInNav,\n    navLabel\n  }\n)[showInNav != false]{\n  "anchorId": sectionId.current,\n  "label": navLabel\n  }\n  \n  },\n  \n    "hero_section": {\n    name,\n    greeting,\n    headline,\n    bio_short,\n    channels[],\n    "stats": stats[]{ value, label },\n    openToWork,\n    openToWorkLabel,\n    "primaryCta":   { "href": primaryCta.href,   "text": primaryCta.text   },\n    "secondaryCta": { "href": secondaryCta.href, "text": secondaryCta.text },\n    avatar {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    }\n  },\n\n  skills[]->{\n    _id,\n    name,\n    slug,\n    category,\n    filter_category,\n    icon {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      }\n    },\n    svg_icon,\n    iconName,\n    proficiency,\n    experience\n  },\n\n  "experience": *[\n    _type == "experience" &&\n    person._ref == ^._id\n  ] | order(startDate desc) {\n    _id,\n    role,\n    employmentType,\n    location,\n    startDate,\n    endDate,\n    isCurrent,\n    description,\n\n    organization->{\n      _id,\n      name,\n      slug,\n      logo {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        },\n        alt\n      },\n      website\n    },\n\n    skills[]->{\n      _id,\n      name,\n      slug,\n      category,\n      filter_category,\n      icon {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        }\n      },\n      svg_icon,\n      iconName\n    }\n  },\n  "sections": sections[]->{\n    _id,\n    sectionType,\n    sectionId,\n    internalTitle,\n    heading,\n    subheading,\n    content,\n    showInNav,\n    navLabel\n  },\n  \n    \n  }': PORTFOLIO_BY_SLUG_QUERY_RESULT
     '*[_type == "person"][0]{\n    seo{\n      metaTitle,\n      metaDescription,\n      keywords,\n      canonicalUrl,\n      ogTitle,\n      ogDescription,\n      ogImage{\n        asset->{\n          url,\n          metadata{ dimensions }\n        },\n        alt\n      },\n      ogType,\n      ogSiteName,\n      twitterCard,\n      twitterTitle,\n      twitterDescription,\n      twitterImage{\n        asset->{\n          url,\n          metadata{ dimensions }\n        },\n        alt\n      },\n      noIndex,\n      noFollow\n    }\n  }\n': METADATA_QUERY_RESULT
     '*[_type == "feedbackSection"][0]{\n  badgeLabel,\n  eyebrow,\n  title,\n  description,\n  submitLabel,\n  submitIcon,\n  contactPerson->{\n    _id,\n    name,\n    avatar {\n      asset->{ _id, url, metadata { lqip, dimensions } },\n      alt\n    }\n  },\n  fields[]{\n    name,\n    step,\n    label,\n    placeholder,\n    fieldType,\n    required,\n    colSpan\n  }\n}': FEEDBACK_SECTION_QUERY_RESULT
   }

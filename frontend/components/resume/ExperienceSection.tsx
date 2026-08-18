@@ -17,7 +17,7 @@ import { formatDateRange } from '@/lib/resume/format'
 const printPortableTextComponents = {
   block: {
     normal: ({ children }: any) => (
-      <p style={{ margin: '0 0 4pt', fontSize: '10pt', lineHeight: 1.4, color: '#1a1a1a' }}>{children}</p>
+      <p style={{ margin: '0 0 4pt', fontSize: '10pt', lineHeight: 1.4, color: 'var(--color-heading-ink)' }}>{children}</p>
     ),
   },
   list: {
@@ -25,7 +25,7 @@ const printPortableTextComponents = {
   },
   listItem: {
     bullet: ({ children }: any) => (
-      <li style={{ fontSize: '10pt', marginBottom: '2pt', color: '#1a1a1a' }}>{children}</li>
+      <li style={{ fontSize: '10pt', marginBottom: '2pt', color: 'var(--color-heading-ink)' }}>{children}</li>
     ),
   },
 }
@@ -56,25 +56,25 @@ function ExperienceEntry({ entry, lang, isLast }: ExperienceEntryProps) {
           style={{
             width: '7pt',
             height: '7pt',
-            border: `1.5pt solid ${entry.isCurrent ? '#3b684a' : '#1a1a1a'}`,
-            backgroundColor: entry.isCurrent ? '#3b684a' : '#fcf9f3',
+            border: `1.5pt solid ${entry.isCurrent ? 'var(--color-primary)' : 'var(--color-heading-ink)'}`,
+            backgroundColor: entry.isCurrent ? 'var(--color-primary)' : 'var(--color-surface)',
             flexShrink: 0,
           }}
         />
-        {!isLast && <div style={{ flex: 1, width: '1.5pt', backgroundColor: '#d0c5b2', marginTop: '2pt' }} />}
+        {!isLast && <div style={{ flex: 1, width: '1.5pt', backgroundColor: 'var(--color-outline-variant)', marginTop: '2pt' }} />}
       </div>
 
       <div style={{ flex: 1, paddingBottom: '4pt' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '8pt', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '10.5pt', fontWeight: 700, color: '#1a1a1a' }}>
+          <span style={{ fontSize: '10.5pt', fontWeight: 700, color: 'var(--color-heading-ink)' }}>
             {role}
           </span>
-          <span style={{ fontSize: '9pt', color: '#555555', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: '9pt', color: 'var(--color-muted-body)', whiteSpace: 'nowrap' }}>
             {formatDateRange(entry.startDate, entry.endDate, lang)}
           </span>
         </div>
         <div>
-          <span style={{ fontSize: '10.5pt', fontWeight: 700, color: '#1a1a1a' }}>       
+          <span style={{ fontSize: '10.5pt', fontWeight: 700, color: 'var(--color-heading-ink)' }}>       
             {orgName ? ` · ${orgName}` : ''}
           </span>
         </div>
@@ -86,8 +86,8 @@ function ExperienceEntry({ entry, lang, isLast }: ExperienceEntryProps) {
               marginTop: '2pt',
               fontSize: '7pt',
               textTransform: 'uppercase',
-              color: '#ffffff',
-              backgroundColor: '#3b684a',
+              color: 'var(--color-on-primary)',
+              backgroundColor: 'var(--color-primary)',
               padding: '1pt 5pt',
             }}
           >
@@ -95,7 +95,7 @@ function ExperienceEntry({ entry, lang, isLast }: ExperienceEntryProps) {
           </span>
         )}
 
-        {entry.location && <div style={{ fontSize: '10pt', color: '#6b6b5e', marginTop: '2pt' }}>{entry.location}</div>}
+        {entry.location && <div style={{ fontSize: '10pt', color: 'var(--color-on-surface-variant)', marginTop: '2pt' }}>{entry.location}</div>}
 
         
           <div style={{ marginTop: '4pt' }}>
@@ -111,9 +111,9 @@ function ExperienceEntry({ entry, lang, isLast }: ExperienceEntryProps) {
                 style={{
                   fontSize: '6pt',
                   // textTransform: 'uppercase',
-                  border: '0.5pt solid #d0c5b2',
+                  border: '0.5pt solid var(--color-outline-variant)',
                   padding: '1pt 2pt',
-                  color: '#1a1a1a',
+                  color: 'var(--color-heading-ink)',
                 }}
               >
                 {localize(skill.name, lang)}

@@ -13,8 +13,8 @@ export function SectionHeading({ children }: SectionHeadingProps) {
       fontWeight:    700,
       textTransform: 'uppercase',
       letterSpacing: '0.08em',
-      color:         '#2d5a3d',
-      borderBottom:  '1px solid #c9a84c',
+      color:         'var(--color-primary)',
+      borderBottom:  '1px solid var(--color-secondary-fixed)',
       paddingBottom: '3px',
       margin:        '0 0 8px',
     }}>

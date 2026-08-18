@@ -14,9 +14,12 @@
     "typegen": "sanity typegen generate",
     "postinstall": "playwright install --with-deps chromium",
     "build:cf-static": "next build && node scripts/extract-static-for-cloudflare.ts",
-  "clean:cf": "rm -rf .next cf-static",
-  "deploy:cf": "npm run clean:cf && npm run build:cf-static && wrangler pages deploy cf-static --project-name=jatin-portfolio"
-
+    "clean:cf": "rm -rf .next cf-static",
+    "deploy:cf": "npm run clean:cf && npm run build:cf-static && wrangler pages deploy cf-static --project-name=jatin-portfolio",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest --project unit",
+    "test:storybook": "vitest run --project storybook",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@sanity/client": "^7.22.1",
@@ -25,6 +28,7 @@
     "@tailwindcss/postcss": "^4.3.0",
     "@tailwindcss/typography": "^0.5.19",
     "@vercel/speed-insights": "^2.0.0",
+    "@web-portfolio/icons": "^0.1.1",
     "autoprefixer": "^10.5.0",
     "date-fns": "^4.4.0",
     "next": "^16.2.7",
@@ -39,12 +43,30 @@
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "latest",
+    "@storybook/addon-a11y": "^10.5.8",
+    "@storybook/addon-docs": "^10.5.8",
+    "@storybook/addon-mcp": "latest",
+    "@storybook/addon-vitest": "^10.5.8",
+    "@storybook/nextjs-vite": "^10.5.8",
+    "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.4",
     "@types/node": "^22.19.19",
     "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.2.0",
+    "@vitest/browser-playwright": "latest",
+    "@vitest/coverage-v8": "latest",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.7",
+    "eslint-plugin-storybook": "^10.5.8",
+    "jsdom": "^29.1.1",
+    "storybook": "^10.5.8",
     "typescript": "^5.9.3",
+    "vite": "latest",
+    "vitest": "latest",
     "wrangler": "^4.110.0"
   }
 }

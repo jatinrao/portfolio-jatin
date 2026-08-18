@@ -16,6 +16,7 @@ import {
   type DocumentLocation,
 } from 'sanity/presentation'
 import {assist} from '@sanity/assist'
+import {sanityIconPicker} from '@web-portfolio/icons-sanity'
 import { categoryI18nBundles } from './src/utils/categoryBundles'
 
 // Environment variables for project configuration
@@ -127,6 +128,7 @@ export default defineConfig({
     unsplashImageAsset(),
     assist(),
     visionTool(),
+    sanityIconPicker(),
   ],
   i18n: {
     bundles: [

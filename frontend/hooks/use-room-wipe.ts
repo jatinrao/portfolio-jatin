@@ -1,0 +1,213 @@
+'use client';
+
+import { useLayoutEffect, useState, type RefObject } from 'react';
+import { skillRiverLoopTranslateX, skillRiverTrackMetrics } from '@/lib/skill-room-filters';
+import type { RoomPlayback } from '@/context/room-playback-context';
+
+const ENABLE_SLIDE_OUT = true;
+
+const DEFAULT_PLAYBACK: RoomPlayback = { skillsProgress: 0, experienceProgress: 0 };
+
+/**
+ * Visible fraction of the TV screen below `clipY`. Progress is measured
+ * against the screen rect (not the viewport) so the page color split
+ * (room top) and the in-frame clip line share the same Y.
+ */
+export function clipProgress(clipY: number, stackTop: number, stackHeight: number) {
+  const stackBottom = stackTop + stackHeight;
+  if (clipY >= stackBottom) return 0;
+  if (clipY <= stackTop) return 1;
+  return (stackBottom - clipY) / stackHeight;
+}
+
+function settledInnerProgress(
+  roomEl: HTMLElement,
+  enter: number,
+  exit: number,
+  stackTop: number,
+  stackHeight: number,
+) {
+  if (enter < 1) return 0;
+  if (exit > 0) return 1;
+  const travel = Math.max(1, roomEl.offsetHeight - stackHeight);
+  return Math.min(1, Math.max(0, (stackTop - roomEl.getBoundingClientRect().top) / travel));
+}
+
+function smoothstep(t: number) {
+  const x = Math.min(1, Math.max(0, t));
+  return x * x * (3 - 2 * x);
+}
+
+export function setSlideOut(layer: HTMLDivElement, exit: number) {
+  const panel = layer.querySelector<HTMLElement>('.tv-screen-panel');
+  if (panel) {
+    panel.style.transform = 'none';
+    panel.style.transformOrigin = 'center center';
+  }
+  layer.style.transformOrigin = 'center center';
+  layer.style.transform = `translate3d(0, ${-Math.min(1, Math.max(0, exit)) * 100}%, 0)`;
+}
+
+export function setWipe(
+  layer: HTMLDivElement,
+  scaleY: number,
+  origin: 'top' | 'bottom',
+) {
+  const s = Math.min(1, Math.max(0, scaleY));
+  const originValue = origin === 'top' ? 'center top' : 'center bottom';
+  const panel = layer.querySelector<HTMLElement>('.tv-screen-panel');
+
+  layer.style.transformOrigin = originValue;
+  layer.style.transform = `matrix(1, 0, 0, ${s}, 0, 0)`;
+
+  if (panel) {
+    panel.style.transformOrigin = originValue;
+    panel.style.transform =
+      s < 0.001 ? 'matrix(1, 0, 0, 0, 0, 0)' : `matrix(1, 0, 0, ${1 / s}, 0, 0)`;
+  }
+}
+
+/**
+ * Apple TV rooms wipe, plus inner-room progress while a room is settled.
+ * Extra article height is the hijack budget: skills → river pan
+ * (one step per skill in the longest category row), experience →
+ * timeline scroll. Then the next room's top starts the wipe.
+ */
+export function useRoomWipe(
+  galleryRef: RefObject<HTMLElement | null>,
+  slideOutEnabled = ENABLE_SLIDE_OUT,
+) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [playback, setPlayback] = useState<RoomPlayback>(DEFAULT_PLAYBACK);
+
+  useLayoutEffect(() => {
+    const gallery = galleryRef.current;
+    if (!gallery) return;
+
+    const stack = gallery.querySelector<HTMLElement>('.tv-screen-stack');
+    const layers = [...gallery.querySelectorAll<HTMLDivElement>('.tv-screen')];
+    const roomEls = [...gallery.querySelectorAll<HTMLElement>('[data-room-copy]')];
+    if (!stack || layers.length === 0 || roomEls.length === 0) return;
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const last = layers.length - 1;
+    let raf = 0;
+
+    const apply = () => {
+      const stackBox = stack.getBoundingClientRect();
+      let nextActive = 0;
+      let skillsProgress = 0;
+      let experienceProgress = 0;
+      let projectsReveal = 0;
+
+      layers.forEach((layer, index) => {
+        const roomEl = roomEls[index];
+        if (!roomEl) return;
+
+        const enter =
+          index === 0
+            ? 1
+            : clipProgress(roomEl.getBoundingClientRect().top, stackBox.top, stackBox.height);
+
+        const nextRoom = roomEls[index + 1];
+        const exit =
+          index < last && nextRoom
+            ? clipProgress(nextRoom.getBoundingClientRect().top, stackBox.top, stackBox.height)
+            : 0;
+
+        if (enter >= 0.5) nextActive = index;
+
+        const settled = enter >= 1 && exit <= 0;
+        layer.style.pointerEvents = settled ? 'auto' : 'none';
+
+        const inner = settledInnerProgress(roomEl, enter, exit, stackBox.top, stackBox.height);
+        const kind = roomEl.dataset.roomKind;
+        if (kind === 'projects') {
+          projectsReveal = Math.min(1, Math.max(0, enter));
+        }
+        if (kind === 'skills') {
+          skillsProgress = inner;
+          const lanes = layer.querySelector<HTMLElement>('.skill-river-lanes');
+          const clip = lanes ?? layer.querySelector<HTMLElement>('.skill-river-overflow');
+          if (clip) {
+            let longestUnique = 0;
+            clip.querySelectorAll<HTMLElement>('.skill-river-track').forEach((track) => {
+              const metrics = skillRiverTrackMetrics(track);
+              longestUnique = Math.max(longestUnique, metrics.uniqueWidth);
+            });
+            clip.querySelectorAll<HTMLElement>('.skill-river-track').forEach((track, rowIndex) => {
+              const { loopWidth } = skillRiverTrackMetrics(track);
+              const x = skillRiverLoopTranslateX(inner, rowIndex, loopWidth, longestUnique);
+              track.style.transform = `translate3d(${x}px, 0, 0)`;
+            });
+          }
+        }
+        if (kind === 'experience') {
+          experienceProgress = inner;
+          const scroller = layer.querySelector<HTMLElement>('.timeline-scroll');
+          if (scroller) {
+            const innerEl = scroller.firstElementChild as HTMLElement | null;
+            const paddingLeft = innerEl ? parseFloat(getComputedStyle(innerEl).paddingLeft) || 0 : 0;
+            const start = Math.max(0, paddingLeft - 20);
+            const max = scroller.scrollWidth - scroller.clientWidth;
+            const travel = Math.max(0, max - start);
+            if (travel > 0) scroller.scrollLeft = start + inner * travel;
+          }
+        }
+
+        if (reduced) {
+          const shown = enter >= 0.5 && exit < 0.5;
+          setWipe(layer, shown ? 1 : 0, shown ? 'bottom' : 'top');
+          return;
+        }
+
+        const enterEased = smoothstep(enter);
+        const exitEased = smoothstep(exit);
+
+        if (exit > 0 && enter >= 1) {
+          if (slideOutEnabled) {
+            setSlideOut(layer, exitEased);
+          } else {
+            setWipe(layer, 1 - exitEased, 'top');
+          }
+          return;
+        }
+
+        setWipe(layer, enterEased, 'bottom');
+      });
+
+      gallery.style.setProperty('--room-projects-t', String(projectsReveal));
+
+      setActiveIndex((current) => (current === nextActive ? current : nextActive));
+      const activeKind = roomEls[nextActive]?.dataset.roomKind;
+      setPlayback((current) => {
+        if (
+          Math.abs(current.skillsProgress - skillsProgress) < 0.002 &&
+          Math.abs(current.experienceProgress - experienceProgress) < 0.002 &&
+          current.activeKind === activeKind
+        ) {
+          return current;
+        }
+        return { skillsProgress, experienceProgress, activeKind };
+      });
+    };
+
+    apply();
+    const onScrollOrResize = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        apply();
+      });
+    };
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
+    };
+  }, [galleryRef, slideOutEnabled]);
+
+  return { activeIndex, playback };
+}

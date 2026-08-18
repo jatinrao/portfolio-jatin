@@ -19,7 +19,7 @@ export function SummarySection({ summary, lang }: SummarySectionProps) {
       {/* <SectionHeading>Summary</SectionHeading> */}
       <p style={{
         fontSize:      '10.5pt',
-        color:         '#1a1a1a',
+        color:         'var(--color-heading-ink)',
         lineHeight:    1.5,
         whiteSpace:    'pre-line',
         margin:        0,

@@ -9,5 +9,5 @@ export function TimelineNode() {
   const { containerRef } = useTimelineScrollContext();
   const { nodeRef, nodeStyle } = useNodeScrollMotion(containerRef as RefObject<HTMLDivElement>);
 
-  return <motion.div ref={nodeRef} style={nodeStyle} className="z-10 h-5 w-5 border-4" />;
+  return <motion.div ref={nodeRef} style={nodeStyle} className="timeline-node z-10 h-5 w-5 border-4" />;
 }

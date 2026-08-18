@@ -54,7 +54,7 @@ export function ProjectMiniCard({ project, locale }: ProjectMiniCardProps) {
       style={{
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',fontSize: '10.5pt', fontWeight: 700, color: '#1a1a1a', 
+        whiteSpace: 'nowrap',fontSize: '10.5pt', fontWeight: 700, color: 'var(--color-heading-ink)',
         // fontFamily: 'var(--font-headline-lg)',
         // fontSize: '13px',
         // textTransform: 'uppercase',

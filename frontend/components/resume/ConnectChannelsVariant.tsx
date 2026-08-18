@@ -19,7 +19,7 @@ export default function ConnectChannelsVariant({ channels, locale }: { channels:
       style={{
         fontFamily: 'var(--font-label-caps)',
         fontSize: '1rem', // text-md — left as-is, see note below
-        color: 'var(--color-on-surface, #1a1a1a)',
+        color: 'var(--color-on-surface)',
         textTransform: 'uppercase',
         letterSpacing: '-0.05em', // tracking-tighter — relative unit, see note below
         display: 'flex',
@@ -47,7 +47,7 @@ export default function ConnectChannelsVariant({ channels, locale }: { channels:
           justifyContent: 'center',
           width: '12.7mm', // was 48px
           height: '12.7mm', // was 48px
-          border: '0.26mm solid var(--color-primary, #2d5a3d)', // was 1px
+          border: '0.26mm solid var(--color-primary)', // was 1px
           backgroundColor: 'transparent',
           transitionProperty: 'background-color',
           transitionDuration: '150ms',
@@ -76,7 +76,7 @@ export default function ConnectChannelsVariant({ channels, locale }: { channels:
         >
           <span
             dangerouslySetInnerHTML={{ __html: channel.icon.svg }}
-            style={{ color: 'var(--color-primary, #2d5a3d)' }}
+            style={{ color: 'var(--color-primary)' }}
           />
         </div>
       </a>

@@ -58,6 +58,7 @@ export interface HeroRawData {
   openToWorkLabel?: LocaleString
   primaryCta?:   { href: string; text: LocaleString }
   secondaryCta?: { href: string; text: LocaleString }
+  heroVideoUrl?: string
   channels?:Array<{
     label: LocaleString
     icon: any
@@ -141,6 +142,11 @@ export async function fetchPortfolioData(slug: string): Promise<any> {
     headline,
     bio_short,
     channels[],
+    "stats": stats[]{ value, label },
+    openToWork,
+    openToWorkLabel,
+    "primaryCta":   { "href": primaryCta.href,   "text": primaryCta.text   },
+    "secondaryCta": { "href": secondaryCta.href, "text": secondaryCta.text },
     avatar {
       asset->{
         _id,
@@ -173,6 +179,7 @@ export async function fetchPortfolioData(slug: string): Promise<any> {
       }
     },
     svg_icon,
+    iconName,
     proficiency,
     experience
   },
@@ -224,7 +231,8 @@ export async function fetchPortfolioData(slug: string): Promise<any> {
           }
         }
       },
-      svg_icon
+      svg_icon,
+      iconName
     }
   },
   "sections": sections[]->{
@@ -312,9 +320,9 @@ export async function fetchPortfolioData(slug: string): Promise<any> {
   endDate,
   isCurrent
 }
-    
+
   }`)
-  return await sanityFetch({query: heroQuery});
+  return await sanityFetch({query: heroQuery, stega: false});
 }
 
 export const SKILLS_QUERY = defineQuery(`*[_type == "skill"] | order(category asc, name.en asc){

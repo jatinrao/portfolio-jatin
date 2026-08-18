@@ -68,13 +68,21 @@ export const skill = defineType({
     }),
     defineField({
       name: 'icon',
-      title: 'Icon',
+      title: 'Icon (legacy, unused)',
       type: 'image',
+      description: 'Not rendered anywhere on the frontend — superseded by "Icon (picker)" below.',
     }),
     defineField({
       name: 'svg_icon',
-      title: 'SVG Icon',
+      title: 'SVG Icon (legacy)',
       type: 'svg',
+      description: 'Old raw-SVG-paste field. Superseded by "Icon (picker)" below — kept as a fallback until every skill has been migrated.',
+    }),
+    defineField({
+      name: 'iconName',
+      title: 'Icon (picker)',
+      type: 'iconRef',
+      description: 'Pick from the bundled icon set. Takes priority over the legacy SVG field on the frontend once set.',
     }),
   ],
   preview: {

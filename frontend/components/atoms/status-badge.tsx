@@ -8,7 +8,7 @@ export function StatusBadge({ status, emphasized = false }: StatusBadgeProps) {
   return (
     <span
       className={[
-        "font-label-caps text-[10px] text-secondary",
+        "font-label-caps text-label-sm text-secondary",
         emphasized ? "font-bold" : "",
       ].join(" ")}
     >

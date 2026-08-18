@@ -1,52 +1,31 @@
 'use client'
 
 import { useState, useRef, useEffect, type KeyboardEvent } from 'react'
+import { Icon } from '@web-portfolio/icons'
 import { STORAGE_KEY, useLanguage }                from '@/components/organisms/LanguageContext'
 import { LANGUAGES, type LangId }     from '@/lib/locale'
 import { useRouter } from 'next/navigation'
-
-// ─── Icons (inline SVG — no extra dep) ───────────────────────────────────
-
-function GlobeIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="2" y1="12" x2="22" y2="12" />
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-    </svg>
-  )
-}
-
-function ChevronIcon({ up }: { up: boolean }) {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"
-      style={{ transition: 'transform 0.2s ease', transform: up ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  )
-}
-
-function CheckIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  )
-}
+import { LiquidGlass } from '@/components/atoms/LiquidGlass'
+import {
+  floatingTriggerBaseStyle,
+  floatingPanelBaseStyle,
+  handleFloatingHoverEnter,
+  handleFloatingHoverLeave,
+} from '@/lib/floating-controls-style'
 
 // ─── Component ────────────────────────────────────────────────────────────
 
-// Brand colours — keep in sync with your Tailwind config / CSS vars
+// Design tokens (CSS custom properties from app/globals.css) — resolved at
+// paint time even when read through inline `style` objects, so this stays
+// in sync with the rest of the site (including live edits from the dev
+// design-token panel) instead of drifting as its own hardcoded palette.
 const C = {
-  cream:     '#f7f4ee',
-  gold:      '#c9a84c',
-  green:     '#2d5a3d',
-  dark:      '#1a1a1a',
-  muted:     '#6b6b5e',
-  hoverBg:   '#eeeade',
+  onPrimary: 'var(--color-on-primary)',
+  gold:      'var(--color-secondary-fixed)',
+  green:     'var(--color-primary)',
+  dark:      'var(--color-heading-ink)',
+  muted:     'var(--color-on-surface-variant)',
+  hoverBg:   'var(--color-surface-container)',
 } as const
 
 export function LanguageSwitcher() {
@@ -88,23 +67,19 @@ export function LanguageSwitcher() {
       ref={ref}
       role="region"
       aria-label="Language switcher"
-      style={{ position: 'fixed', bottom: '28px', right: '28px', zIndex: 9999 }}
+      style={{ position: 'relative' }}
     >
       {/* ── Dropdown panel ──────────────────────────────────────── */}
-      <div
+      <LiquidGlass
+        variant="regular"
         role="listbox"
         aria-label="Select language"
         style={{
+          ...floatingPanelBaseStyle,
           position:      'absolute',
           bottom:        'calc(100% + 8px)',
           right:         0,
           width:         '180px',
-          background:    C.cream,
-          border:        `2px solid ${C.gold}`,
-          borderRadius:  '10px',
-          overflow:      'hidden',
-          boxShadow:     '0 8px 32px rgba(0,0,0,0.14)',
-          // Animated visibility
           opacity:       open ? 1 : 0,
           transform:     open ? 'translateY(0) scale(1)' : 'translateY(8px) scale(0.97)',
           transformOrigin: 'bottom right',
@@ -115,7 +90,7 @@ export function LanguageSwitcher() {
         {/* Header label */}
         <div style={{
           padding:      '8px 14px 6px',
-          fontSize:     '10px',
+          fontSize:     'var(--text-label-sm)',
           fontWeight:   700,
           letterSpacing: '0.08em',
           textTransform: 'uppercase',
@@ -143,7 +118,7 @@ export function LanguageSwitcher() {
                 width:          '100%',
                 padding:        '9px 14px',
                 background:     isActive ? C.green : 'transparent',
-                color:          isActive ? C.cream  : C.dark,
+                color:          isActive ? C.onPrimary : C.dark,
                 border:         'none',
                 cursor:         'pointer',
                 fontSize:       '14px',
@@ -161,7 +136,7 @@ export function LanguageSwitcher() {
               {/* Language code chip */}
               <span style={{
                 minWidth:      '26px',
-                fontSize:      '10px',
+                fontSize:      'var(--text-label-sm)',
                 fontWeight:    700,
                 letterSpacing: '0.04em',
                 opacity:       0.65,
@@ -174,14 +149,14 @@ export function LanguageSwitcher() {
 
               {/* Active checkmark */}
               {isActive && (
-                <span style={{ color: C.gold, flexShrink: 0 }}>
-                  <CheckIcon />
+                <span style={{ color: C.gold, flexShrink: 0, display: 'flex' }}>
+                  <Icon name="check" size={13} />
                 </span>
               )}
             </button>
           )
         })}
-      </div>
+      </LiquidGlass>
 
       {/* ── Trigger button ───────────────────────────────────────── */}
       <button
@@ -189,36 +164,17 @@ export function LanguageSwitcher() {
         aria-expanded={open}
         aria-label={`Current language: ${current.label}. Click to change.`}
         onClick={() => setOpen((prev) => !prev)}
-        style={{
-          display:       'flex',
-          alignItems:    'center',
-          gap:           '7px',
-          padding:       '10px 16px',
-          background:    C.green,
-          color:         C.cream,
-          border:        'none',
-          borderBottom:  `3px solid ${C.gold}`,
-          borderRadius:  '8px',
-          cursor:        'pointer',
-          fontSize:      '13px',
-          fontWeight:    700,
-          letterSpacing: '0.03em',
-          boxShadow:     '0 4px 16px rgba(0,0,0,0.18)',
-          userSelect:    'none',
-          transition:    'transform 0.12s ease, box-shadow 0.12s ease',
-        }}
-        onMouseEnter={(e) => {
-          ;(e.currentTarget as HTMLElement).style.transform    = 'translateY(-1px)'
-          ;(e.currentTarget as HTMLElement).style.boxShadow   = '0 6px 20px rgba(0,0,0,0.22)'
-        }}
-        onMouseLeave={(e) => {
-          ;(e.currentTarget as HTMLElement).style.transform    = 'translateY(0)'
-          ;(e.currentTarget as HTMLElement).style.boxShadow   = '0 4px 16px rgba(0,0,0,0.18)'
-        }}
+        style={floatingTriggerBaseStyle}
+        onMouseEnter={handleFloatingHoverEnter}
+        onMouseLeave={handleFloatingHoverLeave}
       >
-        <GlobeIcon />
+        <Icon name="language" size={15} />
         <span>{current.code}</span>
-        <ChevronIcon up={open} />
+        <Icon
+          name="chevron_right"
+          size={11}
+          style={{ transition: 'transform 0.2s ease', transform: open ? 'rotate(-90deg)' : 'rotate(90deg)' }}
+        />
       </button>
     </div>
   )

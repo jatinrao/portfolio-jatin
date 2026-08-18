@@ -588,7 +588,10 @@ export type Skill = {
     _type: 'image'
   }
   svg_icon?: Svg
+  iconName?: IconRef
 }
+
+export type IconRef = string
 
 export type Svg = {
   _type: 'svg'
@@ -1011,6 +1014,7 @@ export type AllSanitySchemaTypes =
   | Experience
   | Organization
   | Skill
+  | IconRef
   | Svg
   | SectionReference
   | Person

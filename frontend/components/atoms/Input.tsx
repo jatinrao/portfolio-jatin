@@ -22,9 +22,9 @@ export default function Input({
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className={`bg-[#f7f4ee] border border-[#c9a84c] rounded-[4px] px-4 py-3
-        text-sm text-[#1a1a1a] placeholder:text-[#6b6b5e] w-full
-        focus:outline-none focus:ring-2 focus:ring-[#2d5a3d]/30 ${className}`}
+      className={`bg-surface-container border border-outline rounded-[var(--radius-control)] px-4 py-3
+        text-sm text-on-surface placeholder:text-muted-body w-full
+        focus:outline-none focus:ring-2 focus:ring-primary/30 ${className}`}
     />
   );
 }

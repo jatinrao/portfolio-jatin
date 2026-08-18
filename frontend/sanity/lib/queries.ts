@@ -126,6 +126,11 @@ slug,
     headline,
     bio_short,
     channels[],
+    "stats": stats[]{ value, label },
+    openToWork,
+    openToWorkLabel,
+    "primaryCta":   { "href": primaryCta.href,   "text": primaryCta.text   },
+    "secondaryCta": { "href": secondaryCta.href, "text": secondaryCta.text },
     avatar {
       asset->{
         _id,
@@ -170,6 +175,7 @@ slug,
       }
     },
     svg_icon,
+    iconName,
     proficiency,
     experience
   },
@@ -221,7 +227,8 @@ slug,
           }
         }
       },
-      svg_icon
+      svg_icon,
+      iconName
     }
   },
   "sections": sections[]->{
@@ -309,6 +316,12 @@ export const PORTFOLIO_BY_SLUG_QUERY = defineQuery(`
     greeting,
     headline,
     bio_short,
+    channels[],
+    "stats": stats[]{ value, label },
+    openToWork,
+    openToWorkLabel,
+    "primaryCta":   { "href": primaryCta.href,   "text": primaryCta.text   },
+    "secondaryCta": { "href": secondaryCta.href, "text": secondaryCta.text },
     avatar {
       asset->{
         _id,
@@ -341,6 +354,7 @@ export const PORTFOLIO_BY_SLUG_QUERY = defineQuery(`
       }
     },
     svg_icon,
+    iconName,
     proficiency,
     experience
   },
@@ -392,7 +406,8 @@ export const PORTFOLIO_BY_SLUG_QUERY = defineQuery(`
           }
         }
       },
-      svg_icon
+      svg_icon,
+      iconName
     }
   },
   "sections": sections[]->{

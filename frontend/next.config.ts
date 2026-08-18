@@ -14,8 +14,13 @@ const cspHeader = `
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [new URL('https://cdn.sanity.io/**')],
-    
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+        pathname: '/images/**',
+      },
+    ],
   },
   async headers() {
     return [

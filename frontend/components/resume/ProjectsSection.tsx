@@ -14,18 +14,18 @@ function ProjectEntry({ entry, lang }: ProjectEntryProps) {
 
   return (
     <article style={{ marginBottom: '10px', breakInside: 'avoid', pageBreakInside: 'avoid' }}>
-      <div style={{ fontSize: '10.5pt', fontWeight: 700, color: '#1a1a1a' }}>
+      <div style={{ fontSize: '10.5pt', fontWeight: 700, color: 'var(--color-heading-ink)' }}>
         {entry.url ? (
-          <a href={entry.url} style={{ color: '#2d5a3d', textDecoration: 'none' }}>
+          <a href={entry.url} style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>
             {entry.name}
           </a>
         ) : (
           entry.name
         )}
       </div>
-      <p style={{ fontSize: '10pt', color: '#6b6b5e', margin: '2px 0 0' }}>{description}</p>
+      <p style={{ fontSize: '10pt', color: 'var(--color-on-surface-variant)', margin: '2px 0 0' }}>{description}</p>
       {entry.technologies.length > 0 && (
-        <div style={{ fontSize: '9pt', color: '#6b6b5e', marginTop: '2px' }}>
+        <div style={{ fontSize: '9pt', color: 'var(--color-on-surface-variant)', marginTop: '2px' }}>
           {entry.technologies.join(' · ')}
         </div>
       )}

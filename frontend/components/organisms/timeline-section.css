@@ -1,0 +1,218 @@
+.tv-screen-panel[data-kind='experience'],
+.timeline-section {
+  /* Fitness still: dark gym, wood floor, amber light, red, ring green. */
+  --timeline-section-wash:
+    radial-gradient(42% 48% at 84% 22%, #30d158 0%, transparent 52%),
+    radial-gradient(36% 42% at 14% 28%, #ff3b30 0%, transparent 50%),
+    radial-gradient(70% 45% at 48% -8%, #ffd60a 0%, transparent 48%),
+    linear-gradient(180deg, #161412 0%, #2a241c 46%, #c4a574 100%);
+}
+
+.timeline-section {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  overflow: visible;
+  background: #161412;
+  color: #1d1d1f;
+  font-family: var(--font-apple);
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.timeline-section::before {
+  content: '';
+  position: absolute;
+  inset: -22%;
+  z-index: 0;
+  background: var(--timeline-section-wash);
+  filter: blur(72px);
+  pointer-events: none;
+}
+
+.timeline-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tv-screen-panel .timeline-section .timeline-step-card,
+.tv-screen-panel .timeline-section .education-card,
+.timeline-section .timeline-step-card,
+.timeline-section .education-card {
+  border: none;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: none !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #1d1d1f;
+}
+
+.timeline-section .timeline-step-card {
+  height: 100%;
+  min-height: 24.2rem;
+  overflow: visible;
+}
+
+@media (max-width: 734px) {
+  .timeline-section .timeline-step-card {
+    min-height: 17.3rem;
+  }
+}
+
+.tv-screen-panel .timeline-section .timeline-step-role,
+.tv-screen-panel .timeline-section .education-card-name {
+  font-size: 19px;
+  line-height: 1.21053;
+}
+
+.tv-screen-panel .timeline-section .timeline-step-date,
+.tv-screen-panel .timeline-section .timeline-step-org,
+.tv-screen-panel .timeline-section .timeline-step-body,
+.tv-screen-panel .timeline-section .education-card-program {
+  font-size: 14px;
+  line-height: 1.42859;
+}
+
+.timeline-section .timeline-step-date {
+  font-family: var(--font-apple);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.016em;
+  line-height: 1.2857;
+  text-transform: none;
+  color: #1d1d1f;
+}
+
+.timeline-section .timeline-step-role {
+  font-family: var(--font-apple-display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.011em;
+  line-height: 1.19048;
+  text-transform: none;
+}
+
+.timeline-section .timeline-step-org {
+  font-family: var(--font-apple);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.016em;
+  line-height: 1.2857;
+  text-transform: none;
+  color: #6e6e73;
+}
+
+.timeline-section .timeline-step-body {
+  flex: 1 1 auto;
+  font-family: var(--font-apple);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.016em;
+  line-height: 1.42859;
+  color: #6e6e73;
+}
+
+.timeline-section .timeline-step-chip {
+  border: none;
+  border-radius: 999px;
+  background: #f5f5f7;
+  font-family: var(--font-apple);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: #1d1d1f;
+}
+
+.timeline-section .education-card-name {
+  font-family: var(--font-apple-display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.011em;
+  line-height: 1.19048;
+  text-transform: none;
+}
+
+.timeline-section .education-card-program {
+  font-family: var(--font-apple);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.016em;
+  line-height: 1.42859;
+  text-transform: none;
+  color: #6e6e73;
+}
+
+.timeline-section .education-card-mark {
+  border: none;
+  background: #f5f5f7;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.timeline-section .timeline-end-badge {
+  border: none;
+  background: #ffffff;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #1d1d1f;
+}
+
+.timeline-section .timeline-node {
+  border-radius: 999px;
+  border-color: #d2d2d7;
+  background: #ffffff;
+}
+
+.timeline-slider {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 36px;
+  translate: 0 -50%;
+}
+
+.timeline-slider-track {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 10px;
+  overflow: hidden;
+  translate: 0 -50%;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.timeline-slider-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: rgba(72, 22, 18, 0.38);
+}
+
+.timeline-slider-knob {
+  position: absolute;
+  top: 50%;
+  width: 72px;
+  height: 32px;
+  translate: -50% -50%;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  border: 0.5px solid rgba(255, 255, 255, 0.62);
+  box-shadow:
+    0 6px 18px rgba(80, 18, 12, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(22px) saturate(1.6);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+}
+
+@media (max-width: 734px) {
+  .timeline-section .timeline-step-role,
+  .timeline-section .education-card-name {
+    font-size: 19px;
+  }
+}

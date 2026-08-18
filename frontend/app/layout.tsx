@@ -106,7 +106,7 @@ const ibmPlexMono = IBM_Plex_Mono({
     <html
       lang={defaultLocale}
       dir={isRtlLocale(defaultLocale) ? 'rtl' : 'ltr'}
-      className={`${inter.variable} bg-white text-black`}
+      className={`${inter.variable} ${ibmPlexMono.variable} bg-surface text-on-surface`}
     >
       <body>
         <section className="min-h-screen">

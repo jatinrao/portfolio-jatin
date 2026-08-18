@@ -41,3 +41,9 @@ next-env.d.ts
 
 .cache/
 cf-static/
+# temp video refs dropped in during design review — not committed
+tmp-video-drop/
+*.mov
+
+*storybook.log
+storybook-static

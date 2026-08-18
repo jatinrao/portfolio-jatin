@@ -1,17 +1,5 @@
+import { Icon } from '@web-portfolio/icons'
 import type { SupportedLanguage } from '@/lib/resume/validation'
-
-// ─── Sub-components ───────────────────────────────────────────────────────
-
-function DownloadIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3v12" />
-      <polyline points="7 10 12 15 17 10" />
-      <line x1="4" y1="20" x2="20" y2="20" />
-    </svg>
-  )
-}
 
 // ─── Main component ───────────────────────────────────────────────────────
 
@@ -57,12 +45,12 @@ export function DownloadResumeButton({ slug, lang: langOverride, label }: Downlo
         alignItems:     'center',
         gap:            '8px',
         padding:        '12px 20px',
-        background:     '#2d5a3d',
-        color:          '#f7f4ee',
+        background:     'var(--color-primary)',
+        color:          'var(--color-on-primary)',
         fontWeight:     700,
         fontSize:       '14px',
         borderRadius:   '999px',
-        border:         '2px solid #c9a84c',
+        border:         '2px solid var(--color-secondary-fixed)',
         boxShadow:      '0 4px 16px rgba(0,0,0,0.18)',
         textDecoration: 'none',
         transition:     'transform 0.15s ease, box-shadow 0.15s ease',
@@ -76,7 +64,7 @@ export function DownloadResumeButton({ slug, lang: langOverride, label }: Downlo
       //   ;(e.currentTarget as HTMLElement).style.boxShadow  = '0 4px 16px rgba(0,0,0,0.18)'
       // }}
     >
-      <DownloadIcon />
+      <Icon name="download" size={16} />
       {label ?? 'Download Resume'}
     </a>
   )

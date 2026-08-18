@@ -25,6 +25,7 @@ export interface SkillRef {
   filter_category?: string | null;
   icon?: { asset?: SanityImageAsset | null } | null;
   svg_icon?: string | null;
+  iconName?: string | null;
 }
 
 export interface Organization {

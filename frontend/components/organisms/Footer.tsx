@@ -1,69 +1,119 @@
 import Link from 'next/link';
+import { LANGUAGES, type LangId } from '@/lib/locale';
+import './footer.css';
 
 interface FooterLink {
   label: string;
   href: string;
 }
 
+export interface FooterNavItem {
+  anchorId: string;
+  label: string;
+}
+
 interface FooterProps {
   brandName?: string;
   tagline?: string;
   year?: number;
+  locale?: LangId;
+  navItems?: FooterNavItem[];
   legalLinks?: FooterLink[];
   socialLinks?: FooterLink[];
 }
 
-const DEFAULT_LEGAL_LINKS: FooterLink[] = [
-  // { label: 'PRIVACY.MD', href: '/privacy' },
-  // { label: 'TERMS.SH', href: '/terms' },
-];
+const DEFAULT_LEGAL_LINKS: FooterLink[] = [];
 
 export function Footer({
-  brandName = 'JATIN KUMAR',
-  tagline = 'FULL STACK ENGINEER',
+  brandName = 'Jatin Kumar',
+  tagline = 'Full stack engineer',
   year = new Date().getFullYear(),
+  locale = 'en',
+  navItems = [],
   legalLinks = DEFAULT_LEGAL_LINKS,
   socialLinks = [],
 }: FooterProps) {
-  return (
-    <footer className="relative w-full border-t-4 border-heading-ink bg-[#fcf9f3] bg-[radial-gradient(#d0c5b2_1px,transparent_1px)] bg-[length:24px_24px] px-margin-mobile py-10 md:px-margin-desktop">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p className="font-headline-lg text-lg uppercase tight-heading">{brandName}</p>
-          <p className="mt-1 font-label-caps text-[10px] text-muted-body">{tagline}</p>
-        </div>
+  const language = LANGUAGES.find((item) => item.id === locale);
+  const localeLabel = language?.label ?? locale;
 
-        {socialLinks.length > 0 && (
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
-            {socialLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="font-label-caps text-[11px] text-heading-ink underline underline-offset-4 hover:text-primary"
-              >
-                {link.label}
-              </a>
-            ))}
+  return (
+    <footer className="site-footer">
+      <div className="site-footer-content">
+        <ol className="site-footer-crumbs">
+          <li>
+            <Link href="/">{brandName}</Link>
+          </li>
+          {tagline ? (
+            <li>
+              <span className="site-footer-sep" aria-hidden="true">
+                ›
+              </span>{' '}
+              <span>{tagline}</span>
+            </li>
+          ) : null}
+        </ol>
+
+        {(navItems.length > 0 || socialLinks.length > 0) && (
+          <div className="site-footer-directory">
+            {navItems.length > 0 && (
+              <div>
+                <h3 className="site-footer-heading">Explore</h3>
+                <ul className="site-footer-list">
+                  {navItems.map((item) => (
+                    <li key={item.anchorId}>
+                      <Link href={`#${item.anchorId}`}>{item.label}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {socialLinks.length > 0 && (
+              <div>
+                <h3 className="site-footer-heading">Connect</h3>
+                <ul className="site-footer-list">
+                  {socialLinks.map((link) => (
+                    <li key={link.href}>
+                      <a href={link.href} target="_blank" rel="noreferrer noopener">
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
 
-        <div className="flex flex-col gap-4 md:items-end">
-          <p className="font-label-caps text-[10px] text-muted-body">
-            © {year} {brandName.toUpperCase()}
+        {tagline ? (
+          <p className="site-footer-shop">
+            {tagline}
+            {socialLinks[0] ? (
+              <>
+                {' '}
+                <a href={socialLinks[0].href} target="_blank" rel="noreferrer noopener">
+                  {socialLinks[0].label}
+                </a>
+              </>
+            ) : null}
           </p>
-          {/* <div className="flex gap-6">
-            {legalLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="font-label-caps text-[11px] text-heading-ink underline underline-offset-4 hover:text-primary"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div> */}
+        ) : null}
+
+        <div className="site-footer-end">
+          <div className="site-footer-legal">
+            <p className="site-footer-copyright">
+              Copyright © {year} {brandName}. All rights reserved.
+            </p>
+            {legalLinks.length > 0 && (
+              <ul className="site-footer-legal-links">
+                {legalLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href}>{link.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <span className="site-footer-locale">{localeLabel}</span>
         </div>
       </div>
     </footer>

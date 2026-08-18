@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { useMotionTemplate, useScroll, useTransform,} from 'framer-motion';
+import { useScroll, useTransform,} from 'framer-motion';
 import type { RefObject } from 'react';
 /**
  * All scroll-linked motion for one timeline card, as a function of its own
@@ -27,16 +27,9 @@ export function useCardScrollMotion(containerRef: RefObject<HTMLDivElement>) {
     offset: ['start end', 'center center', 'end start'],
   });
 
-  const y = useTransform(cardProgress, [0, 0.5, 1], [14, 0, 14]);
-  const opacity = useTransform(cardProgress, [0, 0.15, 0.5, 0.85, 1], [0.55, 1, 1, 1, 0.55]);
-  const scale = useTransform(cardProgress, [0, 0.5, 1], [0.96, 1, 0.96]);
+  const y = useTransform(cardProgress, [0, 0.5, 1], [0, 0, 0]);
+  const opacity = useTransform(cardProgress, [0, 0.15, 0.5, 0.85, 1], [0.92, 1, 1, 1, 0.92]);
+  const scale = useTransform(cardProgress, [0, 0.5, 1], [1, 1, 1]);
 
-  // Bottom-left light source → shadow falls up-and-right; magnitude peaks
-  // at center (most "lifted"), color shifts to theme green when centered.
-  const distanceFromCenter = useTransform(cardProgress, (p) => Math.abs(p - 0.5));
-  const shadowOffset = useTransform(distanceFromCenter, [0, 0.5], [10, 3], { clamp: true });
-  const shadowColor = useTransform(distanceFromCenter, [0, 0.12], ['#3b684a', '#c9a84c'], { clamp: true });
-  const boxShadow = useMotionTemplate`${shadowOffset}px -${shadowOffset}px 0px 0px ${shadowColor}`;
-
-  return { cardRef, wrapperStyle: { y, opacity, scale }, cardStyle: { boxShadow } };
+  return { cardRef, wrapperStyle: { y, opacity, scale } };
 }

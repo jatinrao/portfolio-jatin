@@ -1,6 +1,11 @@
-import { ReactNode } from "react";
+'use client'
 
-type ButtonVariant = "primary" | "outline" | "ghost";
+import { ReactNode } from "react";
+import Link from "next/link";
+import { GlassButton } from "@/components/atoms/GlassButton";
+
+/** HIG: prominent (glassProminent) vs glass vs quieter styles. Destructive is never primary. */
+type ButtonVariant = "primary" | "glass" | "outline" | "ghost" | "destructive";
 
 interface ButtonProps {
   children: ReactNode;
@@ -8,15 +13,17 @@ interface ButtonProps {
   className?: string;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
+  href?: string;
+  "aria-label"?: string;
 }
 
-const variantStyles: Record<ButtonVariant, string> = {
-  primary:
-    "bg-[#2d5a3d] text-white border-2 border-[#2d5a3d] hover:bg-[#3b7a52] hover:border-[#3b7a52]",
-  outline:
-    "bg-transparent text-[#2d5a3d] border-2 border-[#2d5a3d] hover:bg-[#2d5a3d] hover:text-white",
-  ghost:
-    "bg-transparent text-[#2d5a3d] border border-[#c9a84c] px-3 py-2 hover:bg-[#c9a84c]/10",
+const base = "bg-[#0071e3] hover:bg-[#0076df] active:bg-[#006edb] px-[11px] py-1 min-w-[45px] mx-2.5 my-2.5 text-[12px] leading-[1.3333733333] transition-colors duration-(--transition-fast) ease-standard font-normal tracking-[-0.01em] font-apple -translate-y-1";
+
+const variantStyles: Record<Exclude<ButtonVariant, "glass">, string> = {
+  primary: "bg-primary text-on-primary border border-transparent rounded-[940px]",
+  outline: "bg-transparent text-heading-ink border border-outline hover:bg-surface-container",
+  ghost: "bg-transparent text-heading-ink border border-transparent hover:bg-surface-container",
+  destructive: "bg-error text-on-error border border-transparent",
 };
 
 export default function Button({
@@ -25,14 +32,33 @@ export default function Button({
   className = "",
   onClick,
   type = "button",
+  href,
+  "aria-label": ariaLabel,
 }: ButtonProps) {
+  if (variant === "glass") {
+    return (
+      <GlassButton type={type} onClick={onClick} className={className} aria-label={ariaLabel}>
+        {children}
+      </GlassButton>
+    );
+  }
+
+  const classes = `${base} ${variantStyles[variant]} ${className}`;
+
+  if (href) {
+    return (
+      <Link href={href} aria-label={ariaLabel} className={classes} onClick={onClick}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-[4px]
-        font-medium text-sm cursor-pointer whitespace-nowrap transition-colors duration-200
-        ${variantStyles[variant]} ${className}`}
+      aria-label={ariaLabel}
+      className={classes}
     >
       {children}
     </button>

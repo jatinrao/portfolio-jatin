@@ -1,0 +1,268 @@
+.tv-screen-panel[data-kind='skills'],
+.skill-river {
+  /* Photos still: sky, hat, sweater. */
+  --skill-river-wash:
+    radial-gradient(48% 55% at 78% 86%, #1b7a4a 0%, transparent 58%),
+    radial-gradient(38% 42% at 76% 18%, #ff7a18 0%, #e85d04 38%, transparent 64%),
+    linear-gradient(155deg, #5ba3e8 0%, #6aafec 42%, #4a96d6 100%);
+}
+
+.skill-river {
+  --skill-poster-pad: 7px;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  isolation: isolate;
+  background: #5ba3e8;
+  color: var(--color-heading-ink);
+  font-family: var(--font-apple);
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  container-type: size;
+}
+
+.skill-river::before {
+  content: '';
+  position: absolute;
+  inset: -22%;
+  z-index: 0;
+  background: var(--skill-river-wash);
+  filter: blur(72px);
+  pointer-events: none;
+}
+
+.skill-river > * {
+  position: relative;
+  z-index: 1;
+}
+
+.skill-river-caption {
+  color: var(--color-muted-body);
+  font-family: var(--font-apple);
+  font-size: var(--text-body-md);
+}
+
+.skill-river-overflow {
+  /* Apple large river 345×195 in a 1920 clip, +10%. */
+  --skill-poster-inner-w: calc(100cqw * 345 / 1920 * 1.5);
+  --skill-poster-inner-h: calc(var(--skill-poster-inner-w) * 195 / 345);
+  --skill-poster-w: calc(var(--skill-poster-inner-w) + var(--skill-poster-pad) * 2);
+  --skill-poster-h: calc(var(--skill-poster-inner-h) + var(--skill-poster-pad) * 2);
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+}
+
+.skill-river-lanes {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--skill-poster-pad);
+  overflow: hidden;
+}
+
+.skill-river-row {
+  display: flex;
+  flex: 0 0 auto;
+  height: var(--skill-poster-h);
+  min-height: 0;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  width: max-content;
+}
+
+.skill-river-track {
+  display: flex;
+  width: max-content;
+  flex-wrap: nowrap;
+  will-change: transform;
+}
+
+.skill-poster {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: var(--skill-poster-w);
+  height: var(--skill-poster-h);
+  padding: var(--skill-poster-pad);
+  transition:
+    opacity var(--transition-standard) var(--ease-standard),
+    transform var(--transition-standard) var(--ease-standard);
+}
+
+.skill-poster.is-exiting {
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+.skill-poster-inner {
+  position: relative;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: space-around;
+  overflow: hidden;
+  isolation: isolate;
+  min-width: 0;
+  padding: 0.3rem 0.9rem;
+  border: none;
+  border-radius: 10px;
+  /* background: color-mix(in srgb, var(--color-surface) 38%, transparent); */
+  background: #fff;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.skill-poster:hover .skill-poster-inner {
+  transform: none;
+  box-shadow: none;
+}
+
+.skill-poster-icon {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: var(--skill-poster-from, var(--color-primary));
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.skill-poster-icon svg,
+.skill-poster-icon img {
+  width: clamp(2.37rem, 57%, 3.69rem);
+  height: auto;
+  max-height: none;
+  color: inherit;
+  fill: currentColor;
+}
+
+.skill-poster-icon svg *:not([fill='none']) {
+  fill: currentColor !important;
+}
+
+.skill-poster-icon svg [stroke]:not([stroke='none']) {
+  stroke: currentColor !important;
+}
+
+.skill-poster-scrim {
+  display: flex;
+  flex: 0 0 auto;
+  min-height: 0;
+  flex-direction: column;
+  gap: 0.28rem;
+  color: var(--color-heading-ink);
+}
+
+.skill-poster-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.skill-poster-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-apple-display);
+  font-size: var(--text-label-caps);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.skill-poster-years {
+  flex-shrink: 0;
+  font-family: var(--font-apple);
+  font-size: var(--text-label-sm);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-muted-body);
+}
+
+.skill-poster-proficiency {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.skill-poster-bar {
+  height: 3px;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-outline-variant);
+}
+
+.skill-poster-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background-image: linear-gradient(
+    90deg,
+    var(--skill-poster-from, var(--color-primary)),
+    var(--skill-poster-to, var(--color-secondary))
+  );
+}
+
+.skill-poster-proficiency-label {
+  flex-shrink: 0;
+  font-family: var(--font-apple);
+  font-size: var(--text-label-xs);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-muted-body);
+}
+
+@media (max-width: 1068px) {
+  .skill-river {
+    --skill-poster-pad: 6px;
+  }
+
+  .skill-river-overflow {
+    --skill-poster-inner-w: calc(100cqw * 265 / 1068 * 0.86);
+  }
+}
+
+@media (max-width: 734px) {
+  .skill-river {
+    --skill-poster-pad: 4px;
+  }
+
+  .skill-river-overflow {
+    --skill-poster-inner-w: calc(100cqw * 192 / 734 * 1.1);
+  }
+
+  .skill-poster-name {
+    font-size: var(--text-label-md);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-river-track {
+    will-change: auto;
+  }
+
+  .skill-poster,
+  .skill-poster-inner {
+    transition: none;
+  }
+}

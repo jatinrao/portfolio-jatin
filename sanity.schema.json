@@ -3886,7 +3886,22 @@
           "name": "svg"
         },
         "optional": true
+      },
+      "iconName": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "iconRef"
+        },
+        "optional": true
       }
+    }
+  },
+  {
+    "name": "iconRef",
+    "type": "type",
+    "value": {
+      "type": "string"
     }
   },
   {

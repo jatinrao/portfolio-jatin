@@ -13,27 +13,27 @@ export interface CarouselGeometry {
 }
 
 const DESKTOP: CarouselGeometry = {
-  cardWidth: 380,
-  cardHeight: 520,
-  containerHeight: 600,
-  xOffsets: [-560, -300, 0, 300, 560],
-  zDepths: [220, -100, -320],
+  cardWidth: 342,
+  cardHeight: 468,
+  containerHeight: 540,
+  xOffsets: [-504, -270, 0, 270, 504],
+  zDepths: [198, -90, -288],
 };
 
 const TABLET: CarouselGeometry = {
-  cardWidth: 300,
-  cardHeight: 410,
-  containerHeight: 500,
-  xOffsets: [-430, -230, 0, 230, 430],
-  zDepths: [170, -80, -260],
+  cardWidth: 270,
+  cardHeight: 369,
+  containerHeight: 450,
+  xOffsets: [-387, -207, 0, 207, 387],
+  zDepths: [153, -72, -234],
 };
 
 const MOBILE: CarouselGeometry = {
-  cardWidth: 210,
-  cardHeight: 288,
-  containerHeight: 380,
-  xOffsets: [-270, -145, 0, 145, 270],
-  zDepths: [110, -55, -180],
+  cardWidth: 151,
+  cardHeight: 207,
+  containerHeight: 252,
+  xOffsets: [-180, -99, 0, 99, 180],
+  zDepths: [72, -36, -126],
 };
 
 /**
@@ -51,7 +51,8 @@ export function useCarouselGeometry(): CarouselGeometry {
   useEffect(() => {
     const compute = () => {
       const width = window.innerWidth;
-      if (width < 560) {
+      const portrait = window.matchMedia('(orientation: portrait)').matches;
+      if (width < 560 || (portrait && width < 1024)) {
         setGeometry(MOBILE);
       } else if (width < 900) {
         setGeometry(TABLET);

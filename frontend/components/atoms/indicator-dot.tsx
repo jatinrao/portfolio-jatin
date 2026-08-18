@@ -9,36 +9,24 @@ export interface IndicatorDotProps {
   onClick: () => void;
 }
 
-/**
- * Reads distance from the shared continuous index so the active segment
- * widens in step with the card that's animating into focus, instead of
- * snapping instantly the moment a threshold is crossed.
- */
+/** HIG page control: equidistant circular dots; solid = current page. */
 export function IndicatorDot({ index, springIndex, label, onClick }: IndicatorDotProps) {
   const distance = useTransform(springIndex, (value) => Math.abs(value - index));
-  const width = useTransform(distance, [0, 1], [32, 12], { clamp: true });
-  const background = useTransform(distance, (value) =>
-    value < 0.5 ? "#755b00" : "#edeae0",
-  );
+  const opacity = useTransform(distance, [0, 1, 4], [1, 0.38, 0.22], { clamp: true });
+  const scale = useTransform(distance, [0, 3, 6], [1, 1, 0.55], { clamp: true });
 
   return (
     <button
       type="button"
       aria-label={label}
-      // aria-current={index === springIndex ? "true" : undefined}
       onClick={onClick}
-      className="flex h-11 w-11 items-center justify-center"
+      className="page-control-hit"
     >
       <motion.span
         aria-hidden="true"
-        style={{ width, backgroundColor: background }}
-        className="h-2 border border-heading-ink"
-        transition={{ type: "spring", stiffness: 300, damping: 32 }}
+        style={{ opacity, scale }}
+        className="page-control-dot"
       />
     </button>
   );
 }
-
-
-
-

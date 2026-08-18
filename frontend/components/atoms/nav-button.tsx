@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import type { ReactNode } from "react";
+import { GlassButton } from "@/components/atoms/GlassButton";
 
 export interface NavButtonProps {
   direction: "prev" | "next";
@@ -11,31 +11,16 @@ export interface NavButtonProps {
   label: string;
 }
 
-/**
- * Shared visual language with the rest of the spec sheet: hard 2px ink
- * border, offset drop shadow, and a press that collapses the shadow so
- * the button reads as physically depressed rather than just dimmed.
- */
-export function NavButton({ direction, onClick, disabled, children, label }: NavButtonProps) {
-  const isNext = direction === "next";
-
+/** Circular HIG button — GlassButton with a 44pt hit target. */
+export function NavButton({ onClick, disabled, children, label }: NavButtonProps) {
   return (
-    <motion.button
-      type="button"
+    <GlassButton
       aria-label={label}
       onClick={onClick}
       disabled={disabled}
-      whileHover={disabled ? undefined : { x: 2, y: 2 }}
-      whileTap={disabled ? undefined : { x: 4, y: 4, boxShadow: "0px 0px 0px 0px #1a1a1a" }}
-      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-      className={[
-        "flex h-12 w-12 z-20 items-center justify-center border-2 border-heading-ink transition-colors",
-        isNext ? "bg-primary text-white" : "bg-white text-heading-ink",
-        disabled ? "cursor-not-allowed opacity-30" : "cursor-pointer",
-      ].join(" ")}
-      style={{ boxShadow: disabled ? "none" : "4px 4px 0px 0px #1a1a1a" }}
+      className={["hig-circle-button", disabled ? "is-disabled" : ""].join(" ")}
     >
       {children}
-    </motion.button>
+    </GlassButton>
   );
 }

@@ -1,11 +1,14 @@
 import { fetchHeroData, fetchPortfolioData }    from '@/lib/queries'
+import type { HeroRawData } from '@/lib/queries'
 import { HeroSection }      from '@/components/organisms/HeroSection'
-import { LanguageSwitcher } from '@/components/organisms/LanguageSwitcher'
+import { FloatingControls } from '@/components/shared/FloatingControls'
 import { LanguageProvider } from '@/components/organisms/LanguageContext'
 import { LangId, localize } from '@/lib/locale'
-import { Header } from '../organisms/Header'
+import { Header, type HeaderData } from '../organisms/Header'
 import { Footer } from '../organisms/Footer'
-import { renderSection } from '@/components/shared/renderSection'
+import { renderSection, isRoomSection, buildRoomDef } from '@/components/shared/renderSection'
+import { RoomsSection, type RoomDef } from '@/components/organisms/RoomsSection'
+import type { ReactNode } from 'react'
 
 // Revalidate every 60 s (ISR) — or set to 0 for full SSG
 export const revalidate = 60
@@ -24,7 +27,33 @@ export default async function HomePage({lang}: {lang: LangId}) {
       <main>
         <HeroSection data={portfolio.data.hero_section} locale={lang}/>
         {/* Add more sections here */}
-        {portfolio.data.sections?.map((section: any,i:number) => renderSection(section, portfolio.data, lang,(i+1)%2 !== 0 ))}
+        {(() => {
+// Consecutive "room" sections (skills / experience / projects) are
+          // grouped into one pinned RoomsSection scroll frame; everything
+          // else keeps rendering as its own standalone stacked section.
+          const sections = portfolio.data.sections ?? []
+          const nodes: ReactNode[] = []
+          let pendingRooms: RoomDef[] = []
+
+          const flushRooms = () => {
+            if (pendingRooms.length) {
+              nodes.push(<RoomsSection key={`rooms-${nodes.length}`} rooms={pendingRooms} />)
+              pendingRooms = []
+            }
+          }
+
+          sections.forEach((section: any, i: number) => {
+            if (isRoomSection(section)) {
+              pendingRooms.push(buildRoomDef(section, portfolio.data, lang))
+            } else {
+              flushRooms()
+              nodes.push(renderSection(section, portfolio.data, lang, (i + 1) % 2 !== 0))
+            }
+          })
+          flushRooms()
+
+          return nodes
+        })()}
 
       </main>
 
@@ -59,12 +88,26 @@ export default async function HomePage({lang}: {lang: LangId}) {
       </main> */}
 
       
-      <Footer brandName={localize(portfolio.data.hero_section.name,lang)} tagline={localize(portfolio.data.hero_section.headline,lang)}/>
+      <Footer
+        brandName={localize(portfolio.data.hero_section.name, lang)}
+        tagline={localize(portfolio.data.hero_section.headline, lang)}
+        locale={lang}
+        navItems={(portfolio.data.header?.navItems ?? []).map((item: NonNullable<HeaderData['navItems']>[number]) => ({
+          anchorId: item.anchorId,
+          label: localize(item.label, lang),
+        }))}
+        socialLinks={(portfolio.data.hero_section.channels ?? [])
+          .filter((channel: NonNullable<HeroRawData['channels']>[number]) => Boolean(channel.url))
+          .map((channel: NonNullable<HeroRawData['channels']>[number]) => ({
+            label: localize(channel.label, lang) || channel.url,
+            href: channel.url,
+          }))}
+      />
       
       {/* <SkillCloud skills={portfolio.data.skills} locale={portfolio.data.locale} /> */}
 
       {/* Fixed overlay — sits on top of everything */}
-      <LanguageSwitcher />
+      <FloatingControls />
     </LanguageProvider>
   )
 }

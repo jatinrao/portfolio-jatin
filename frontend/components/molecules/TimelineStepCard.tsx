@@ -7,6 +7,7 @@ import { useCardScrollMotion } from '@/hooks/use-card-scroll-motion';
 import type { ExperienceEntry } from '@/types/portfolio';
 import { localize, type LangId } from '@/lib/locale';
 import Image from 'next/image';
+import Badge from '@/components/atoms/Badge';
 
 interface TimelineStepCardProps {
   entry: ExperienceEntry;
@@ -23,7 +24,7 @@ function formatDateRange(entry: ExperienceEntry,locale:LangId) {
 
 export function TimelineStepCard({ entry, locale = 'en' }: TimelineStepCardProps) {
   const { containerRef } = useTimelineScrollContext();
-  const { cardRef, wrapperStyle, cardStyle } = useCardScrollMotion(
+  const { cardRef, wrapperStyle } = useCardScrollMotion(
     containerRef as RefObject<HTMLDivElement>
   );
 
@@ -36,18 +37,10 @@ export function TimelineStepCard({ entry, locale = 'en' }: TimelineStepCardProps
     : localize(entry.organization.logo?.alt, locale) ?? '';
  
   return (
-    <motion.div ref={cardRef} style={wrapperStyle} className="h-full w-full">
-      <motion.div style={cardStyle} className="flex h-full flex-col border-2 border-[#c9a84c] bg-[#fcf9f3] p-5 sm:p-6 md:p-8">
+    <motion.div ref={cardRef} style={wrapperStyle} className="flex h-full w-full">
+      <div className="timeline-step-card rooms-material flex h-full w-full flex-col rounded-[var(--radius-card)] border px-5 py-6 sm:px-6 sm:py-8 md:px-7 md:py-10">
         <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
-          <span className="font-label-caps text-[10px] text-primary">{formatDateRange(entry,locale)}</span>
-          {/* <span
-            className={[
-              'px-2 py-0.5 font-label-caps text-[8px] uppercase',
-              entry.isCurrent ? 'bg-secondary text-white' : 'bg-[#edeae0] text-heading-ink',
-            ].join(' ')}
-          >
-            {entry.isCurrent ? 'Active Deployment' : 'Terminated_Success'}
-          </span> */}
+          <span className="timeline-step-date font-label-caps text-label-sm text-primary">{formatDateRange(entry,locale)}</span>
         </div>
         <div className='flex flex-row w-full gap-2'>
           <div className='flex'>
@@ -66,25 +59,25 @@ export function TimelineStepCard({ entry, locale = 'en' }: TimelineStepCardProps
           </div>
           <div className='flex flex-col'>
             <div> 
-            <h3 className="tight-heading -mb-1 font-headline-lg text-base uppercase sm:text-sm md:text-lg">{role}</h3>
-        <p className="mb-4 font-label-caps text-sm font-bold text-secondary">{orgName}</p>
+            <h3 className="timeline-step-role tight-heading -mb-1 font-headline-lg text-base uppercase sm:text-sm md:text-lg">{role}</h3>
+        <p className="timeline-step-org mb-4 font-label-caps text-sm font-bold text-secondary">{orgName}</p>
           </div>
           </div>
         </div>
         
 
-        {description && <p className="mb-6 text-sm text-on-surface">{description}</p>}
+        {description && <p className="timeline-step-body mb-4 text-sm text-on-surface">{description}</p>}
 
         {entry.skills && entry.skills.length > 0 && (
           <div className="mt-auto flex flex-wrap gap-2 pt-2">
             {entry.skills.map((skill) => (
-              <span key={skill._id} className="border border-outline-variant px-2 py-1 font-label-caps text-[9px] uppercase">
+              <Badge key={skill._id} className="timeline-step-chip px-2 py-1 text-label-xs uppercase">
                 {localize(skill.name, locale)}
-              </span>
+              </Badge>
             ))}
           </div>
         )}
-      </motion.div>
+      </div>
     </motion.div>
   );
 }

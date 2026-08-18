@@ -37,7 +37,7 @@ interface ResumeDocumentProps {
  */
 export function ResumeDocument({ resume, lang }: ResumeDocumentProps) {
   return (
-    <div style={{backgroundColor:'#fcf9f3',}}>
+    <div style={{backgroundColor:'var(--color-surface)',}}>
       {/* eslint-disable-next-line react/no-danger -- static, non-user-controlled CSS string */}
       <style dangerouslySetInnerHTML={{ __html: PRINT_STYLES }} />
       <div style={{
@@ -46,14 +46,14 @@ export function ResumeDocument({ resume, lang }: ResumeDocumentProps) {
         fontFamily: 'Georgia, "Times New Roman", serif',
         fontSize:   '11pt',
         lineHeight: 1.45,
-        color:      '#1a1a1a',
+        color:      'var(--color-heading-ink)',
       }}
     
       >
         {/* Header identity — full width, bottom rule, matching the HTML
             reference's title + location line. ResumeHeader's own internals
             are unchanged; only the surrounding spacing/border is new. */}
-        <div style={{ padding: '8mm 4mm 1mm', borderBottom: '1pt solid #7e7665' }}>
+        <div style={{ padding: '8mm 4mm 1mm', borderBottom: '1pt solid var(--color-outline)' }}>
           <ResumeHeader resume={resume} lang={lang} />
         </div>
 
@@ -117,12 +117,12 @@ export function ResumeDocument({ resume, lang }: ResumeDocumentProps) {
           style={{
             marginTop: '10mm',
             padding: '6mm 16mm',
-            borderTop: '2pt solid #755b00',
+            borderTop: '2pt solid var(--color-secondary)',
             textAlign: 'right',
             fontSize: '6pt',
             // textTransform: 'uppercase',
             letterSpacing: '0.5pt',
-            color: '#755b00',
+            color: 'var(--color-secondary)',
           }}
         >
           {'Generated on'} {new Date().getDate()}/{new Date().getMonth()}/{new Date().getFullYear()}  

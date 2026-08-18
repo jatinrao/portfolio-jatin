@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import '../components/atoms/liquid-glass.css';
 
 /*
  * ICON FONT
@@ -33,56 +34,98 @@
  * muted-body, margin-mobile/desktop, gutter) that were introduced
  * alongside it in the original mockups but aren't standard M3 names.
  *
- * VALUES BELOW ARE PLACEHOLDERS. I don't have your actual brand palette —
- * these are reasonable, harmonious defaults (the warm cream/ink/gold/green
- * scheme visible across the mockups you pasted this session) so every
- * class resolves to *something* sensible rather than nothing. Swap the hex
- * values for your real brand colors; the token *names* are what matters
- * for the components to keep working.
+ * VALUES BELOW come from the "Update app design system" Claude Design
+ * project (iOS/iPadOS 26/27 design system kit), imported via the design
+ * MCP — see Portfolio.dc.html and its _ds/ tokens in that project. Apple's
+ * HIG semantic color roles (backgrounds/labels/fills/separators/accents,
+ * light + dark) are mapped 1:1 onto this file's existing M3-style token
+ * *names* so every component keeps working unchanged — only the values
+ * moved, from the old warm cream/ink/gold/green palette to this kit's
+ * white/black/system-blue/system-orange palette.
  */
 
 @theme {
   /* ---------------------------------------------------------------------
-   * COLOR — light (default) values.
+   * COLOR — light (default) values. Source: fig-tokens.css :root block
+   * (backgrounds-primary/secondary, labels-primary/secondary,
+   * accents-blue/orange, separators-opaque/non-opaque).
    * ------------------------------------------------------------------- */
-  --color-surface: #fcf9f3;
-  --color-on-surface: #1c1c18;
-  --color-surface-container: #f3ede0;
-  --color-surface-container-low: #f7f2e8;
+  --color-surface: #ffffff;
+  --color-on-surface: #000000;
+  --color-surface-container: #f2f2f7;
+  --color-surface-container-low: #f8f8fa;
 
-  --color-primary: #3b684a;
+  --color-primary: #0071e3;
   --color-on-primary: #ffffff;
-  --color-primary-container: #dcebe0;
-  --color-on-primary-container: #14261a;
+  --color-primary-container: #e0f1ff;
+  --color-on-primary-container: #003a70;
   /* M3 "fixed" roles: intentionally the SAME value in both light and dark
      — used when a color needs to stay legible/consistent regardless of
-     theme (e.g. Header's title text). Not redeclared under .dark below. */
-  --color-primary-fixed: #3b684a;
+     theme (e.g. Header's title text). Not redeclared under .dark below.
+     accents-blue barely shifts between modes (#0088ff / #0091ff) — fixed
+     roles pin to the light-mode value, matching the existing pattern. */
+  --color-primary-fixed: #0071e3;
   --color-on-primary-fixed: #ffffff;
 
-  --color-secondary: #755b00;
+  --color-secondary: #ff8d28;
   --color-on-secondary: #ffffff;
-  --color-secondary-container: #f3e4b8;
-  --color-on-secondary-container: #241a00;
-  --color-secondary-fixed: #c9a84c;
-  --color-on-secondary-fixed: #1c1c18;
---color-on-surface-variant: #5c5c4f; /* was #6b6b5e → 4.62:1, now ~5.8–6.4:1 */
---color-on-secondary-fixed-variant: #3d3200; /* was #4d3f00 → 4.53:1, now ~5.55:1 */
-  --color-outline: #7e7665;
-  --color-outline-variant: #d0c5b2;
+  --color-secondary-container: #ffe8d6;
+  --color-on-secondary-container: #7a3d0a;
+  --color-secondary-fixed: #ff8d28;
+  --color-on-secondary-fixed: #ffffff;
+--color-on-surface-variant: rgba(60,60,67,0.6); /* labels-secondary */
+--color-on-secondary-fixed-variant: #7a3d0a;
+  --color-outline: #c6c6c8;
+  --color-outline-variant: rgba(0,0,0,0.12);
 
-  --color-inverse-surface: #1c1c18;
-  --color-inverse-on-surface: #fcf9f3;
-  --color-inverse-primary: #9bd4ab;
+  --color-inverse-surface: #000000;
+  --color-inverse-on-surface: #ffffff;
+  --color-inverse-primary: #0091ff;
 
-  --color-error: #b3261e;
+  --color-error: #ff383c;
   --color-on-error: #ffffff;
+
+  /* Rooms page fills — Background 1 / 2 / 3 in the dev token editor. */
+  --color-room-skills: #34c759;
+  --color-room-experience: #5e5ce6;
+  --color-room-projects: #ff375f;
+  --color-room-screen-skills: #f5f5f7;
+  --color-room-screen-experience: #f5f5f7;
+  --color-room-screen-projects: #f5f5f7;
+  --color-on-room: #ffffff;
+  --color-on-room-muted: rgba(255, 255, 255, 0.78);
+  --glass-fill: rgba(245, 245, 247, 0.16);
+  --glass-fill-strong: rgba(245, 245, 247, 0.62);
+  --glass-hairline: rgba(255, 255, 255, 0.55);
+  --glass-highlight: rgba(255, 255, 255, 0.72);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --glass-blur: 30px;
+  --glass-saturate: 1.8;
+  --glass-refraction: 0.04;
+  --glass-enabled: 1;
+  --glass-clear-dim: rgba(0, 0, 0, 0.35);
+  --rooms-glass: var(--glass-fill);
+  --rooms-glass-strong: var(--glass-fill-strong);
+  --rooms-hairline: var(--glass-hairline);
+  --rooms-glass-enabled: var(--glass-enabled);
 
   /* Custom additions used across components — not standard M3 names, but
      established by the mockups this session (headline color, deemphasized
-     body copy). */
-  --color-heading-ink: #1a1a1a;
-  --color-muted-body: #55554a;
+     body copy). Mapped to labels-primary / labels-secondary. */
+  --color-heading-ink: #000000;
+  --color-muted-body: rgba(60,60,67,0.6);
+
+  /* ---------------------------------------------------------------------
+   * MOTION — shared timing for hover/focus/press interactions. Referenced
+   * via arbitrary-value utilities (duration-[var(--transition-fast)]) since
+   * these aren't a Tailwind theme namespace on their own. Durations already
+   * matched the design system kit's --duration-fast/--duration-standard
+   * exactly (150ms/250ms) — only the easing curve changed, to the kit's
+   * --ease-standard from tokens/semantic.css.
+   * ------------------------------------------------------------------- */
+  --transition-fast: 150ms;
+  --transition-standard: 250ms;
+  --ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
 
   /* ---------------------------------------------------------------------
    * TYPOGRAPHY
@@ -98,11 +141,20 @@
      next/font variable names differ from --font-inter/--font-ibm-plex-mono. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+  /* Hero + localnav: Apple TV 4K stacks. Named SF Pro when present;
+     otherwise -apple-system / Helvetica Neue. No licensed webfonts. */
+  --font-apple: 'SF Pro Text', 'SF Pro Icons', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-apple-display: 'SF Pro Display', 'SF Pro Icons', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   /* The feedback-section mockup used a serif body face not loaded via
      next/font in any layout built this session — add a next/font (or
      @import) entry for it if you want this to be a real loaded font
      rather than a system-serif fallback. */
   --font-serif: 'Source Serif 4', ui-serif, Georgia, serif;
+
+  /* iOS kit's global tracking (tokens/fonts.css --tracking-tight), applied
+     site-wide below via a base-layer rule on the same element list the kit
+     itself targets (body, input, textarea, button, select). */
+  --tracking-tight: -0.015em;
 
   --font-headline-xl: var(--font-sans);
   --font-headline-lg: var(--font-sans);
@@ -122,15 +174,45 @@
   --text-headline-md: 1.5rem;
   --text-headline-md--line-height: 1.2;
 
+  /* Was referenced by Header.tsx (site title) and EducationCard.tsx but
+     never defined here — those utilities were silently no-ops, falling
+     back to the browser default font-size instead of an actual headline
+     size. */
+  --text-headline-sm: 1.25rem;
+  --text-headline-sm--line-height: 1.25;
+  --text-headline-sm--letter-spacing: -0.01em;
+
   --text-body-lg: 1.125rem;
   --text-body-lg--line-height: 1.6;
 
   --text-body-md: 1rem;
   --text-body-md--line-height: 1.6;
 
+  --text-body-sm: 0.75rem;
+  --text-body-sm--line-height: 1.45;
+
   --text-label-caps: 0.75rem;
   --text-label-caps--line-height: 1.2;
   --text-label-caps--letter-spacing: 0.08em;
+
+  /* Smaller label sizes — same mono/uppercase role as label-caps, used for
+     micro copy (footer tagline/links, skill card badges) that previously
+     hardcoded one-off px values (text-[10px], text-[8px], etc). */
+  --text-label-md: 0.6875rem;
+  --text-label-md--line-height: 1.2;
+  --text-label-md--letter-spacing: 0.06em;
+
+  --text-label-sm: 0.625rem;
+  --text-label-sm--line-height: 1.2;
+  --text-label-sm--letter-spacing: 0.05em;
+
+  --text-label-xs: 0.5rem;
+  --text-label-xs--line-height: 1.2;
+  --text-label-xs--letter-spacing: 0.04em;
+
+  --text-label-2xs: 0.4375rem;
+  --text-label-2xs--line-height: 1.2;
+  --text-label-2xs--letter-spacing: 0.03em;
 
   /* ---------------------------------------------------------------------
    * SPACING — custom named values, used with any spacing-scale utility
@@ -140,6 +222,19 @@
   --spacing-margin-mobile: 1.25rem;
   --spacing-margin-desktop: 3.5rem;
   --spacing-gutter: 2.5rem;
+
+  /* ---------------------------------------------------------------------
+   * CARD SHAPE + ELEVATION — from the iOS/iPadOS 26/27 kit (semantic.css's
+   * --radius-card, and Portfolio.dc.html's .skill-tile/.timeline-card/
+   * .project-card resting + hover shadow pair). Replaces this project's
+   * earlier "brutalist" card language (thick borders, square corners, hard
+   * offset drop-shadows) — applied via rounded-[var(--radius-card)] and
+   * shadow-[var(--shadow-card-resting)] on the card components themselves.
+   * ------------------------------------------------------------------- */
+  --radius-card: 10px;
+  --radius-control: 10px;
+  --shadow-card-resting: 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 12px 28px rgba(0, 0, 0, 0.12);
 }
 
 /* ---------------------------------------------------------------------
@@ -153,31 +248,57 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 .dark {
-  --color-surface: #1c1c18;
-  --color-on-surface: #fcf9f3;
-  --color-on-surface-variant: #b8b2a0;
-  --color-surface-container: #2a2a24;
-  --color-surface-container-low: #232320;
+  /* Source: fig-tokens.css :root[data-theme="dark"] block. */
+  --color-surface: #000000;
+  --color-on-surface: #ffffff;
+  --color-on-surface-variant: rgba(235,235,245,0.7);
+  --color-surface-container: #1c1c1e;
+  --color-surface-container-low: #121214;
 
-  --color-primary: #9bd4ab;
-  --color-on-primary: #0a1f10;
-  --color-primary-container: #14261a;
-  --color-on-primary-container: #dcebe0;
+  --color-primary: #0091ff;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #002540;
+  --color-on-primary-container: #99d1ff;
 
-  --color-secondary: #e8c96b;
-  --color-on-secondary: #241a00;
-  --color-secondary-container: #4d3f00;
-  --color-on-secondary-container: #f3e4b8;
+  --color-secondary: #ff9230;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #402611;
+  --color-on-secondary-container: #ffcfa3;
 
-  --color-outline: #948c78;
-  --color-outline-variant: #4a453a;
+  --color-outline: #38383a;
+  --color-outline-variant: rgba(255,255,255,0.17);
 
-  --color-inverse-surface: #fcf9f3;
-  --color-inverse-on-surface: #1c1c18;
-  --color-inverse-primary: #3b684a;
+  --color-inverse-surface: #ffffff;
+  --color-inverse-on-surface: #000000;
+  --color-inverse-primary: #0088ff;
 
-  --color-heading-ink: #fcf9f3;
-  --color-muted-body: #b8b2a0;
+  --color-heading-ink: #ffffff;
+  --color-muted-body: rgba(235,235,245,0.7);
+
+  --color-room-skills: #30d158;
+  --color-room-experience: #7d7aff;
+  --color-room-projects: #ff375f;
+  --color-room-screen-skills: #f5f5f7;
+  --color-room-screen-experience: #f5f5f7;
+  --color-room-screen-projects: #f5f5f7;
+  --glass-fill: rgba(28, 28, 30, 0.28);
+  --glass-fill-strong: rgba(28, 28, 30, 0.55);
+  --glass-hairline: rgba(255, 255, 255, 0.22);
+  --glass-highlight: rgba(255, 255, 255, 0.28);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+  --glass-enabled: 1;
+  --rooms-glass: var(--glass-fill);
+  --rooms-glass-strong: var(--glass-fill-strong);
+  --rooms-hairline: var(--glass-hairline);
+  --rooms-glass-enabled: var(--glass-enabled);
+}
+
+/* iOS kit's global tracking — same element list as tokens/fonts.css's own
+   `body,input,textarea,button,select{letter-spacing:var(--tracking-tight)}`. */
+@layer base {
+  body, input, textarea, button, select {
+    letter-spacing: var(--tracking-tight);
+  }
 }
 
 /*
@@ -219,7 +340,31 @@
   }
   .scroll-hide::-webkit-scrollbar {
     display: none;
-}
+  }
+
+  .hig-circle-button {
+    display: flex;
+    height: 44px;
+    width: 44px;
+    z-index: 20;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    min-height: 44px;
+    min-width: 44px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    color: #1d1d1f;
+    box-shadow: none;
+    cursor: pointer;
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  }
+
+  .hig-circle-button.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+  }
 }
 
 @media print {
