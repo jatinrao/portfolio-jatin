@@ -35,7 +35,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  serverExternalPackages: ["playwright", "react-dom"],
+  serverExternalPackages: ["playwright", "react-dom","vitest"],
 }
 
 export default nextConfig
