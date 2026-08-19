@@ -120,7 +120,7 @@ export function Header({ locale, data, activeHref }: HeaderProps) {
                   key={item.anchorId}
                   href={`#${item.anchorId}`}
                   className={[
-                    'font-apple whitespace-nowrap border-b border-transparent py-px text-[12px] font-normal leading-5.5 inline-block opacity-80 -translate-y-1  duration-[400ms]tracking-[-0.12px] transition-colors duration-(--transition-fast) ease-standard',
+                    'font-apple whitespace-nowrap border-b border-transparent py-px text-[12px] font-normal leading-5.5 inline-block opacity-80 tracking-[-0.12px] transition-[color,border-color,opacity] duration-[var(--transition-fast)] ease-[var(--ease-standard)] hover:opacity-100',
                     `#${item.anchorId}` === activeHref
                       ? 'border-black text-black dark:border-[#f5f5f7] dark:text-[#f5f5f7]'
                       : 'text-black hover:text-[#06c] dark:text-[#f5f5f7]',

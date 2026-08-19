@@ -76,6 +76,7 @@ export function setWipe(
 export function useRoomWipe(
   galleryRef: RefObject<HTMLElement | null>,
   slideOutEnabled = ENABLE_SLIDE_OUT,
+  resetKey?: unknown,
 ) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [playback, setPlayback] = useState<RoomPlayback>(DEFAULT_PLAYBACK);
@@ -207,7 +208,7 @@ export function useRoomWipe(
       window.removeEventListener('scroll', onScrollOrResize);
       window.removeEventListener('resize', onScrollOrResize);
     };
-  }, [galleryRef, slideOutEnabled]);
+  }, [galleryRef, slideOutEnabled, resetKey]);
 
   return { activeIndex, playback };
 }

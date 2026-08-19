@@ -338,13 +338,21 @@ export function HeroSection({ data, locale = 'en' }: HeroSectionProps) {
                 <HeroLayout {...layout} heading tilt />
               </div>
             </div>
-            <div className="hero-phone-slot" aria-hidden="true" inert>
+            {/* <div className="hero-phone-slot" aria-hidden="true" inert>
               <IphoneFrame>
                 <ViewShot width={390} height={844}>
                   <HeroLayout {...layout} preview="lqip" />
                 </ViewShot>
               </IphoneFrame>
-            </div>
+            </div> */}
+            <Image
+              src="/images/hero_tv_shadow_color.png"
+              alt=""
+              width={740}
+              height={440}
+              className="hero-glow-image"
+              aria-hidden="true"
+            />
           </div>
         </div>
       </div>

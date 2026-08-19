@@ -76,6 +76,9 @@ export function buildRoomDef(section: Section, person: Person, locale: LangId = 
 
   return {
     id: section._id,
+    // Header's navItems derive anchorId from this same field (sectionId.current)
+    // — reused here so the DOM element the nav link scrolls to actually exists.
+    anchorId: section.sectionId?.current,
     kind: section.sectionType as string,
     heading: localize(section.heading, locale),
     subheading: localize(section.subheading, locale),

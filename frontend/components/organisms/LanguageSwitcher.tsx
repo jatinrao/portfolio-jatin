@@ -12,6 +12,7 @@ import {
   handleFloatingHoverEnter,
   handleFloatingHoverLeave,
 } from '@/lib/floating-controls-style'
+import { GlassButton } from '../atoms/GlassButton'
 
 // ─── Component ────────────────────────────────────────────────────────────
 
@@ -71,9 +72,10 @@ export function LanguageSwitcher() {
     >
       {/* ── Dropdown panel ──────────────────────────────────────── */}
       <LiquidGlass
-        variant="regular"
         role="listbox"
         aria-label="Select language"
+        variant="clear"
+        tint="0.35"
         style={{
           ...floatingPanelBaseStyle,
           position:      'absolute',
@@ -159,7 +161,7 @@ export function LanguageSwitcher() {
       </LiquidGlass>
 
       {/* ── Trigger button ───────────────────────────────────────── */}
-      <button
+      <GlassButton
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={`Current language: ${current.label}. Click to change.`}
@@ -167,6 +169,9 @@ export function LanguageSwitcher() {
         style={floatingTriggerBaseStyle}
         onMouseEnter={handleFloatingHoverEnter}
         onMouseLeave={handleFloatingHoverLeave}
+        variant="clear"
+        tint="0.35"
+        className='flex gap-2 items-center justify-center'
       >
         <Icon name="language" size={15} />
         <span>{current.code}</span>
@@ -175,7 +180,7 @@ export function LanguageSwitcher() {
           size={11}
           style={{ transition: 'transform 0.2s ease', transform: open ? 'rotate(-90deg)' : 'rotate(90deg)' }}
         />
-      </button>
+      </GlassButton>
     </div>
   )
 }

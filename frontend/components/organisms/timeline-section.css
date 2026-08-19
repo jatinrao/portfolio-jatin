@@ -216,3 +216,18 @@
     font-size: 19px;
   }
 }
+
+/*
+ * Matches RoomsSection's mobile breakpoint (see rooms-tv.css) — no pinned
+ * TV screen behind this room anymore, so drop the TV-only solid color and
+ * gradient wash and let the room's own background show through instead.
+ */
+@media (max-width: 734px), (max-width: 1024px) and (orientation: portrait) {
+  .rooms-mobile-screen .timeline-section {
+    background: transparent;
+  }
+
+  .rooms-mobile-screen .timeline-section::before {
+    display: none;
+  }
+}

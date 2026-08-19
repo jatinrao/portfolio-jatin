@@ -6,6 +6,7 @@ import {
   handleFloatingHoverEnter,
   handleFloatingHoverLeave,
 } from '@/lib/floating-controls-style'
+import { GlassButton } from '../atoms/GlassButton'
 
 const STORAGE_KEY = 'theme'
 
@@ -67,7 +68,7 @@ export function ThemeToggle() {
   if (!mounted) return null
 
   return (
-    <button
+    <GlassButton
       type="button"
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       aria-pressed={isDark}
@@ -75,8 +76,10 @@ export function ThemeToggle() {
       style={floatingIconTriggerStyle}
       onMouseEnter={handleFloatingHoverEnter}
       onMouseLeave={handleFloatingHoverLeave}
+      variant="clear"
+      tint="0.35"
     >
       {isDark ? <MoonIcon /> : <SunIcon />}
-    </button>
+    </GlassButton>
   )
 }

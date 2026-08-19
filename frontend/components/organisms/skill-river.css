@@ -256,6 +256,95 @@
   }
 }
 
+/*
+ * Matches RoomsSection's mobile breakpoint, where the scroll-jack that
+ * normally drives .skill-river-track's translateX on desktop is disabled
+ * entirely. Sized up to the apple.com/apple-tv-4k "featured river" scale
+ * (large, few-per-screen posters) instead of the dense TV-bezel sizing.
+ */
+@media (max-width: 734px), (max-width: 1024px) and (orientation: portrait) {
+  .skill-river-row {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .skill-river-overflow {
+    --skill-poster-inner-w: 62cqw;
+  }
+
+  /* The screen behind it is now a glass card (see .rooms-mobile-screen
+     override below) instead of a pinned TV — .skill-river itself stays
+     transparent so that card's material shows through. */
+  .rooms-mobile-screen .skill-river {
+    background: transparent;
+  }
+
+  .rooms-mobile-screen .skill-river::before {
+    display: none;
+  }
+
+  /* Liquid-glass card, matching the site's .rooms-material/.liquid-glass-surface
+     treatment — replaces the pinned TV bezel this room lost on mobile. */
+  .rooms-mobile-screen[data-kind='skills'] {
+    background: var(--rooms-glass-strong);
+    border: 0.5px solid var(--rooms-hairline);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card-resting);
+    backdrop-filter: blur(calc(var(--glass-blur) * var(--rooms-glass-enabled)))
+      saturate(calc(1 + (var(--glass-saturate) - 1) * var(--rooms-glass-enabled)));
+    -webkit-backdrop-filter: blur(calc(var(--glass-blur) * var(--rooms-glass-enabled)))
+      saturate(calc(1 + (var(--glass-saturate) - 1) * var(--rooms-glass-enabled)));
+  }
+
+  /*
+   * Same continuous river pan as desktop's scroll-tied
+   * skillRiverLoopTranslateX (lib/skill-room-filters.ts), just time- rather
+   * than scroll-driven since mobile has no scroll-jack to tie it to. Rows
+   * mirror APPLE_RIVER_ROW_MOTION 1:1: row 1 left, row 2 right (delayed
+   * start so it isn't in lockstep with row 1), row 3 left at 2/3 speed.
+   * translateX(-50%) is exactly "one copy" since SKILL_RIVER_COPIES
+   * duplicates the row's content, giving a seamless loop with no JS
+   * measurement needed.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes skill-river-marquee {
+      from {
+        transform: translateX(0%);
+      }
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    .skill-river-track {
+      animation: skill-river-marquee 20s linear infinite;
+    }
+
+    .skill-river-row[data-row='2'] .skill-river-track {
+      animation-direction: reverse;
+      animation-delay: -3s;
+    }
+
+    .skill-river-row[data-row='3'] .skill-river-track {
+      animation-duration: 30s;
+    }
+  }
+
+  /* Reduced motion: no auto-pan, so fall back to a manually-swipeable row
+     instead of leaving extra skills permanently out of reach. */
+  @media (prefers-reduced-motion: reduce) {
+    .skill-river-row {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .skill-river-row::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .skill-river-track {
     will-change: auto;

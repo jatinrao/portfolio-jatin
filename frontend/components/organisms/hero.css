@@ -49,6 +49,29 @@
   overflow: visible;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    width: 187%;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    width: 80%;
+    transform: translateY(-5px);
+  }
+}
+@keyframes fadeInIntro {
+  from {
+    opacity: 0.5;
+    
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
 .hero-scale {
   position: relative;
   display: flex;
@@ -61,7 +84,20 @@
   will-change: width, height;
 }
 
-.hero-glow {
+.hero-glow-image{
+  position: absolute;
+  bottom: -25%;
+  z-index: -1;
+  width: 157%;
+  height: 22%;
+  pointer-events: none;
+   animation: fadeIn linear both;
+  animation-timeline: view();
+  
+  /* Tells the animation where to start and end within the viewport */
+  animation-range: entry 0% cover 80%;
+}
+/* .hero-glow {
   position: absolute;
   left: 50%;
   bottom: -6%;
@@ -80,7 +116,7 @@
     transparent 100%
   );
   filter: blur(22px);
-}
+} */
 
 .hero-screen {
   position: relative;
@@ -724,7 +760,10 @@
 
 .hero-repo-intro {
   margin: 0;
-  color: var(--hero-ink);
+  color: #86868b;
+  position:relative;
+  animation: fadeInIntro linear both;
+  animation-timeline: view();
 }
 
 .hero-more {

@@ -231,6 +231,7 @@
   width: 100%;
   aspect-ratio: 1000 / 720;
   pointer-events: auto;
+  box-shadow: 20px 30px 40px rgba(0, 0, 0, 0.35);
 }
 
 .rooms-tv-bezel {
@@ -380,50 +381,24 @@
   }
 }
 
+/*
+ * Below this breakpoint RoomsSection swaps the pinned TV/wipe layout for
+ * RoomsMobileFlow: a plain vertical stack, no sticky frame, no scroll-jack.
+ * .rooms-copy-body/-link/-eyebrow are pinned back to the exact desktop
+ * (>1068px) type scale here — full width means it no longer needs the
+ * cramped intermediate tiers below.
+ */
 @media (max-width: 734px), (max-width: 1024px) and (orientation: portrait) {
-  .rooms-device {
-    z-index: 30;
+  .rooms-mobile-room + .rooms-mobile-room {
+    margin-top: 32px;
+  }
+
+  .rooms-mobile-screen {
+    position: relative;
     width: 100%;
-    /* height: auto; */
-    margin-left: 0;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 14px 8px;
-    background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    overflow: visible;
-  }
-
-  .rooms-tv {
-   width: 100%;
     height: 40rem;
-    aspect-ratio: auto;
-  }
-
-  .rooms-tv-bezel {
-    border-width: 4px;
-    border-radius: 12px;
-  }
-
-  .tv-screen-stack {
-    inset: 4px;
-    border-radius: 8px;
-  }
-
-  .rooms-track {
-    z-index: 1;
-    margin-top: 0;
-  }
-
-  .rooms-page {
-    z-index: 0;
-    align-items: flex-start;
-    padding-top: 0;
-  }
-
-  .rooms-page-glass {
-    z-index: 0;
+    overflow: hidden;
+    background: transparent;
   }
 
   .rooms-copy {
@@ -436,30 +411,25 @@
     padding: 16px 20px 32px;
   }
 
+  .rooms-mobile-room .rooms-copy-body,
+  .rooms-mobile-room .rooms-copy-link {
+    font-family: var(--font-apple-display);
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    line-height: 1.19048;
+  }
+
+  .rooms-mobile-room .rooms-copy-link {
+    margin-top: 11px;
+  }
+
+  .rooms-mobile-room .rooms-copy-eyebrow {
+    margin-bottom: 30px;
+  }
+
   .rooms-copy-inner {
     max-width: none;
-  }
-
-  .rooms-copy-body,
-  .rooms-copy-link {
-    font-size: 14px;
-    letter-spacing: -0.008em;
-    line-height: 1.42859;
-  }
-
-  .rooms-copy-eyebrow {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 16px;
-  }
-
-  .tv-screen-panel .skill-river {
-    --skill-poster-pad: 4px;
-  }
-
-  .timeline-scroll > div {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
   }
 }
 

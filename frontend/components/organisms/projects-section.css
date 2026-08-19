@@ -106,6 +106,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
+  position: absolute;
+  bottom: 8px;
 }
 
 .projects-below {

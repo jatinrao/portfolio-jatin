@@ -4,7 +4,7 @@ import type { CSSProperties, MouseEvent } from 'react'
 export const FLOATING_BUTTON_SIZE = 44
 export const FLOATING_CONTROLS_GAP = 8
 
-/** Toolbar *items* on a shared Liquid Glass surface — no fill of their own (no glass-on-glass). */
+/** Toolbar *items* — glass material fill on the shared Liquid Glass surface. */
 export const floatingTriggerBaseStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
@@ -13,7 +13,7 @@ export const floatingTriggerBaseStyle: CSSProperties = {
   height: FLOATING_BUTTON_SIZE,
   minWidth: FLOATING_BUTTON_SIZE,
   padding: '0 14px',
-  background: 'transparent',
+  background: 'var(--glass-fill)',
   color: 'var(--color-heading-ink)',
   border: 'none',
   borderRadius: 999,
@@ -21,7 +21,7 @@ export const floatingTriggerBaseStyle: CSSProperties = {
   fontSize: 13,
   fontWeight: 600,
   letterSpacing: '0.02em',
-  boxShadow: 'none',
+  boxShadow: 'var(--glass-shadow)',
   userSelect: 'none',
   transition: 'transform 0.12s ease, background 0.12s ease',
 }
@@ -34,11 +34,11 @@ export const floatingIconTriggerStyle: CSSProperties = {
 }
 
 export function handleFloatingHoverEnter(e: MouseEvent<HTMLElement>) {
-  e.currentTarget.style.background = 'color-mix(in srgb, var(--color-heading-ink) 8%, transparent)'
+  e.currentTarget.style.background = 'var(--glass-fill-strong)'
 }
 
 export function handleFloatingHoverLeave(e: MouseEvent<HTMLElement>) {
-  e.currentTarget.style.background = 'transparent'
+  e.currentTarget.style.background = 'var(--glass-fill)'
 }
 
 /** Menus/popovers: regular Liquid Glass, thicker than toolbar chips (HIG). */

@@ -28,8 +28,10 @@ const TABLET: CarouselGeometry = {
   zDepths: [153, -72, -234],
 };
 
-const MOBILE: CarouselGeometry = {
-  cardWidth: 151,
+// Base (unscaled) mobile shape, from which mobileGeometry derives every
+// other value proportionally — see mobileGeometry below.
+const MOBILE_BASE_WIDTH = 151;
+const MOBILE_BASE: Omit<CarouselGeometry, "cardWidth"> = {
   cardHeight: 207,
   containerHeight: 252,
   xOffsets: [-180, -99, 0, 99, 180],
@@ -37,13 +39,32 @@ const MOBILE: CarouselGeometry = {
 };
 
 /**
+ * The "MOBILE" bucket below covers everything from a small phone up to a
+ * 1024px portrait tablet (matches RoomsSection's own mobile-flow
+ * breakpoint), so a single fixed card size either looks tiny on the wide
+ * end or overflows on the narrow end. Scale cardWidth as a fraction of the
+ * viewport instead, clamped to a sane range, and derive the rest of the
+ * geometry from it so offsets/depth stay proportional.
+ */
+function mobileGeometry(width: number): CarouselGeometry {
+  const cardWidth = Math.round(Math.min(340, Math.max(220, width * 0.72)));
+  const scale = cardWidth / MOBILE_BASE_WIDTH;
+  return {
+    cardWidth,
+    cardHeight: Math.round(MOBILE_BASE.cardHeight * scale),
+    containerHeight: Math.round(MOBILE_BASE.containerHeight * scale),
+    xOffsets: MOBILE_BASE.xOffsets.map((v) => Math.round(v * scale)) as CarouselGeometry["xOffsets"],
+    zDepths: MOBILE_BASE.zDepths.map((v) => Math.round(v * scale)) as CarouselGeometry["zDepths"],
+  };
+}
+
+/**
  * All pixel math for card position (x offset, z depth, card size) lives
- * in one of these three presets rather than scattered magic numbers, so
- * the drag/flick physics in `useCoverflow` — which work in raw pixels —
- * stay correct at every screen size. SSR/SSG renders the desktop preset
- * (no window access on the server), then this narrows on mount and on
- * resize, so desktop has no layout shift and phones correct immediately
- * after hydration.
+ * here rather than scattered magic numbers, so the drag/flick physics in
+ * `useCoverflow` — which work in raw pixels — stay correct at every screen
+ * size. SSR/SSG renders the desktop preset (no window access on the
+ * server), then this narrows on mount and on resize, so desktop has no
+ * layout shift and phones correct immediately after hydration.
  */
 export function useCarouselGeometry(): CarouselGeometry {
   const [geometry, setGeometry] = useState<CarouselGeometry>(DESKTOP);
@@ -53,7 +74,7 @@ export function useCarouselGeometry(): CarouselGeometry {
       const width = window.innerWidth;
       const portrait = window.matchMedia('(orientation: portrait)').matches;
       if (width < 560 || (portrait && width < 1024)) {
-        setGeometry(MOBILE);
+        setGeometry(mobileGeometry(width));
       } else if (width < 900) {
         setGeometry(TABLET);
       } else {

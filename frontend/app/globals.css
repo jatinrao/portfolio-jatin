@@ -299,6 +299,21 @@
   body, input, textarea, button, select {
     letter-spacing: var(--tracking-tight);
   }
+
+  /* Anchor-link targets (RoomsSection ids, etc.) shouldn't land under the
+     sticky 52px header — Header.tsx's HEADER_HEIGHT. */
+  html {
+    scroll-padding-top: 52px;
+  }
+
+  /* Desktop only: RoomsSection's own scroll-jack already owns scroll
+     physics on touch/mobile, so this is scoped to pointer:fine + a width
+     floor to leave that untouched. Respects prefers-reduced-motion. */
+  @media (min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
 }
 
 /*
