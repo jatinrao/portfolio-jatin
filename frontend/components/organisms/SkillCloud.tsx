@@ -1,9 +1,11 @@
 'use client';
 
+import { useRef } from 'react';
 import { SkillCard } from '@/components/molecules/SkillCard';
 import type { Skill } from '@/sanity.types';
 import type { LangId } from '@/lib/locale';
 import { groupSkillsIntoRiverRows, SKILL_RIVER_COPIES } from '@/lib/skill-room-filters';
+import { useSkillRiverScroll } from '@/hooks/use-skill-river-scroll';
 import './skill-river.css';
 
 interface SkillCloudProps {
@@ -14,6 +16,8 @@ interface SkillCloudProps {
 
 export function SkillCloud({ data, locale = 'en', description }: SkillCloudProps) {
   const rows = groupSkillsIntoRiverRows(data.skills);
+  const riverRef = useRef<HTMLDivElement>(null);
+  useSkillRiverScroll(riverRef);
 
   return (
     <div className="z-20 flex h-full w-full min-h-0 flex-col overflow-hidden">
@@ -23,7 +27,7 @@ export function SkillCloud({ data, locale = 'en', description }: SkillCloudProps
         </p>
       )}
 
-      <div className="skill-river" role="region" aria-label="Skills, revealed by scrolling">
+      <div ref={riverRef} className="skill-river" role="region" aria-label="Skills, revealed by scrolling">
         <div className="skill-river-overflow">
           <div className="skill-river-lanes">
             {rows.map((row, rowIndex) => (

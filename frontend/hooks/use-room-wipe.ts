@@ -1,7 +1,7 @@
 'use client';
 
 import { useLayoutEffect, useState, type RefObject } from 'react';
-import { skillRiverLoopTranslateX, skillRiverTrackMetrics } from '@/lib/skill-room-filters';
+import { applySkillRiverProgress } from '@/lib/skill-room-filters';
 import type { RoomPlayback } from '@/context/room-playback-context';
 
 const ENABLE_SLIDE_OUT = true;
@@ -130,18 +130,7 @@ export function useRoomWipe(
           skillsProgress = inner;
           const lanes = layer.querySelector<HTMLElement>('.skill-river-lanes');
           const clip = lanes ?? layer.querySelector<HTMLElement>('.skill-river-overflow');
-          if (clip) {
-            let longestUnique = 0;
-            clip.querySelectorAll<HTMLElement>('.skill-river-track').forEach((track) => {
-              const metrics = skillRiverTrackMetrics(track);
-              longestUnique = Math.max(longestUnique, metrics.uniqueWidth);
-            });
-            clip.querySelectorAll<HTMLElement>('.skill-river-track').forEach((track, rowIndex) => {
-              const { loopWidth } = skillRiverTrackMetrics(track);
-              const x = skillRiverLoopTranslateX(inner, rowIndex, loopWidth, longestUnique);
-              track.style.transform = `translate3d(${x}px, 0, 0)`;
-            });
-          }
+          if (clip) applySkillRiverProgress(clip, inner);
         }
         if (kind === 'experience') {
           experienceProgress = inner;
