@@ -88,6 +88,25 @@ export function skillRiverTrackMetrics(track: HTMLElement) {
 }
 
 /**
+ * Drives every `.skill-river-track` under `clip` from a single 0-1 progress
+ * value — shared by desktop's scroll-jack (use-room-wipe.ts) and mobile's
+ * natural-scroll-linked equivalent (use-skill-river-scroll.ts) so both
+ * produce the exact same per-row pan (skillRiverLoopTranslateX).
+ */
+export function applySkillRiverProgress(clip: HTMLElement, progress: number) {
+  const tracks = clip.querySelectorAll<HTMLElement>('.skill-river-track');
+  let longestUnique = 0;
+  tracks.forEach((track) => {
+    longestUnique = Math.max(longestUnique, skillRiverTrackMetrics(track).uniqueWidth);
+  });
+  tracks.forEach((track, rowIndex) => {
+    const { loopWidth } = skillRiverTrackMetrics(track);
+    const x = skillRiverLoopTranslateX(progress, rowIndex, loopWidth, longestUnique);
+    track.style.transform = `translate3d(${x}px, 0, 0)`;
+  });
+}
+
+/**
  * Apple TV 4K river: row 1 left 15w, row 2 right from -15w, row 3 left 10w.
  * Speeds 15:15:10; start offsets keep rows from lining up.
  */
