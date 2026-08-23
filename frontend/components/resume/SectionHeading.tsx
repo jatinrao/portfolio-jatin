@@ -8,16 +8,7 @@ interface SectionHeadingProps { children: React.ReactNode }
  */
 export function SectionHeading({ children }: SectionHeadingProps) {
   return (
-    <h2 style={{
-      fontSize:      '10.5pt',
-      fontWeight:    700,
-      textTransform: 'uppercase',
-      letterSpacing: '0.08em',
-      color:         'var(--color-primary)',
-      borderBottom:  '1px solid var(--color-secondary-fixed)',
-      paddingBottom: '3px',
-      margin:        '0 0 8px',
-    }}>
+    <h2 className="resume-section-title">
       {children}
     </h2>
   )

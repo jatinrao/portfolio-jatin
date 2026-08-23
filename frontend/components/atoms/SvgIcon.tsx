@@ -18,6 +18,23 @@ function tintSvgMarkup(svg: string, color: string): string {
     .replace(/stroke:\s*(?!none|url\()[^;}]+/gi, `stroke:${color}`);
 }
 
+/**
+ * Strips whatever `width`/`height` the source SVG was authored with and
+ * pins `width` to the requested size (height left to scale off the
+ * viewBox). Without this, the raw markup's own intrinsic dimensions win
+ * over the wrapping <span>'s CSS width — normally papered over on the
+ * main site by `.skill-poster-icon svg { width: clamp(...) }` in
+ * skill-river.css, but the resume PDF pipeline (resume-renderer.tsx)
+ * renders standalone HTML with no stylesheet at all, so nothing there
+ * corrects an oversized/undersized icon.
+ */
+function sizeSvgMarkup(svg: string, size: number): string {
+  return svg.replace(/<svg([^>]*)>/i, (_match, attrs) => {
+    const stripped = attrs.replace(/\s(width|height)=(["']).*?\2/gi, "");
+    return `<svg${stripped} width="${size}">`;
+  });
+}
+
 export default function SvgIcon({ src, alt = "Icon", width = 300, accentColor }: SVGIconProps) {
   if (src === undefined || src === null) {
     return null;
@@ -29,13 +46,19 @@ export default function SvgIcon({ src, alt = "Icon", width = 300, accentColor }:
   }
 
   const paint = accentColor ?? "currentColor";
-  const markup = tintSvgMarkup(raw, paint);
+  const markup = sizeSvgMarkup(tintSvgMarkup(raw, paint), width);
 
   return (
     <span
       aria-hidden="true"
-      className="inline-flex items-center justify-center"
-      style={{ width: `${width}px`, height: "auto", color: paint }}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: `${width}px`,
+        height: "auto",
+        color: paint,
+      }}
       dangerouslySetInnerHTML={{ __html: markup }}
     />
   );

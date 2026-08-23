@@ -642,6 +642,16 @@ export type Person = {
     _type: 'stat'
     _key: string
   }>
+  featureHighlights?: Array<{
+    iconName: IconRef
+    kicker: string
+    label: LocaleString
+    _type: 'featureHighlight'
+    _key: string
+  }>
+  featureIntro?: LocaleText
+  featureLinkUrl?: string
+  featureLinkLabel?: LocaleString
   primaryCta?: {
     text?: LocaleString
     href?: string

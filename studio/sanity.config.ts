@@ -26,25 +26,12 @@ const dataset = process.env.SANITY_STUDIO_DATASET || 'production'
 // URL for preview functionality, defaults to localhost:3000 if not set
 const SANITY_STUDIO_PREVIEW_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
 
-// Define the home location for the presentation tool
-const homeLocation = {
-  title: 'Home',
-  href: '/',
-} satisfies DocumentLocation
+// Real content routes — keep in sync with frontend/i18n/config.ts's `locales`
+const SUPPORTED_LOCALES = ['en', 'es', 'fr', 'zh', 'hi', 'ar'] as const
 
-// resolveHref() is a convenience function that resolves the URL
-// path for different document types and used in the presentation tool.
-function resolveHref(documentType?: string, slug?: string): string | undefined {
-  switch (documentType) {
-    case 'post':
-      return slug ? `/posts/${slug}` : undefined
-    case 'page':
-      return slug ? `/${slug}` : undefined
-    default:
-      console.warn('Invalid document type:', documentType)
-      return undefined
-  }
-}
+// The sole person document backing this single-portfolio site — keep in
+// sync with studio/scripts/migrate-feature-highlights.ts's PERSON_SLUG
+const PERSON_SLUG = 'jatin-kumar'
 
 // Main Sanity configuration
 export default defineConfig({
@@ -65,57 +52,26 @@ export default defineConfig({
       },
       resolve: {
         // The Main Document Resolver API provides a method of resolving a main document from a given route or route pattern. https://www.sanity.io/docs/visual-editing/presentation-resolver-api#57720a5678d9
+        // This is a single-portfolio site — every locale route resolves to
+        // the one `person` document that backs the whole page.
         mainDocuments: defineDocuments([
           {
-            route: '/',
-            filter: `_type == "settings" && _id == "siteSettings"`,
-          },
-          {
-            route: '/:slug',
-            filter: `_type == "page" && slug.current == $slug || _id == $slug`,
-          },
-          {
-            route: '/posts/:slug',
-            filter: `_type == "post" && slug.current == $slug || _id == $slug`,
+            route: '/:lang',
+            filter: `_type == "person" && slug.current == "${PERSON_SLUG}"`,
           },
         ]),
         // Locations Resolver API allows you to define where data is being used in your application. https://www.sanity.io/docs/visual-editing/presentation-resolver-api#8d8bca7bfcd7
         locations: {
-          settings: defineLocations({
-            locations: [homeLocation],
-            message: 'This document is used on all pages',
-            tone: 'positive',
-          }),
-          page: defineLocations({
+          person: defineLocations({
             select: {
-              name: 'name',
+              name: 'name.en',
               slug: 'slug.current',
             },
             resolve: (doc) => ({
-              locations: [
-                {
-                  title: doc?.name || 'Untitled',
-                  href: resolveHref('page', doc?.slug)!,
-                },
-              ],
-            }),
-          }),
-          post: defineLocations({
-            select: {
-              title: 'title',
-              slug: 'slug.current',
-            },
-            resolve: (doc) => ({
-              locations: [
-                {
-                  title: doc?.title || 'Untitled',
-                  href: resolveHref('post', doc?.slug)!,
-                },
-                {
-                  title: 'Home',
-                  href: '/',
-                } satisfies DocumentLocation,
-              ].filter(Boolean) as DocumentLocation[],
+              locations: SUPPORTED_LOCALES.map((lang) => ({
+                title: `${doc?.name || 'Jatin Kumar'} — ${lang.toUpperCase()}`,
+                href: `/${lang}`,
+              })) satisfies DocumentLocation[],
             }),
           }),
         },

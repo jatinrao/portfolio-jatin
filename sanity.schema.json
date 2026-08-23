@@ -4227,6 +4227,82 @@
         },
         "optional": true
       },
+      "featureHighlights": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "object",
+            "attributes": {
+              "iconName": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "inline",
+                  "name": "iconRef"
+                },
+                "optional": false
+              },
+              "kicker": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": false
+              },
+              "label": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "inline",
+                  "name": "localeString"
+                },
+                "optional": false
+              },
+              "_type": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string",
+                  "value": "featureHighlight"
+                }
+              }
+            },
+            "rest": {
+              "type": "object",
+              "attributes": {
+                "_key": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "optional": true
+      },
+      "featureIntro": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "localeText"
+        },
+        "optional": true
+      },
+      "featureLinkUrl": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "featureLinkLabel": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "localeString"
+        },
+        "optional": true
+      },
       "primaryCta": {
         "type": "objectAttribute",
         "value": {

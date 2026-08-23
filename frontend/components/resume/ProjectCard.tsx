@@ -34,18 +34,10 @@ export function ProjectMiniCard({ project, locale }: ProjectMiniCardProps) {
 
   return (
     <article
+    className="resume-surface resume-role"
     style={{
     display: 'flex',
     flexDirection: 'column',
-    // gap: '1mm',
-    // marginTop:"2mm"
-    // border: '1px solid #1a1a1a', // border-heading-ink
-    // backgroundColor: '#ffffff',
-    // padding: '12px',
-    // boxShadow: '3px -3px 0px 0px #c9a84c',
-    // transitionProperty: 'all',
-    // transitionDuration: '200ms',
-    // marginTop:"12mm"
   }}
 >
   {/* Row 1: title */}
@@ -54,11 +46,11 @@ export function ProjectMiniCard({ project, locale }: ProjectMiniCardProps) {
       style={{
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',fontSize: '10.5pt', fontWeight: 700, color: 'var(--color-heading-ink)',
-        // fontFamily: 'var(--font-headline-lg)',
-        // fontSize: '13px',
-        // textTransform: 'uppercase',
-        // lineHeight: 1.1, // tight-heading
+        whiteSpace: 'nowrap',
+        margin: 0,
+        fontSize: '10pt',
+        fontWeight: 600,
+        color: 'var(--r-text-primary)',
       }}
     >
       {title}
@@ -117,15 +109,11 @@ export function ProjectMiniCard({ project, locale }: ProjectMiniCardProps) {
         {description && (
         <p
           style={{
-            marginTop: '-2mm',
-            // display: '-webkit-box',
-            // WebkitLineClamp: 2,
-            // WebkitBoxOrient: 'vertical',
+            margin: '2pt 0 0',
             overflow: 'hidden',
-            // fontFamily: 'var(--font-body-md)',
-            fontSize: '10pt',
-            // lineHeight: 1.375, // leading-snug
-            // color: 'var(--color-on-surface-variant, #6b7280)',
+            fontSize: '8.5pt',
+            lineHeight: 1.4,
+            color: 'var(--r-text-secondary)',
           }}
         >
           {description}

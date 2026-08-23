@@ -1,15 +1,26 @@
 'use client';
 
 import { useRef, type ReactNode } from 'react';
+import dynamic from 'next/dynamic';
 import { useRoomWipe } from '@/hooks/use-room-wipe';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { RoomPlaybackProvider } from '@/context/room-playback-context';
+import { RoomPlaybackProvider, useRoomPlayback } from '@/context/room-playback-context';
 import { RoomsChromeProvider } from '@/context/rooms-chrome-context';
 import './rooms-tv.css';
 import './projects-section.css';
 
 // Same breakpoint the pinned TV layout switches off at (rooms-tv.css).
 const ROOMS_MOBILE_QUERY = '(max-width: 734px), (max-width: 1024px) and (orientation: portrait)';
+
+// ssr:false keeps the whole three.js/R3F stack out of the server-rendered
+// HTML and the first-paint JS chunk — only fetched once a room's eyebrow
+// actually mounts one of these (see RoomCopy's showIcon gate below).
+const RoomIconSkills = dynamic(() => import('./RoomIconSkills'), { ssr: false });
+const RoomIconExperience = dynamic(() => import('./RoomIconExperience'), { ssr: false });
+
+function prefersReducedMotion() {
+  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
 
 export interface RoomDef {
   id: string;
@@ -55,11 +66,32 @@ function TvScreens({ rooms }: { rooms: RoomDef[] }) {
   );
 }
 
-function RoomCopy({ room }: { room: RoomDef }) {
+function RoomCopy({ room, isMobile }: { room: RoomDef; isMobile: boolean }) {
+  // Mounting is gated on this room being the active one (via
+  // RoomPlaybackProvider, driven by hooks/use-room-wipe.ts) — but that
+  // alone isn't a reliable mobile gate: useRoomWipe's very first `apply()`
+  // call runs synchronously on mount and sets `activeKind` to whichever
+  // room is active at scrollY 0 (skills) *before* useIsMobile's own
+  // mount-effect has corrected `isMobile` to true, and nothing ever resets
+  // `playback` back to a blank state once RoomsSection settles into
+  // RoomsMobileFlow — so `activeKind` stays permanently stuck at that
+  // stale value on mobile instead of going back to undefined. `isMobile`
+  // (passed down from RoomsSection's own already-corrected value, not a
+  // second independent useIsMobile() instance in here) is the actual gate.
+  const { activeKind } = useRoomPlayback();
+  const showIcon = !isMobile && activeKind === room.kind && !prefersReducedMotion();
+
   return (
     <div className="rooms-copy">
       <div className="rooms-copy-inner">
-        <span className="rooms-copy-eyebrow" data-kind={room.kind} aria-hidden="true" />
+        <div className="rooms-copy-eyebrow" data-kind={room.kind} aria-hidden="true">
+          {showIcon && (
+            <div className="rooms-copy-eyebrow-icon">
+              {room.kind === 'skills' && <RoomIconSkills />}
+              {room.kind === 'experience' && <RoomIconExperience />}
+            </div>
+          )}
+        </div>
         {(room.heading || room.subheading) && (
           <p className="rooms-copy-body">
             {room.heading && (
@@ -89,7 +121,7 @@ function RoomsMobileFlow({ rooms }: { rooms: RoomDef[] }) {
           data-room-kind={room.kind}
           style={{ backgroundColor: `var(${room.colorVar})` }}
         >
-          <RoomCopy room={room} />
+          <RoomCopy room={room} isMobile />
           <div className="rooms-mobile-screen" data-kind={room.kind}>
             {room.content}
           </div>
@@ -139,7 +171,7 @@ export function RoomsSection({ rooms }: RoomsSectionProps) {
                   }}
                 >
                   <div className="rooms-page-glass" aria-hidden="true" />
-                  <RoomCopy room={room} />
+                  <RoomCopy room={room} isMobile={false} />
                 </article>
               ))}
             </div>

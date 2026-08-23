@@ -51,7 +51,7 @@
    * accents-blue/orange, separators-opaque/non-opaque).
    * ------------------------------------------------------------------- */
   --color-surface: #ffffff;
-  --color-on-surface: #000000;
+  --color-on-surface: #1d1d1f;
   --color-surface-container: #f2f2f7;
   --color-surface-container-low: #f8f8fa;
 
@@ -249,7 +249,7 @@
 
 .dark {
   /* Source: fig-tokens.css :root[data-theme="dark"] block. */
-  --color-surface: #000000;
+  --color-surface: #1d1d1f;
   --color-on-surface: #ffffff;
   --color-on-surface-variant: rgba(235,235,245,0.7);
   --color-surface-container: #1c1c1e;

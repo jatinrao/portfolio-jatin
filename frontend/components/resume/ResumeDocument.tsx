@@ -37,27 +37,27 @@ interface ResumeDocumentProps {
  */
 export function ResumeDocument({ resume, lang }: ResumeDocumentProps) {
   return (
-    <div style={{backgroundColor:'var(--color-surface)',}}>
+    <div className="resume-root">
       {/* eslint-disable-next-line react/no-danger -- static, non-user-controlled CSS string */}
       <style dangerouslySetInnerHTML={{ __html: PRINT_STYLES }} />
-      <div style={{
-        maxWidth:   '210mm',
-        margin:     '0 auto',
-        fontFamily: 'Georgia, "Times New Roman", serif',
-        fontSize:   '11pt',
-        lineHeight: 1.45,
-        color:      'var(--color-heading-ink)',
-      }}
-    
+      <div
+        className="resume-page"
+        style={{
+          maxWidth:   '210mm',
+          margin:     '0 auto',
+          fontSize:   '10pt',
+          lineHeight: 1.45,
+          color:      'var(--r-text-primary)',
+        }}
       >
-        {/* Header identity — full width, bottom rule, matching the HTML
-            reference's title + location line. ResumeHeader's own internals
-            are unchanged; only the surrounding spacing/border is new. */}
-        <div style={{ padding: '8mm 4mm 1mm', borderBottom: '1pt solid var(--color-outline)' }}>
+        {/* Header identity — a full-bleed glass bar across the top of the
+            page, as in the design reference. ResumeHeader's own internals
+            are unchanged; only the surrounding spacing is new. */}
+        <div style={{ padding: '0' }}>
           <ResumeHeader resume={resume} lang={lang} />
         </div>
 
-        <main style={{ padding: '8mm 4mm 0', display: 'flex', flexDirection: 'column', gap: '8mm' }}>
+        <main style={{ padding: '0', display: 'flex', flexDirection: 'column', gap: '8mm' }}>
           {/* Not present in the HTML mockup — kept as a full-width lead-in
               above the two-column split, since dropping the candidate's
               bio by default felt like the wrong call. Say the word if this
@@ -68,7 +68,7 @@ export function ResumeDocument({ resume, lang }: ResumeDocumentProps) {
               lg:col-span-3 / lg:col-span-9. Grid (not float/inline-block)
               renders correctly under Chromium's print pipeline, which is
               what a DOM+CSS-based PDF export like this depends on. */}
-          <div style={{ display: 'grid', gridTemplateColumns: '25% 75%', gap: '2mm', alignItems: 'start' }}>
+          <div className="resume-columns">
             {/* Left column — Technical Stack. SkillsSection's internals are
                 unchanged; only its position/width moved into this rail.
                 (The mockup splits skills into two labeled groups — "Core
@@ -76,32 +76,27 @@ export function ResumeDocument({ resume, lang }: ResumeDocumentProps) {
                 chips. Replicating that split means grouping by category
                 inside SkillsSection itself, which I haven't seen — happy
                 to do that pass once you share that file.) */}
-            <aside>
+            <aside className="resume-rail">
               <SkillsSection skills={resume.skills} locale={lang} categoryLabels={resume.categoryLabels as any} />
-              
+
             </aside>
 
             {/* Right column — Engineering Chronology. */}
-            <section>
+            <section className="resume-main">
               <ExperienceSection entries={resume.experience} lang={lang} />
               <EducationSection entries={resume.education} lang={lang} /> 
               <section>
                     <SectionHeading>Projects</SectionHeading>
-                     {resume.projects?.map(project => (<ProjectMiniCard key={project._id} project={project} locale={lang}/>))}
+                     {resume.projects?.slice(0, 3).map(project => (<ProjectMiniCard key={project._id} project={project} locale={lang}/>))}
 
       <a
         href="https://jatin.getresume.dev/#projects"
         style={{
-           display: 'inline-block',
-          // fontFamily: 'var(--font-label-caps)',
+          display: 'inline-block',
+          marginTop: '2mm',
           fontSize: '8pt',
-          // textTransform: 'uppercase',
-          // letterSpacing: '0.025em', // tracking-wide
-          // color: 'var(--color-primary, #2d5a3d)',
-          textDecoration: 'underline',
-          // textUnderlineOffset: '2px',
-          zIndex:100,
-          marginTop:"-8mm"
+          fontWeight: 600,
+          color: 'var(--r-accent)',
         }}
       >
         More details →
@@ -115,14 +110,13 @@ export function ResumeDocument({ resume, lang }: ResumeDocumentProps) {
             Matches the reference's centered rule + copyright bar. */}
         <footer
           style={{
-            marginTop: '10mm',
-            padding: '6mm 16mm',
-            borderTop: '2pt solid var(--color-secondary)',
+            marginTop: '6mm',
+            padding: '3mm 7mm 5mm',
+            borderTop: '0.5px solid var(--r-separator)',
             textAlign: 'right',
-            fontSize: '6pt',
-            // textTransform: 'uppercase',
-            letterSpacing: '0.5pt',
-            color: 'var(--color-secondary)',
+            fontSize: '6.5pt',
+            letterSpacing: '0.04em',
+            color: 'var(--r-text-tertiary)',
           }}
         >
           {'Generated on'} {new Date().getDate()}/{new Date().getMonth()}/{new Date().getFullYear()}  

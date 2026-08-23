@@ -17,16 +17,16 @@ function EducationEntry({ entry, lang }: EducationEntryProps) {
   console.log('Education debug',entry);
 
   return (
-    <article style={{ breakInside: 'avoid', pageBreakInside: 'avoid'}}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '8px' }}>
-        <span style={{ fontSize: '10.5pt', fontWeight: 700, color: 'var(--color-heading-ink)' }}>
+    <article className="resume-surface resume-role">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '6pt' }}>
+        <span style={{ fontSize: '10pt', fontWeight: 600, color: 'var(--r-text-primary)' }}>
           {institutionName}
         </span>
-        <span style={{ fontSize: '9pt', color: 'var(--color-muted-body)', whiteSpace: 'nowrap' }}>
+        <span style={{ fontSize: '8pt', color: 'var(--r-text-tertiary)', whiteSpace: 'nowrap' }}>
           {formatDateRange(entry.startDate, entry.endDate, lang)}
         </span>
       </div>
-      <div style={{ fontSize: '10pt', color: 'var(--color-on-surface-variant)' }}>
+      <div style={{ fontSize: '9pt', color: 'var(--r-text-secondary)', marginTop: '1pt' }}>
         {degree}
         {fieldOfStudy ? `, ${fieldOfStudy}` : ''}
       </div>
@@ -45,7 +45,7 @@ export function EducationSection({ entries, lang }: EducationSectionProps) {
   if (entries.length === 0) return null
 
   return (
-    <section style={{ marginBottom: '14px' }}>
+    <section style={{ marginBottom: '10.5pt' }}>
       <SectionHeading>Education</SectionHeading>
       {entries.map((entry) => (
         <EducationEntry key={entry._id} entry={entry} lang={lang} />

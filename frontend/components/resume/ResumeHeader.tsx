@@ -2,7 +2,11 @@ import { localize } from '@/lib/locale'
 import type { ResumeModel } from '@/lib/resume/types'
 import type { SupportedLanguage } from '@/lib/resume/validation'
 import { SummarySection } from './SummarySection';
-import ConnectChannelsVariant from './ConnectChannelsVariant';
+import { ResumeConnectIcons, PORTFOLIO_URL } from './ResumeConnectIcons';
+import { sizedImageUrl } from '@/lib/resume/image';
+
+/** Matches .resume-name's sibling headshot size in print.styles.ts (75pt). */
+const HEADSHOT_PX = 100;
 
 // ─── Sub-components ───────────────────────────────────────────────────────
 
@@ -39,99 +43,82 @@ export function ResumeHeader({ resume, lang }: ResumeHeaderProps) {
   const resumeImageLqip = resume.resumeImage?.asset?.metadata?.lqip;
   return (
     <header>
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'row',
-      gap: '3.17mm', // was 12px
-      justifyContent: 'space-between',
-      marginBottom: '4.76mm', // was 18px
-      borderBottom: '0.53mm solid var(--color-primary)', // was 2px
-      paddingBottom: '2.65mm', // was 10px
-      breakInside: 'avoid',
-    }}
-  >
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
-      {resumeImageUrl && (
-        <div style={{ display: 'block' }}>
-          <img
-            src={resumeImageUrl}
-            alt={resumeImageAlt}
-            width={78}
-            height={78}
-            style={{
-              border: '0.53mm solid var(--color-primary)', // was 2px — border-primary border-2
-              height: 'auto',
-            }}
-            // openToWork={resume.openToWork}
-            // openToWorkLabel={openToWorkLabel}
-          />
-        </div>
-      )}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          marginLeft: '2.12mm', // was 8px
-        }}
-      >
-        <h1
+  {/* Layout lives in print.styles.ts's .resume-header-bar rather than
+      inline, so the narrow-viewport media query there can restack it —
+      an inline style would win over any stylesheet rule. */}
+  <div className="resume-surface resume-header-bar" style={{ breakInside: 'avoid' }}>
+    {/* Left: headshot alone — the connect icons live in the name column
+        below, where there's actually unused vertical space (that column
+        is shorter than the bio beside it), instead of cramped under the
+        78px-wide image. */}
+    {resumeImageUrl && (
+      <div style={{ display: 'flex', flexDirection: 'column', flex: '0 0 auto' }}>
+        <img
+          src={sizedImageUrl(resumeImageUrl, HEADSHOT_PX)}
+          alt={resumeImageAlt}
+          width={HEADSHOT_PX}
+          height={HEADSHOT_PX}
           style={{
-            fontSize: '22pt',
-            fontWeight: 900,
-            letterSpacing: '-0.13mm', // was -0.5px
-            color: 'var(--color-heading-ink)',
-            margin: '0 0 0mm',
+            width: '75pt',
+            height: '75pt',
+            borderRadius: '50%',
+            objectFit: 'cover',
+            border: '0.5px solid var(--r-glass-border)',
+            boxShadow: 'var(--r-glass-shadow)',
           }}
-        >
-          {fullName}
-        </h1>
-
-        {headline && (
-          <p
-            style={{
-              fontSize: '11pt',
-              color: 'var(--color-primary)',
-              fontWeight: 600,
-              margin: '0 0 0.53mm', // was 2px
-            }}
-          >
-            {headline}
-          </p>
-          
-        )}
-        <a
-        href="https://jatin.getresume.dev/"
-        target="_blank"
-        style={{
-           display: 'inline-block',
-          // fontFamily: 'var(--font-label-caps)',
-          fontSize: '8pt',
-          // textTransform: 'uppercase',
-          // letterSpacing: '0.025em', // tracking-wide
-          // color: 'var(--color-primary, #2d5a3d)',
-          textDecoration: 'underline',
-          // textUnderlineOffset: '2px',
-          zIndex:100,
-          // marginTop:"-8mm"
-        }}
-      >
-        jatin.getresume.dev →
-      </a>
+          // openToWork={resume.openToWork}
+          // openToWorkLabel={openToWorkLabel}
+        />
       </div>
-    </div>
+    )}
 
     <div
       style={{
         display: 'flex',
-        transform: 'scale(0.65)',
-        marginTop: '-2.12mm', // was -8px
-        transformOrigin: 'right',
+        flexDirection: 'column',
+        flex: '0 0 auto',
       }}
     >
-      <ConnectChannelsVariant channels={resume.channels} locale={lang} />
+      <h1 className="resume-name">
+        {fullName}
+      </h1>
+
+      {headline && (
+        <p className="resume-headline">
+          {headline}
+        </p>
+
+      )}
+      {/* <a
+      href={PORTFOLIO_URL}
+      target="_blank"
+      style={{
+         display: 'inline-block',
+        // fontFamily: 'var(--font-label-caps)',
+        fontSize: '8pt',
+        // textTransform: 'uppercase',
+        // letterSpacing: '0.025em', // tracking-wide
+        // color: 'var(--color-primary, #2d5a3d)',
+        textDecoration: 'underline',
+        // textUnderlineOffset: '2px',
+        zIndex:100,
+        // marginTop:"-8mm"
+      }}
+    >
+      jatin.getresume.dev →
+    </a> */}
+
+    <div style={{ marginTop: '7.5pt' }}>
+      <ResumeConnectIcons channels={resume.channels} locale={lang} />
+    </div>
+    </div>
+
+    {/* Right: bio, filling whatever width is left in the row instead of
+        its own full-width block below the name — saves a full text
+        block's worth of vertical space on a page that's already tight. */}
+    <div className="resume-header-bio">
+      <SummarySection summary={resume.bio_short} lang={lang} />
     </div>
   </div>
-  <SummarySection summary={resume.bio_short} lang={lang} />
 </header>)
 }

@@ -100,6 +100,14 @@ export function useRoomWipe(
       let skillsProgress = 0;
       let experienceProgress = 0;
       let projectsReveal = 0;
+      // Shine sweep progress for whichever room is currently entering —
+      // one full 0→1 sweep per section as it wipes in, not a single sweep
+      // tied to overall gallery scroll (a continuous scroll-driven sweep
+      // read as one shine "spread thin" across the whole skills/
+      // experience/projects journey rather than a per-section moment).
+      // Defaults to 1 (steady, fully revealed) when no room is mid-
+      // transition, so the shine doesn't disappear between sections.
+      let activeShineT = 1;
 
       layers.forEach((layer, index) => {
         const roomEl = roomEls[index];
@@ -117,6 +125,7 @@ export function useRoomWipe(
             : 0;
 
         if (enter >= 0.5) nextActive = index;
+        if (enter > 0 && enter < 1) activeShineT = enter;
 
         const settled = enter >= 1 && exit <= 0;
         layer.style.pointerEvents = settled ? 'auto' : 'none';
@@ -167,6 +176,7 @@ export function useRoomWipe(
       });
 
       gallery.style.setProperty('--room-projects-t', String(projectsReveal));
+      gallery.style.setProperty('--rooms-shine-t', activeShineT.toFixed(4));
 
       setActiveIndex((current) => (current === nextActive ? current : nextActive));
       const activeKind = roomEls[nextActive]?.dataset.roomKind;

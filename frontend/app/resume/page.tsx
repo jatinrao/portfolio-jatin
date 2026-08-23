@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { localize } from "@/lib/locale";
 import { getResumeCached } from "@/lib/resume/service";
 import { ResumeDocument } from "@/components/resume/ResumeDocument";
-import { DownloadResumeButton } from "@/components/resume/DownloadResumeButton";
+import { ResumeThemeToggle } from "@/components/resume/ResumeThemeToggle";
 import { ResumeNotFoundError } from "@/lib/shared/errors";
 import {
   DEFAULT_RESUME_SLUG,
@@ -78,7 +78,8 @@ export default async function ResumePage({ searchParams }: ResumePageProps) {
   return (
     <>
       <ResumeDocument resume={resume} lang={lang} />
-      {/* <DownloadResumeButton slug={slug} lang={lang} /> */}
+      {/* Browser-only chrome — never part of the printed/PDF document. */}
+      <ResumeThemeToggle slug={slug} lang={lang} />
     </>
   );
 }

@@ -1,72 +1,57 @@
 import Link from 'next/link'
+import { Icon } from '@web-portfolio/icons'
 
-const REPO_URL = 'https://github.com/jatinrao/portfolio-jatin'
-const REPO_INTRO =
-  'An open Next.js and Sanity workspace for this site — live visual editing, six locales including RTL, scroll rooms, and a resume-to-PDF pipeline. One CMS, one deploy, every page in sync.'
-
-const FEATURES = [
-  {
-    id: 'lighthouse',
-    src: '/hero/bolt.shield.png',
-    kicker: '100',
-    label: 'Lighthouse score',
-  },
-  {
-    id: 'cms',
-    src: '/hero/sparkle.text.clipboard.png',
-    kicker: '100%',
-    label: 'CMS coverage',
-  },
-  {
-    id: 'i18n',
-    src: '/hero/globe.central.south.asia.png',
-    kicker: '6',
-    label: 'Languages supported',
-  },
-  {
-    id: 'packages',
-    src: '/hero/gift.png',
-    kicker: '3',
-    label: 'Packages published',
-  },
-] as const
-
-function HeroOriginalGlyph({ src }: { src: string }) {
-  return (
-    <span
-      className="hero-sf-original"
-      style={{
-        WebkitMaskImage: `url(${src})`,
-        maskImage: `url(${src})`,
-      }}
-      aria-hidden="true"
-    />
-  )
+export interface HeroFeatureHighlight {
+  key:    string
+  iconName: string
+  kicker: string
+  label:  string
 }
 
-export function HeroFeatureGroup() {
+interface HeroFeatureGroupProps {
+  features:   HeroFeatureHighlight[]
+  intro?:     string
+  linkUrl?:   string
+  linkLabel?: string
+}
+
+/**
+ * Sanity-driven — every value here (icon, kicker, label, intro, link) comes
+ * from `person.featureHighlights`/`featureIntro`/`featureLinkUrl`/
+ * `featureLinkLabel` via HeroSection, which localizes before passing down.
+ * Icons come from the same @web-portfolio/icons registry as Skill's icon
+ * picker (`<Icon name=... />`), not an uploaded image — keeps this section
+ * on the same icon pipeline as the rest of the site instead of a one-off
+ * image-mask technique. Renders nothing if Studio has no feature highlights
+ * set yet, rather than silently falling back to stale hardcoded content.
+ */
+export function HeroFeatureGroup({ features, intro, linkUrl, linkLabel }: HeroFeatureGroupProps) {
+  if (features.length === 0) return null
+
   return (
     <div className="hero-intro-inner">
       <ul className="hero-icon-group">
-        {FEATURES.map((item) => (
-          <li key={item.id} className="hero-icon-item">
+        {features.map((item) => (
+          <li key={item.key} className="hero-icon-item">
             <span className="hero-icon-glyph">
-              <HeroOriginalGlyph src={item.src} />
+              <Icon name={item.iconName} size={40} color="var(--color-secondary)" />
             </span>
             <p className="hero-icon-metric">{item.kicker}</p>
             <p className="hero-icon-label">{item.label}</p>
           </li>
         ))}
       </ul>
-      <p className="hero-repo-intro">{REPO_INTRO}</p>
-      <Link
-        href={REPO_URL}
-        className="hero-more"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span className="hero-link-copy">Learn more</span>
-      </Link>
+      {intro && <p className="hero-repo-intro">{intro}</p>}
+      {linkUrl && (
+        <Link
+          href={linkUrl}
+          className="hero-more"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span className="hero-link-copy">{linkLabel || 'Learn more'}</span>
+        </Link>
+      )}
     </div>
   )
 }
