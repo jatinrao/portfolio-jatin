@@ -1,6 +1,30 @@
 {
   "version": 1,
   "skills": {
+    "favicon-gen": {
+      "source": "jezweb/claude-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/design-assets/skills/favicon-gen/SKILL.md",
+      "computedHash": "c1c34ef7c8dcdde0527119f49953b5c55f32b5d5c1d3fefc9c74bdc3f88e0451"
+    },
+    "image-processing": {
+      "source": "jezweb/claude-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/design-assets/skills/image-processing/SKILL.md",
+      "computedHash": "249258ab63a60f89411f6e2d60da45ecf1675022e4f6f565d0efeea6b978d2b0"
+    },
+    "react-patterns": {
+      "source": "jezweb/claude-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/frontend/skills/react-patterns/SKILL.md",
+      "computedHash": "28c2718c8b74b38c21fc03a83cb6c2a4efee86c92cf5b2d1e0e42cdf1674eeed"
+    },
+    "responsiveness-check": {
+      "source": "jezweb/claude-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/dev-tools/skills/responsiveness-check/SKILL.md",
+      "computedHash": "7b7e74472ecdfb8fa1b2a5d00af7c6caa4a1969e5f38367b314e13e6a77700de"
+    },
     "sanity-live-cache-components": {
       "source": "sanity-io/next-sanity",
       "sourceType": "github",

@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { Fragment } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -17,6 +17,7 @@ import { OpenToWorkBadge } from '@/components/atoms/OpenToWorkBadge'
 import HeroGreeting from '@/components/molecules/HeroGreeting'
 import StatItem from '@/components/molecules/StatItem'
 import { HeroFeatureGroup } from '@/components/molecules/HeroFeatureGroup'
+import { HeroDiamondSlot } from '@/components/organisms/HeroDiamondSlot'
 import './hero.css'
 
 function channelHref(
@@ -227,75 +228,13 @@ function HeroLayout({
   )
 }
 
-function ViewShot({
-  width,
-  height,
-  children,
-}: {
-  width: number
-  height: number
-  children: ReactNode
-}) {
-  const clipRef = useRef<HTMLDivElement>(null)
-  const [scale, setScale] = useState(0)
-
-  useLayoutEffect(() => {
-    const el = clipRef.current
-    if (!el) return
-    const measure = () => {
-      const next = el.clientWidth / width
-      setScale(Number.isFinite(next) && next > 0 ? next : 0)
-    }
-    measure()
-    const observer = new ResizeObserver(measure)
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [width])
-
-  return (
-    <div
-      ref={clipRef}
-      className="hero-shot"
-      style={{ aspectRatio: `${width} / ${height}` }}
-    >
-      <div
-        className="hero-shot-page"
-        style={{
-          width,
-          height,
-          transform: `scale(${scale})`,
-          visibility: scale > 0 ? 'visible' : 'hidden',
-        }}
-      >
-        {children}
-      </div>
-    </div>
-  )
-}
-
-function IphoneFrame({ children }: { children: ReactNode }) {
-  return (
-    <div className="hero-iphone">
-      <span className="hero-iphone-btn hero-iphone-silent" aria-hidden="true" />
-      <span className="hero-iphone-btn hero-iphone-vol-up" aria-hidden="true" />
-      <span className="hero-iphone-btn hero-iphone-vol-down" aria-hidden="true" />
-      <span className="hero-iphone-btn hero-iphone-power" aria-hidden="true" />
-      <div className="hero-iphone-bezel">
-        <span className="hero-iphone-island" aria-hidden="true" />
-        <div className="hero-iphone-screen">{children}</div>
-        <span className="hero-iphone-home" aria-hidden="true" />
-      </div>
-    </div>
-  )
-}
-
 interface HeroSectionProps {
   data: HeroRawData
   locale: LangId
 }
 
 export function HeroSection({ data, locale = 'en' }: HeroSectionProps) {
-  const { trackRef, style } = useHeroScale()
+  const { trackRef, style, phone, z } = useHeroScale()
 
   const name = localize(data.name, locale) || ''
   const greeting = localize(data.greeting, locale) || 'Hi, my name is'
@@ -306,6 +245,17 @@ export function HeroSection({ data, locale = 'en' }: HeroSectionProps) {
     value: s.value,
     label: localize(s.label, locale),
   }))
+  const featureHighlights = (data.featureHighlights ?? [])
+    .filter((item) => item.iconName)
+    .map((item) => ({
+      key: item._key,
+      iconName: item.iconName,
+      kicker: item.kicker,
+      label: localize(item.label, locale) || '',
+    }))
+  const featureIntro = localize(data.featureIntro, locale)
+  const featureLinkLabel = localize(data.featureLinkLabel, locale)
+
   const channels = mapChannels(data.channels, locale)
   const reachOutHref =
     channelHref(channels, 'calendly', 'meet.google', 'calendar') || data.primaryCta?.href
@@ -338,19 +288,23 @@ export function HeroSection({ data, locale = 'en' }: HeroSectionProps) {
                 <HeroLayout {...layout} heading tilt />
               </div>
             </div>
-            {/* <div className="hero-phone-slot" aria-hidden="true" inert>
-              <IphoneFrame>
-                <ViewShot width={390} height={844}>
-                  <HeroLayout {...layout} preview="lqip" />
-                </ViewShot>
-              </IphoneFrame>
-            </div> */}
+            <div className="hero-phone-slot" aria-hidden="true">
+              <HeroDiamondSlot phone={phone} z={z} />
+            </div>
             <Image
               src="/images/hero_tv_shadow_color.png"
               alt=""
-              width={740}
-              height={440}
-              className="hero-glow-image"
+              width={1192}
+              height={108}
+              className="hero-glow-image hero-glow-image-light"
+              aria-hidden="true"
+            />
+            <Image
+              src="/images/hero_tv_shadow_color_dark.png"
+              alt=""
+              width={1192}
+              height={108}
+              className="hero-glow-image hero-glow-image-dark"
               aria-hidden="true"
             />
           </div>
@@ -358,7 +312,12 @@ export function HeroSection({ data, locale = 'en' }: HeroSectionProps) {
       </div>
 
       <div className="hero-intro">
-        <HeroFeatureGroup />
+        <HeroFeatureGroup
+          features={featureHighlights}
+          intro={featureIntro}
+          linkUrl={data.featureLinkUrl}
+          linkLabel={featureLinkLabel}
+        />
       </div>
     </section>
   )

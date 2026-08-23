@@ -1,11 +1,16 @@
 import './globals.css'
 import type {Metadata} from 'next'
 import {Inter, IBM_Plex_Mono} from 'next/font/google'
-import {sanityFetch, } from '@/sanity/lib/live'
+import {draftMode} from 'next/headers'
+import {VisualEditing} from 'next-sanity/visual-editing'
+import {Toaster} from 'sonner'
+import {sanityFetch, SanityLive} from '@/sanity/lib/live'
 import {METADATA_QUERY} from '@/sanity/lib/queries'
 import {defaultLocale} from '@/i18n/config'
 import { isRtlLocale, localize } from '@/lib/locale'
 import GoogleAnalytics from '@/components/shared/GoogleAnalytics'
+import DraftModeToast from '@/components/sanity-cms/DraftModeToast'
+import {handleError} from '@/app/client-utils'
 
 /**
  * Generate metadata for the page.
@@ -94,6 +99,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 
  export default async function RootLayout({children}: LayoutProps<'/'>) {
+  const isDraftMode = (await draftMode()).isEnabled
 
   return (
     // `lang` is kept at the build-time default here on purpose — this
@@ -109,10 +115,20 @@ const ibmPlexMono = IBM_Plex_Mono({
       className={`${inter.variable} ${ibmPlexMono.variable} bg-surface text-on-surface`}
     >
       <body>
+        <Toaster />
+        {isDraftMode && (
+          <>
+            <DraftModeToast />
+            {/* Enable Visual Editing, only rendered when Draft Mode is enabled */}
+            <VisualEditing />
+          </>
+        )}
         <section className="min-h-screen">
           <main className="">{children}</main>
         </section>
         <GoogleAnalytics/>
+        {/* Makes all sanityFetch calls in the app live — always rendered */}
+        <SanityLive onError={handleError} />
       </body>
     </html>
   )

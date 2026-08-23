@@ -3,6 +3,40 @@
   --hero-ink: #1d1d1f;
   --hero-muted: #86868b;
   --hero-link: #0066cc;
+  /* Reveal state for the icon group / intro copy below the frame — driven
+     by useHeroScale, clamped to the same settled-frame progress as the
+     TV frame itself. Set here (not on .hero-track) so it's inherited by
+     the sibling .hero-intro too. */
+  --hero-icon-opacity: 0;
+  --hero-icon-shift: 24px;
+  /* Pulls .hero-intro's top up to align with .hero-glow-image's top — see
+     the write() effect in use-hero-scale.ts for the derivation. 0px until
+     hydration's first measurement runs. */
+  --hero-intro-gap: 0px;
+  /* TV-glass shine gradients — one for the screen (.hero-screen::before,
+     scroll-linked), one for the bezel ring (.hero-scale::after, timed and
+     deliberately brighter). Kept as tokens so the dark-mode override below
+     only has to restate the numbers, not the whole gradient/rule. */
+  --hero-shine-screen: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 35%,
+    rgba(255, 255, 255, 0.4) 47%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0.4) 53%,
+    rgba(255, 255, 255, 0.03) 65%,
+    transparent 100%
+  );
+  --hero-shine-bezel: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 35%,
+    rgba(255, 255, 255, 0.55) 47%,
+    rgba(255, 255, 255, 0.75) 50%,
+    rgba(255, 255, 255, 0.55) 53%,
+    rgba(255, 255, 255, 0.04) 65%,
+    transparent 100%
+  );
   background: #f5f5f7;
   color: var(--hero-ink);
   font-family: var(--font-apple);
@@ -14,6 +48,30 @@
   --hero-ink: #f5f5f7;
   --hero-muted: #86868b;
   --hero-link: #2997ff;
+  /* Same shape, peak alphas at ~60% of the light-mode values (40% less
+     prominent) — a glass glint reads brighter against the light bezel's
+     #f5f5f7 surroundings than the dark one, so dark mode needs less of it
+     to look proportionate rather than washed out. */
+  --hero-shine-screen: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.018) 35%,
+    rgba(255, 255, 255, 0.24) 47%,
+    rgba(255, 255, 255, 0.33) 50%,
+    rgba(255, 255, 255, 0.24) 53%,
+    rgba(255, 255, 255, 0.018) 65%,
+    transparent 100%
+  );
+  --hero-shine-bezel: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.024) 35%,
+    rgba(255, 255, 255, 0.33) 47%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.33) 53%,
+    rgba(255, 255, 255, 0.024) 65%,
+    transparent 100%
+  );
   background: var(--color-surface);
 }
 
@@ -61,17 +119,6 @@
     transform: translateY(-5px);
   }
 }
-@keyframes fadeInIntro {
-  from {
-    opacity: 0.5;
-    
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0px);
-  }
-}
 .hero-scale {
   position: relative;
   display: flex;
@@ -93,9 +140,23 @@
   pointer-events: none;
    animation: fadeIn linear both;
   animation-timeline: view();
-  
+
   /* Tells the animation where to start and end within the viewport */
   animation-range: entry 0% cover 80%;
+}
+
+/* Same box/animation for both images — only visibility swaps on theme, so
+   toggling dark mode never shifts layout. */
+.hero-glow-image-dark {
+  display: none;
+}
+
+.dark .hero-glow-image-light {
+  display: none;
+}
+
+.dark .hero-glow-image-dark {
+  display: block;
 }
 /* .hero-glow {
   position: absolute;
@@ -127,7 +188,97 @@
   border: var(--hero-bezel) solid #1d1d1f;
   border-radius: var(--hero-radius);
   background: var(--color-surface);
-  box-shadow: 0 0 0 calc(var(--hero-t) * 1px) rgba(0, 0, 0, 0.35);
+  /* Scroll-tied ring (unchanged) + static elevation: a soft outer lift
+     shadow and an inset top/bottom bevel, same 3-layer "glass" recipe as
+     the resume's --r-glass-shadow (components/resume/print.styles.ts). */
+  box-shadow:
+    0 0 0 calc(var(--hero-t) * 1px) rgba(0, 0, 0, 0.35),
+    0 24px 60px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+}
+
+/* Glass-screen shine — scroll-linked (not a self-playing animation, so
+   not gated on prefers-reduced-motion the way the timed bezel shine below
+   is): position tracks --hero-t directly via calc(), the same value that
+   drives the frame's own shrink, so the light sweeps across the screen in
+   step with scrolling instead of on its own clock. Sizing/technique is
+   the resume's 200%-oversized-box-plus-transform trick (see
+   resume-gloss-sweep in components/resume/print.styles.ts for the full
+   writeup of why that beats animating background-position), tuned
+   brighter/narrower so it reads as a glossy TV panel rather than the
+   resume's paper-like sheen. --hero-shine-falloff (written by
+   useHeroScale) dims this by 30% once you've scrolled past the hero
+   section entirely. */
+.hero-screen::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  background-image: var(--hero-shine-screen);
+  background-repeat: no-repeat;
+  opacity: var(--hero-shine-falloff, 1);
+  transform: translate(calc(var(--hero-t, 0) * -50%), calc(var(--hero-t, 0) * -50%));
+}
+
+/* Bezel shine — the frame border itself, brighter than the screen's and
+   deliberately NOT tied to scroll (keeps drifting on its own 10s clock
+   even while the frame is held still or between scroll gestures). Ring
+   shape via the "background + mask-composite" technique: an oversized
+   box masked down to just the padding band (thickness = the bezel width,
+   var(--hero-bezel)) so only the border area gets the shine, not the
+   screen content inside it. Lives on .hero-scale (not .hero-screen)
+   because .hero-screen's own overflow:hidden — needed to clip the screen
+   shine above — would also clip anything here that extends into the
+   border region; .hero-scale is the unclipped parent .hero-screen's
+   border-box exactly fills. */
+.hero-scale::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  padding: var(--hero-bezel);
+  box-sizing: border-box;
+  pointer-events: none;
+  background-image: var(--hero-shine-bezel);
+  background-repeat: no-repeat;
+  background-size: 200% 200%;
+  opacity: var(--hero-shine-falloff, 1);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-scale::after {
+    animation: hero-gloss-sweep 10s cubic-bezier(0.25, 0.1, 0.25, 1) infinite alternate;
+  }
+}
+
+/* Same band, held still — a visitor with reduced-motion still gets the
+   glossy look, just no sliding. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-scale::after {
+    background-position: 50% 50%;
+  }
+}
+
+@keyframes hero-gloss-sweep {
+  from {
+    background-position: -50% -50%;
+  }
+  to {
+    background-position: 150% 150%;
+  }
 }
 
 .hero-show {
@@ -550,7 +701,7 @@
   right: -6%;
   bottom: -10%;
   z-index: 3;
-  width: min(28%, 210px);
+  width: min(42%, 315px);
   pointer-events: none;
   transform: translate3d(
     calc((1 - var(--hero-phone, 0)) * 100%),
@@ -560,126 +711,30 @@
   will-change: transform;
 }
 
-.hero-iphone {
-  position: relative;
+.hero-diamond-slot {
   width: 100%;
-  aspect-ratio: 9 / 19.4;
-  padding: 10px 9px 12px;
-  background: linear-gradient(165deg, #4a4a4e 0%, #1f1f21 42%, #0c0c0d 100%);
-  border-radius: 40px;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
-    inset 0 0 0 3px #111,
-    0 24px 50px rgba(0, 0, 0, 0.45);
-}
-
-.hero-iphone-btn {
-  position: absolute;
-  width: 3px;
-  background: #2a2a2c;
-  border-radius: 1px;
-}
-
-.hero-iphone-silent {
-  top: 16%;
-  left: -3px;
-  height: 16px;
-}
-
-.hero-iphone-vol-up {
-  top: 24%;
-  left: -3px;
-  height: 28px;
-}
-
-.hero-iphone-vol-down {
-  top: 34%;
-  left: -3px;
-  height: 28px;
-}
-
-.hero-iphone-power {
-  top: 27%;
-  right: -3px;
-  height: 52px;
-}
-
-.hero-iphone-bezel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 30px;
-  background: #000;
-}
-
-.hero-iphone-island {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  z-index: 3;
-  width: 34%;
-  height: 16px;
-  translate: -50% 0;
-  border-radius: 12px;
-  background: #000;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
-}
-
-.hero-iphone-home {
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  z-index: 3;
-  width: 34%;
-  height: 4px;
-  translate: -50% 0;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.hero-iphone-screen {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.hero-iphone-screen .hero-shot {
-  height: 100%;
-}
-
-.hero-shot {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-}
-
-.hero-shot-page {
-  transform-origin: top left;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.hero-shot-page .hero-layout {
-  min-height: 100%;
+  aspect-ratio: 1;
 }
 
 .hero-intro {
+  position: relative;
+  z-index: 2;
   width: 100%;
   max-width: none;
   margin: 0;
+  margin-top: calc(-1 * var(--hero-intro-gap, 0px));
   padding: 28px var(--hero-gutter, 22px) 185px;
-  background: #f5f5f7;
-}
-
-.dark .hero-intro {
-  background: var(--color-surface);
 }
 
 .hero-intro-inner {
   max-width: 760px;
   margin: 0 auto;
   text-align: center;
+  /* Icon group + intro copy reveal together, clamped to the same
+     settled-frame progress that drives the TV frame (see useHeroScale). */
+  opacity: var(--hero-icon-opacity, 0);
+  transform: translateY(var(--hero-icon-shift, 24px));
+  will-change: opacity, transform;
 }
 
 .hero-icon-group {
@@ -761,9 +816,7 @@
 .hero-repo-intro {
   margin: 0;
   color: #86868b;
-  position:relative;
-  animation: fadeInIntro linear both;
-  animation-timeline: view();
+  position: relative;
 }
 
 .hero-more {

@@ -6,6 +6,10 @@ import { SupportedLanguage } from '@/lib/resume/validation'
 import { PortableText } from '@portabletext/react'
 import { SectionHeading } from '@/components/resume/SectionHeading'
 import { formatDateRange } from '@/lib/resume/format'
+import { sizedImageUrl } from '@/lib/resume/image'
+
+/** Matches .resume-avatar's box in print.styles.ts (19.5pt). */
+const LOGO_PX = 26
 
 // Assumed already available in this file, same as before: localize,
 // formatDateRange, SectionHeading, ResumeExperienceEntry, SupportedLanguage.
@@ -33,10 +37,9 @@ const printPortableTextComponents = {
 interface ExperienceEntryProps {
   entry: ResumeExperienceEntry
   lang: SupportedLanguage
-  isLast: boolean
 }
 
-function ExperienceEntry({ entry, lang, isLast }: ExperienceEntryProps) {
+function ExperienceEntry({ entry, lang }: ExperienceEntryProps) {
   const role = localize(entry.role, lang) || ''
   // `organization` is the real source of truth now; `company` only
   // survives as a fallback for as long as it's marked @deprecated on the
@@ -44,84 +47,72 @@ function ExperienceEntry({ entry, lang, isLast }: ExperienceEntryProps) {
 
   const orgName = localize(entry.organization?.name, lang) || ''
   const description = entry.description ? localize(entry.description, lang) : null;
-  
+  const logoUrl = entry.organization?.logo?.asset?.url;
 
   return (
-    <article style={{ display: 'flex', gap: '12pt', marginBottom: '10pt', breakInside: 'avoid', pageBreakInside: 'avoid',paddingTop:"4mm"  }}>
-      {/* Rail: node + connecting line — Timeline's node/line pair, static
-          instead of scroll-driven, since a printed page has no scroll
-          position for the node to react to. */}
-      <div style={{ width: '10pt', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div
+    <article className="resume-surface resume-role">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '6pt', flexWrap: 'wrap' }}>
+        <span style={{ fontSize: '11pt', fontWeight: 600, lineHeight: 1.3, color: 'var(--r-text-primary)' }}>
+          {role}
+        </span>
+        <span style={{ fontSize: '8pt', color: 'var(--r-text-tertiary)', whiteSpace: 'nowrap' }}>
+          {formatDateRange(entry.startDate, entry.endDate, lang)}
+        </span>
+      </div>
+
+      {orgName && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5pt', marginTop: '3pt' }}>
+          {logoUrl ? (
+            <img
+              src={sizedImageUrl(logoUrl, LOGO_PX)}
+              alt=""
+              width={LOGO_PX}
+              height={LOGO_PX}
+              className="resume-avatar"
+            />
+          ) : (
+            <span style={{ fontSize: '9pt', color: 'var(--r-text-tertiary)' }}>·</span>
+          )}
+          <span style={{ fontSize: '9pt', color: 'var(--r-text-secondary)' }}>
+            {orgName}
+          </span>
+        </div>
+      )}
+
+      {entry.isCurrent && (
+        <span
           style={{
-            width: '7pt',
-            height: '7pt',
-            border: `1.5pt solid ${entry.isCurrent ? 'var(--color-primary)' : 'var(--color-heading-ink)'}`,
-            backgroundColor: entry.isCurrent ? 'var(--color-primary)' : 'var(--color-surface)',
-            flexShrink: 0,
+            display: 'inline-block',
+            marginTop: '3pt',
+            fontSize: '6.5pt',
+            fontWeight: 600,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            borderRadius: '100px',
+            color: 'var(--color-on-primary)',
+            backgroundColor: 'var(--r-accent)',
+            padding: '1.5pt 6pt',
           }}
-        />
-        {!isLast && <div style={{ flex: 1, width: '1.5pt', backgroundColor: 'var(--color-outline-variant)', marginTop: '2pt' }} />}
+        >
+          Active
+        </span>
+      )}
+
+      {entry.location && <div style={{ fontSize: '8pt', color: 'var(--r-text-tertiary)', marginTop: '2pt' }}>{entry.location}</div>}
+
+      <div style={{ marginTop: '4.5pt', fontSize: '9pt', lineHeight: 1.5, color: 'var(--r-text-primary)' }}>
+        {description}
       </div>
 
-      <div style={{ flex: 1, paddingBottom: '4pt' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '8pt', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '10.5pt', fontWeight: 700, color: 'var(--color-heading-ink)' }}>
-            {role}
-          </span>
-          <span style={{ fontSize: '9pt', color: 'var(--color-muted-body)', whiteSpace: 'nowrap' }}>
-            {formatDateRange(entry.startDate, entry.endDate, lang)}
-          </span>
+      {entry.skills?.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3.75pt', marginTop: '5.25pt' }}>
+          {entry.skills.map((skill) => (
+            <span key={skill._id} className="resume-tag">
+              {localize(skill.name, lang)}
+            </span>
+          ))}
         </div>
-        <div>
-          <span style={{ fontSize: '10.5pt', fontWeight: 700, color: 'var(--color-heading-ink)' }}>       
-            {orgName ? ` · ${orgName}` : ''}
-          </span>
-        </div>
-
-        {entry.isCurrent && (
-          <span
-            style={{
-              display: 'inline-block',
-              marginTop: '2pt',
-              fontSize: '7pt',
-              textTransform: 'uppercase',
-              color: 'var(--color-on-primary)',
-              backgroundColor: 'var(--color-primary)',
-              padding: '1pt 5pt',
-            }}
-          >
-            Active
-          </span>
-        )}
-
-        {entry.location && <div style={{ fontSize: '10pt', color: 'var(--color-on-surface-variant)', marginTop: '2pt' }}>{entry.location}</div>}
-
-        
-          <div style={{ marginTop: '4pt' }}>
-            {description}
-          </div>
-        
-
-        {entry.skills?.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4pt', marginTop: '6pt' }}>
-            {entry.skills.map((skill) => (
-              <span
-                key={skill._id}
-                style={{
-                  fontSize: '6pt',
-                  // textTransform: 'uppercase',
-                  border: '0.5pt solid var(--color-outline-variant)',
-                  padding: '1pt 2pt',
-                  color: 'var(--color-heading-ink)',
-                }}
-              >
-                {localize(skill.name, lang)}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
+      )}
     </article>
   )
 }
@@ -137,10 +128,10 @@ export function ExperienceSection({ entries, lang }: ExperienceSectionProps) {
   if (!entries || entries.length === 0) return null
 
   return (
-    <section style={{ marginBottom: '14pt' }}>
+    <section style={{ marginBottom: '10.5pt' }}>
       <SectionHeading>Experience</SectionHeading>
-      {entries.map((entry, index) => (
-        <ExperienceEntry key={entry.id} entry={entry} lang={lang} isLast={index === entries.length - 1} />
+      {entries.map((entry) => (
+        <ExperienceEntry key={entry.id} entry={entry} lang={lang} />
       ))}
     </section>
   )

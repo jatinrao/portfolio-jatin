@@ -14,6 +14,16 @@ export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
 export const DEFAULT_LANGUAGE: SupportedLanguage = "en";
 
+/**
+ * The appearance the exported PDF is rendered in. Defaults to `light`:
+ * a resume that arrives without an explicit preference is going to be
+ * read on paper or in a viewer, and light is the safe assumption there.
+ */
+export const RESUME_THEMES = ["light", "dark"] as const;
+export type ResumeTheme = (typeof RESUME_THEMES)[number];
+
+export const DEFAULT_RESUME_THEME: ResumeTheme = "light";
+
 const querySchema = z.object({
   slug: z
     .string()
@@ -24,17 +34,22 @@ const querySchema = z.object({
   lang: z
     .enum(SUPPORTED_LANGUAGES)
     .default(DEFAULT_LANGUAGE),
+  theme: z
+    .enum(RESUME_THEMES)
+    .default(DEFAULT_RESUME_THEME),
 });
 
 export interface ResumePdfQuery {
   slug: string;
   lang: SupportedLanguage;
+  theme: ResumeTheme;
 }
 
 export function parseResumeQuery(searchParams: URLSearchParams): ResumePdfQuery {
   const result = querySchema.safeParse({
     slug: searchParams.get("slug") ?? undefined,
     lang: searchParams.get("lang") ?? undefined,
+    theme: searchParams.get("theme") ?? undefined,
   });
 
   if (!result.success) {

@@ -122,6 +122,65 @@ export const person = defineType({
       ],
     }),
     defineField({
+      name: 'featureHighlights',
+      title: 'Feature highlights (App highlights)',
+      type: 'array',
+      group: 'hero',
+      description:
+        'Icon + big number + label tiles shown below the hero (e.g. "100 / Lighthouse score"). Renders as the feature-highlight row on the front end.',
+      of: [
+        {
+          type: 'object',
+          name: 'featureHighlight',
+          fields: [
+            defineField({
+              name: 'iconName',
+              title: 'Icon',
+              type: 'iconRef',
+              description: 'Pick from the bundled @web-portfolio/icons set — same picker as Skill\'s "Icon (picker)" field.',
+              validation: (R) => R.required(),
+            }),
+            defineField({
+              name: 'kicker',
+              title: 'Kicker (big number)',
+              type: 'string',
+              description: 'e.g. "100" or "6"',
+              validation: (R) => R.required(),
+            }),
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'localeString',
+              description: 'e.g. "Lighthouse score"',
+              validation: (R) => R.required(),
+            }),
+          ],
+          preview: { select: { title: 'kicker', subtitle: 'label.en' } },
+        },
+      ],
+    }),
+    defineField({
+      name: 'featureIntro',
+      title: 'Feature intro text',
+      type: 'localeText',
+      group: 'hero',
+      description: 'Paragraph shown below the feature-highlight tiles.',
+    }),
+    defineField({
+      name: 'featureLinkUrl',
+      title: 'Feature link URL',
+      type: 'string',
+      group: 'hero',
+      description: 'e.g. a link to the GitHub repo. Leave blank to hide the link.',
+    }),
+    defineField({
+      name: 'featureLinkLabel',
+      title: 'Feature link label',
+      type: 'localeString',
+      group: 'hero',
+      description: 'e.g. "Learn more". Falls back to "Learn more" on the front end if left blank.',
+    }),
+    defineField({
       name: 'primaryCta',
       title: 'Primary CTA button',
       type: 'object',

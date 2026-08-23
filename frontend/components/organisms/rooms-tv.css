@@ -3,6 +3,18 @@
   --rooms-copy-strong: #1d1d1f;
   --rooms-link: var(--color-primary);
   --room-projects-t: 0;
+  /* Shared by .rooms-device's and .rooms-copy's shine layers below — one
+     token so both stay in sync instead of two copies of the gradient. */
+  --rooms-shine-gradient: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 35%,
+    rgba(255, 255, 255, 0.4) 47%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0.4) 53%,
+    rgba(255, 255, 255, 0.03) 65%,
+    transparent 100%
+  );
   position: relative;
   isolation: isolate;
   color: var(--rooms-copy);
@@ -172,6 +184,13 @@
   );
 }
 
+.rooms-copy-eyebrow[data-kind='skills'],
+.rooms-copy-eyebrow[data-kind='experience'] {
+  position: relative;
+  width: 72px; /* 48px * 1.5 — carries the 3D icon, sized up from the plain-color placeholder */
+  height: 72px;
+}
+
 .rooms-copy-eyebrow[data-kind='skills'] {
   background-image: none;
   background-color: var(--color-room-skills);
@@ -185,6 +204,19 @@
 .rooms-copy-eyebrow[data-kind='projects'] {
   background-image: none;
   background-color: var(--color-room-projects);
+}
+
+/* Bottom-anchored, taller than its own placeholder by exactly 30% of its
+   own height (H = P / 0.7, so H - P = 0.3H) — the 3D icon appears to stand
+   on the colored square like a figure on a carpet instead of sitting flush
+   inside it. */
+.rooms-copy-eyebrow-icon {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% / 0.7);
+  pointer-events: none;
 }
 
 .rooms-copy-body {
@@ -246,9 +278,62 @@
     transparent
   );
   border: 5px solid #000;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  /* Elevation: outer lift shadow + inset top/bottom bevel — same 3-layer
+     "glass" recipe as the resume's --r-glass-shadow
+     (components/resume/print.styles.ts). */
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.28),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(calc(var(--glass-blur) * var(--glass-enabled))) saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
   -webkit-backdrop-filter: blur(calc(var(--glass-blur) * var(--glass-enabled))) saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
+}
+
+/* Glass-screen shine — ONE layer spanning the full section width (copy
+   panel + device, same plane), not one shine per column: two separately-
+   positioned layers can never read as a single beam of light, since each
+   computes its own background-position independently, and worse,
+   .rooms-device's entire subtree (z-index: 2) always paints above
+   .rooms-copy's (inside .rooms-track, z-index: 1) regardless of any
+   z-index set *inside* .rooms-device — stacking-context boundaries don't
+   let a child's z-index reach out and beat a whole sibling subtree.
+   So this lives directly on .rooms-gallery (the shared ancestor, and the
+   thing "section container" meant), using the sticky-ghost technique:
+   position: sticky + height: 100vh pins it to the viewport as you scroll
+   the same way .rooms-device already does, and margin-bottom: -100vh
+   collapses its own footprint back to zero so it doesn't add scroll
+   height or push .rooms-device/.rooms-track down.
+   z-index is high (above everything in the room, not negative): each
+   room's own background (.rooms-page's flat colour, .tv-screen-panel's
+   flat colour) is itself opaque and lives *inside* those same z-index: 1
+   / z-index: 2 subtrees, so putting this shine behind them — the earlier
+   attempt — hid it completely behind those flat colours, not just behind
+   the text like intended; there's no single z position outside both
+   subtrees that's "above their background but below their text" the way
+   there was when the shine lived inside .hero-screen. Sitting on top with
+   mix-blend-mode: overlay instead: it composites against whatever's
+   underneath (so it's never hidden by an opaque background) while mostly
+   sparing dark text and saturated card colours, unlike a flat opacity
+   layer which would wash out everything under it equally.
+   Position tracks --rooms-shine-t, written by useRoomWipe: one full 0→1
+   sweep per room as it wipes into place (not a single sweep tied to
+   overall gallery scroll), holding at 1 while a room is settled. */
+.rooms-gallery::before {
+  content: '';
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: block;
+  width: 100%;
+  height: 100vh;
+  margin-bottom: -100vh;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  background-image: var(--rooms-shine-gradient);
+  background-repeat: no-repeat;
+  background-size: 300% 300%;
+  background-position:
+    calc(-50% + var(--rooms-shine-t, 0) * 200%) calc(-50% + var(--rooms-shine-t, 0) * 200%);
 }
 
 .tv-screen-stack {
