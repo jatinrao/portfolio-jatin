@@ -1,12 +1,14 @@
 'use client';
 
 import { useLayoutEffect, useState, type RefObject } from 'react';
-import { applySkillRiverProgress } from '@/lib/skill-room-filters';
+import { applySkillRiverProgress, quantizeProgress } from '@/lib/skill-room-filters';
+import { getTimelineScrollBounds } from '@/context/timeline-scroll-context';
+import { createScrollSettle } from '@/lib/scroll-settle';
 import type { RoomPlayback } from '@/context/room-playback-context';
 
 const ENABLE_SLIDE_OUT = true;
 
-const DEFAULT_PLAYBACK: RoomPlayback = { skillsProgress: 0, experienceProgress: 0 };
+const DEFAULT_PLAYBACK: RoomPlayback = { skillsProgress: 0, experienceProgress: 0, projectsProgress: 0 };
 
 /**
  * Visible fraction of the TV screen below `clipY`. Progress is measured
@@ -94,11 +96,35 @@ export function useRoomWipe(
     const last = layers.length - 1;
     let raf = 0;
 
+    // Skills pans continuously (instantly, 1:1 with scroll) every frame
+    // below — smooth by construction, never a visible step. Once scrolling
+    // pauses for a beat, this idle "settle" callback nudges the nearest
+    // skill into a clean, centered rest position instead — a soft
+    // correction, not a ratchet. Reads the latest captured element/
+    // progress at the time it actually fires (140ms after the last scroll
+    // frame), not at schedule time.
+    //
+    // Experience deliberately does NOT get this treatment: it had it
+    // (quantized settle-to-card-center), but that fought the glass slider's
+    // own drag — a pending settle timer from the last window-scroll frame
+    // would fire mid-drag and yank scrollLeft out from under the user's
+    // pointer. Plain continuous scrollLeft, 1:1 with scroll, is what the
+    // timeline actually wants; TimelineGlassSlider.tsx's own rubber-band
+    // easing (not a hard settle-snap) handles landing cleanly at the ends.
+    let lastSkillsClip: HTMLElement | null = null;
+    let lastSkillsInner = 0;
+    const skillsSettle = createScrollSettle(() => {
+      if (lastSkillsClip) {
+        applySkillRiverProgress(lastSkillsClip, lastSkillsInner, { instant: reduced, quantize: true });
+      }
+    });
+
     const apply = () => {
       const stackBox = stack.getBoundingClientRect();
       let nextActive = 0;
       let skillsProgress = 0;
       let experienceProgress = 0;
+      let projectsProgress = 0;
       let projectsReveal = 0;
       // Shine sweep progress for whichever room is currently entering —
       // one full 0→1 sweep per section as it wipes in, not a single sweep
@@ -134,22 +160,29 @@ export function useRoomWipe(
         const kind = roomEl.dataset.roomKind;
         if (kind === 'projects') {
           projectsReveal = Math.min(1, Math.max(0, enter));
+          projectsProgress = inner;
         }
         if (kind === 'skills') {
           skillsProgress = inner;
           const lanes = layer.querySelector<HTMLElement>('.skill-river-lanes');
           const clip = lanes ?? layer.querySelector<HTMLElement>('.skill-river-overflow');
-          if (clip) applySkillRiverProgress(clip, inner);
+          if (clip) {
+            applySkillRiverProgress(clip, inner, { instant: true, quantize: false });
+            lastSkillsClip = clip;
+            lastSkillsInner = inner;
+            skillsSettle.notify();
+          }
         }
         if (kind === 'experience') {
           experienceProgress = inner;
           const scroller = layer.querySelector<HTMLElement>('.timeline-scroll');
           if (scroller) {
-            const innerEl = scroller.firstElementChild as HTMLElement | null;
-            const paddingLeft = innerEl ? parseFloat(getComputedStyle(innerEl).paddingLeft) || 0 : 0;
-            const start = Math.max(0, paddingLeft - 20);
-            const max = scroller.scrollWidth - scroller.clientWidth;
+            // Same start/max convention as TimelineScrollProvider and the
+            // glass slider's drag math (context/timeline-scroll-context.tsx)
+            // — all three have to agree on what "all the way left" means.
+            const { start, max } = getTimelineScrollBounds(scroller);
             const travel = Math.max(0, max - start);
+            // Continuous, immediate, 1:1 with scroll — no quantized settle.
             if (travel > 0) scroller.scrollLeft = start + inner * travel;
           }
         }
@@ -184,11 +217,12 @@ export function useRoomWipe(
         if (
           Math.abs(current.skillsProgress - skillsProgress) < 0.002 &&
           Math.abs(current.experienceProgress - experienceProgress) < 0.002 &&
+          Math.abs((current.projectsProgress ?? 0) - projectsProgress) < 0.002 &&
           current.activeKind === activeKind
         ) {
           return current;
         }
-        return { skillsProgress, experienceProgress, activeKind };
+        return { skillsProgress, experienceProgress, projectsProgress, activeKind };
       });
     };
 
@@ -204,6 +238,7 @@ export function useRoomWipe(
     window.addEventListener('resize', onScrollOrResize);
     return () => {
       window.cancelAnimationFrame(raf);
+      skillsSettle.cancel();
       window.removeEventListener('scroll', onScrollOrResize);
       window.removeEventListener('resize', onScrollOrResize);
     };
