@@ -19,7 +19,11 @@ export function EducationCard({ education, locale }: EducationCardProps) {
       <div className="flex flex-col gap-4 md:items-center">
         <div className="w-full flex space-y-1 text-center ">
           {institutionName && (
-            <p className="education-card-name font-headline-lg uppercase text-heading-ink md:font-headline-md text-headline-sm w-full">
+            // .education-card is a fixed white card regardless of site
+            // theme (timeline-section.css), so its text stays fixed dark
+            // too — text-heading-ink turns white in dark mode and
+            // disappears on this always-white background.
+            <p className="education-card-name font-headline-lg uppercase text-[#1d1d1f] md:font-headline-md text-headline-sm w-full">
               {institutionName}
             </p>
           )}
@@ -42,7 +46,7 @@ export function EducationCard({ education, locale }: EducationCardProps) {
           
         </div>
 
-        <div className="flex flex-col gap-4 border-t pt-1 border-outline-variant sm:flex-row sm:items-center w-full">
+        <div className="flex flex-col gap-4 border-t pt-1 border-[rgba(0,0,0,0.12)] sm:flex-row sm:items-center w-full">
             {programLabel && (
                 <span className="education-card-program font-label-caps text-left pl-3 text-sm uppercase tracking-widest text-secondary whitespace-pre-wrap">
                   {programLabel}

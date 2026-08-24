@@ -17,6 +17,7 @@ const ROOMS_MOBILE_QUERY = '(max-width: 734px), (max-width: 1024px) and (orienta
 // actually mounts one of these (see RoomCopy's showIcon gate below).
 const RoomIconSkills = dynamic(() => import('./RoomIconSkills'), { ssr: false });
 const RoomIconExperience = dynamic(() => import('./RoomIconExperience'), { ssr: false });
+const RoomIconProjects = dynamic(() => import('./RoomIconProjects'), { ssr: false });
 
 function prefersReducedMotion() {
   return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -89,6 +90,7 @@ function RoomCopy({ room, isMobile }: { room: RoomDef; isMobile: boolean }) {
             <div className="rooms-copy-eyebrow-icon">
               {room.kind === 'skills' && <RoomIconSkills />}
               {room.kind === 'experience' && <RoomIconExperience />}
+              {room.kind === 'projects' && <RoomIconProjects />}
             </div>
           )}
         </div>

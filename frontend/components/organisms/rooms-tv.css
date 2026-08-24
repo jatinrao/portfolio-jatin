@@ -3,6 +3,10 @@
   --rooms-copy-strong: #1d1d1f;
   --rooms-link: var(--color-primary);
   --room-projects-t: 0;
+  /* Drives the TV bezel's liquid-glass tint below — kept in sync with
+     whichever room is active so the frame reads as the same colour as
+     that room's rooms-copy-eyebrow icon background. */
+  --rooms-frame-color: var(--color-room-skills);
   /* Shared by .rooms-device's and .rooms-copy's shine layers below — one
      token so both stay in sync instead of two copies of the gradient. */
   --rooms-shine-gradient: linear-gradient(
@@ -25,6 +29,18 @@
 .dark .rooms-gallery {
   --rooms-copy-strong: var(--color-heading-ink);
   --rooms-link: var(--color-primary);
+}
+
+.rooms-gallery[data-active-kind='skills'] {
+  --rooms-frame-color: var(--color-room-skills);
+}
+
+.rooms-gallery[data-active-kind='experience'] {
+  --rooms-frame-color: var(--color-room-experience);
+}
+
+.rooms-gallery[data-active-kind='projects'] {
+  --rooms-frame-color: var(--color-room-projects);
 }
 
 .rooms-device {
@@ -185,9 +201,9 @@
 }
 
 .rooms-copy-eyebrow[data-kind='skills'],
-.rooms-copy-eyebrow[data-kind='experience'] {
+.rooms-copy-eyebrow[data-kind='experience'],.rooms-copy-eyebrow[data-kind='projects'] {
   position: relative;
-  width: 72px; /* 48px * 1.5 — carries the 3D icon, sized up from the plain-color placeholder */
+  width: 124px; /* 48px * 1.5 — carries the 3D icon, sized up from the plain-color placeholder */
   height: 72px;
 }
 
@@ -272,10 +288,15 @@
   z-index: 1;
   pointer-events: none;
   border-radius: 0;
-  background: color-mix(
-    in srgb,
-    var(--glass-fill) calc(var(--glass-enabled) * 100%),
-    transparent
+  /* Liquid-glass frame experiment: same gradient shape as the flat
+     rooms-copy-eyebrow icon swatches, but softened into a translucent
+     sheet — a warm tint near the top-left easing into the existing glass
+     fill, so the bezel reads as coloured glass rather than a flat chip. */
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--rooms-frame-color) 60%, transparent) 0%,
+    color-mix(in srgb, var(--rooms-frame-color) 28%, transparent) 45%,
+    color-mix(in srgb, var(--glass-fill) calc(var(--glass-enabled) * 100%), transparent) 100%
   );
   border: 5px solid #000;
   /* Elevation: outer lift shadow + inset top/bottom bevel — same 3-layer
@@ -287,6 +308,7 @@
     inset 0 -1px 1px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(calc(var(--glass-blur) * var(--glass-enabled))) saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
   -webkit-backdrop-filter: blur(calc(var(--glass-blur) * var(--glass-enabled))) saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
+  transition: background 0.6s ease;
 }
 
 /* Glass-screen shine — ONE layer spanning the full section width (copy

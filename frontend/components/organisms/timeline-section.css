@@ -175,6 +175,10 @@
   top: 50%;
   height: 36px;
   translate: 0 -50%;
+  /* The wrapping row (Timeline.tsx) is pointer-events-none so it doesn't
+     block the node markers around it; re-enable it here on just the two
+     interactive pieces (track + knob) below. */
+  pointer-events: none;
 }
 
 .timeline-slider-track {
@@ -186,6 +190,9 @@
   translate: 0 -50%;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.28);
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: none;
 }
 
 .timeline-slider-fill {
@@ -208,6 +215,18 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(22px) saturate(1.6);
   -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+}
+
+.timeline-slider-knob:active {
+  cursor: grabbing;
+}
+
+.timeline-slider-knob:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 @media (max-width: 734px) {

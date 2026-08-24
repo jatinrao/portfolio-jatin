@@ -89,8 +89,17 @@ export function buildRoomDef(section: Section, person: Person, locale: LangId = 
       section.sectionType === "skills"
         ? skillRiverScrollSteps((person as any)?.skills)
         : section.sectionType === "experience"
-          ? Math.max(3, ((person as any)?.experience?.length ?? 3) as number)
-          : 1,
+          // Half the original budget (one scroll-step per ~2 entries) —
+          // shorter scroll length while keeping the room's pan itself
+          // continuous (see use-room-wipe.ts's plain scrollLeft write).
+          ? Math.max(2, Math.ceil((((person as any)?.experience?.length ?? 4) as number) / 2))
+          : section.sectionType === "projects"
+            // Was a flat 1 (no hijack at all — cards only changed via
+            // buttons/drag). Same ~1-step-per-2-cards budget as experience,
+            // so scrolling through the room can also page the carousel
+            // (ProjectCarousel reads this via useRoomPlayback().projectsProgress).
+            ? Math.max(2, Math.ceil((((person as any)?.projects?.length ?? 4) as number) / 2))
+            : 1,
     isProject: section.sectionType === "projects" ? true:false,
     content: <Component key={section._id} data={data} section={section} locale={locale} />,
   };

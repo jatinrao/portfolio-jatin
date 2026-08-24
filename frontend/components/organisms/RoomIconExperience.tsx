@@ -112,6 +112,7 @@ export default function RoomIconExperience() {
       camera={{ position: [0, 0, -29], fov: 35 }}
       gl={{ alpha: true, premultipliedAlpha: false }}
       onCreated={({ gl }) => gl.setClearAlpha(0)}
+      className='scale-125 -ml-4'
     >
       <Suspense fallback={null}>
         <group rotation={[0, Math.PI, 0]}>

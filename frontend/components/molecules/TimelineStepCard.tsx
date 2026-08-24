@@ -52,7 +52,7 @@ export function TimelineStepCard({ entry, locale = 'en' }: TimelineStepCardProps
                         height={40}
                         placeholder={entry.organization.logo?.asset?.metadata?.lqip ? 'blur' : undefined}
                         blurDataURL={entry.organization.logo?.asset?.metadata?.lqip ?? undefined}
-                        className="h-10 w-10 shrink-0 rounded-full border border-outline-variant object-cover"
+                        className="h-10 w-10 shrink-0 rounded-full border border-[rgba(0,0,0,0.12)] object-cover"
                       />
           
                     )}

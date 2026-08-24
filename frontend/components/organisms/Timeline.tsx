@@ -2,7 +2,7 @@ import { TimelineScrollProvider } from '@/context/timeline-scroll-context';
 import { TimelineGlassSlider } from '@/components/molecules/TimelineGlassSlider';
 import { TimelineStepCard } from '@/components/molecules/TimelineStepCard';
 import { TimelineNode } from '@/components/atoms/TimelineNode';
-import { Icon } from '@web-portfolio/icons';
+import { TimelineEndBadgeIcon } from '@/components/atoms/TimelineEndBadgeIcon';
 import type { ExperienceEntry } from '@/types/portfolio';
 import type { LangId } from '@/lib/locale';
 import { EducationCard } from '../molecules/EducationCard';
@@ -40,7 +40,7 @@ export function Timeline({ data, locale = 'en' }: TimelineProps) {
             ))}
             <div className={`${END_COLUMN} flex justify-center`}>
               <div className="timeline-end-badge rooms-material z-10 flex h-10 w-10 items-center justify-center rounded-full border sm:h-12 sm:w-12">
-                <Icon name="verified" size={24} />
+                <TimelineEndBadgeIcon size={20} />
               </div>
             </div>
           </div>

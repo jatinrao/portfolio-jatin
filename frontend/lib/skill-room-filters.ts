@@ -77,6 +77,18 @@ function wrapOffset(distance: number, loopWidth: number) {
   return ((distance % loopWidth) + loopWidth) % loopWidth;
 }
 
+/**
+ * Snaps a continuous 0-1 scroll progress to the nearest of `steps` discrete
+ * positions — the shared primitive behind "scroll advances one card at a
+ * time" for both the skill river and the experience timeline, on desktop's
+ * scroll-jack and mobile's native scroll alike.
+ */
+export function quantizeProgress(progress: number, steps: number): number {
+  if (steps <= 1) return 0;
+  const clamped = Math.min(1, Math.max(0, progress));
+  return Math.round(clamped * (steps - 1)) / (steps - 1);
+}
+
 /** Pixel span of one unique pass vs one looping unit, from a duplicated track. */
 export function skillRiverTrackMetrics(track: HTMLElement) {
   const childCount = track.childElementCount;
@@ -87,21 +99,54 @@ export function skillRiverTrackMetrics(track: HTMLElement) {
   return { uniqueWidth, loopWidth };
 }
 
+export interface SkillRiverProgressOptions {
+  /**
+   * `true` (default): write the transform with no CSS transition, for
+   * per-scroll-frame updates — the pan has to track the finger/wheel 1:1
+   * with zero lag, or it reads as laggy rather than smooth. `false`: leave
+   * the transition running (skill-river.css's `.skill-river-track` has a
+   * standing 380ms ease) so a `quantize: true` settle call glides into
+   * place instead of jumping.
+   */
+  instant?: boolean;
+  /**
+   * `false` (default): use `progress` as-is, for continuous scroll-linked
+   * panning. `true`: snap to the nearest one-step-per-skill position —
+   * used only by the idle "settle" callback (lib/scroll-settle.ts) once
+   * scrolling has stopped, so cards land centered without the pan ever
+   * visibly stepping while the user is actually scrolling.
+   */
+  quantize?: boolean;
+}
+
 /**
  * Drives every `.skill-river-track` under `clip` from a single 0-1 progress
  * value — shared by desktop's scroll-jack (use-room-wipe.ts) and mobile's
  * natural-scroll-linked equivalent (use-skill-river-scroll.ts) so both
  * produce the exact same per-row pan (skillRiverLoopTranslateX).
  */
-export function applySkillRiverProgress(clip: HTMLElement, progress: number) {
+export function applySkillRiverProgress(
+  clip: HTMLElement,
+  progress: number,
+  options?: SkillRiverProgressOptions,
+) {
+  const instant = options?.instant ?? true;
+  const quantize = options?.quantize ?? false;
   const tracks = clip.querySelectorAll<HTMLElement>('.skill-river-track');
   let longestUnique = 0;
+  let longestUniqueCount = 0;
   tracks.forEach((track) => {
     longestUnique = Math.max(longestUnique, skillRiverTrackMetrics(track).uniqueWidth);
+    longestUniqueCount = Math.max(longestUniqueCount, Number(track.dataset.uniqueCount) || 0);
   });
+  const applied = quantize ? quantizeProgress(progress, Math.max(1, longestUniqueCount)) : progress;
   tracks.forEach((track, rowIndex) => {
     const { loopWidth } = skillRiverTrackMetrics(track);
-    const x = skillRiverLoopTranslateX(progress, rowIndex, loopWidth, longestUnique);
+    const x = skillRiverLoopTranslateX(applied, rowIndex, loopWidth, longestUnique);
+    // Inline 'none' beats the CSS transition for continuous frames; an
+    // empty string clears the inline override so the CSS transition (only
+    // meant for the settle snap) takes over again.
+    track.style.transition = instant ? 'none' : '';
     track.style.transform = `translate3d(${x}px, 0, 0)`;
   });
 }
@@ -132,8 +177,8 @@ export function skillRiverLoopTranslateX(
   return -wrapOffset(distance, loopWidth);
 }
 
-/** Hijack budget: unique skills on the longest row, at 4× pan speed. */
+/** Hijack budget: unique skills on the longest row, at 6× pan speed. */
 export function skillRiverScrollSteps(skills: Skill[] | null | undefined): number {
   const longest = Math.max(1, ...uniqueCategoryRows(skills).map((row) => row.uniqueCount));
-  return Math.max(1, longest / 4);
+  return Math.max(1, longest / 6);
 }

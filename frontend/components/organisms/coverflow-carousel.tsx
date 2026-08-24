@@ -14,6 +14,7 @@ import { Project, Section } from "@/sanity.types";
 import { LangId, localize } from "@/lib/locale";
 import { useViewportKeyboardNav } from "@/hooks/use-keyboard-nav";
 import { useRoomsChrome } from "@/context/rooms-chrome-context";
+import { useRoomPlayback } from "@/context/room-playback-context";
 import "./projects-section.css";
 
 export interface CoverflowCarouselProps {
@@ -56,6 +57,26 @@ export function ProjectCarousel({
   useEffect(() => {
     setFlippedIndex(null);
   }, [activeIndex]);
+
+  // Rooms with a scroll-jack budget (renderSection.tsx) page this carousel
+  // as the user scrolls through the room, same as skills/experience. Anchored
+  // at resolvedInitialIndex — not 0 — and only ever moves forward from
+  // there, so arriving at the room via scroll (progress starts at 0) never
+  // yanks the carousel away from the featured card it's already showing;
+  // scroll only carries it onward toward the last card. Backward navigation
+  // stays available via buttons/drag/keyboard regardless.
+  const playback = useRoomPlayback();
+  const lastProjectsStepRef = useRef(resolvedInitialIndex);
+
+  useEffect(() => {
+    if (data.length <= 1) return;
+    const progress = playback.projectsProgress ?? 0;
+    const span = data.length - 1 - resolvedInitialIndex;
+    const index = span > 0 ? Math.round(resolvedInitialIndex + progress * span) : resolvedInitialIndex;
+    if (lastProjectsStepRef.current === index) return;
+    lastProjectsStepRef.current = index;
+    goTo(index);
+  }, [playback.projectsProgress, data.length, resolvedInitialIndex, goTo]);
 
   const handleDragStart = useCallback(
     (...args: Parameters<typeof dragHandlers.onDragStart>) => {
