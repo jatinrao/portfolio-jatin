@@ -20,6 +20,8 @@ interface FooterProps {
   navItems?: FooterNavItem[];
   legalLinks?: FooterLink[];
   socialLinks?: FooterLink[];
+  exploreLabel?: string;
+  connectLabel?: string;
 }
 
 const DEFAULT_LEGAL_LINKS: FooterLink[] = [];
@@ -32,6 +34,8 @@ export function Footer({
   navItems = [],
   legalLinks = DEFAULT_LEGAL_LINKS,
   socialLinks = [],
+  exploreLabel = 'Explore',
+  connectLabel = 'Connect',
 }: FooterProps) {
   const language = LANGUAGES.find((item) => item.id === locale);
   const localeLabel = language?.label ?? locale;
@@ -57,7 +61,7 @@ export function Footer({
           <div className="site-footer-directory">
             {navItems.length > 0 && (
               <div>
-                <h3 className="site-footer-heading">Explore</h3>
+                <h3 className="site-footer-heading">{exploreLabel}</h3>
                 <ul className="site-footer-list">
                   {navItems.map((item) => (
                     <li key={item.anchorId}>
@@ -69,7 +73,7 @@ export function Footer({
             )}
             {socialLinks.length > 0 && (
               <div>
-                <h3 className="site-footer-heading">Connect</h3>
+                <h3 className="site-footer-heading">{connectLabel}</h3>
                 <ul className="site-footer-list">
                   {socialLinks.map((link) => (
                     <li key={link.href}>

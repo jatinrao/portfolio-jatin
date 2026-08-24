@@ -4,6 +4,7 @@ import { HeroSection }      from '@/components/organisms/HeroSection'
 import { FloatingControls } from '@/components/shared/FloatingControls'
 import { LanguageProvider } from '@/components/organisms/LanguageContext'
 import { LangId, localize } from '@/lib/locale'
+import { getChannelKind } from '@/lib/channel-kind'
 import { Header, type HeaderData } from '../organisms/Header'
 import { Footer } from '../organisms/Footer'
 import { renderSection, isRoomSection, buildRoomDef } from '@/components/shared/renderSection'
@@ -20,12 +21,22 @@ export default async function HomePage({lang}: {lang: LangId}) {
     return <p style={{ padding: '2rem' }}>Portfolio not found.</p>
   }
 
+  // Small settings-style singleton (studio/src/schemaTypes/documents/ui-labels.ts)
+  // holding CMS-driven, per-locale copy for repeated bits of chrome (button/
+  // link text) that would otherwise be hardcoded English strings.
+  const uiLabels = (portfolio.data as any)?.uiLabels
+
   return (
     // Wrap the tree once — LanguageSwitcher and HeroSection share the context
     <LanguageProvider lang={lang}>
       <Header data={portfolio.data.header} locale={lang}  />
       <main>
-        <HeroSection data={portfolio.data.hero_section} locale={lang}/>
+        <HeroSection
+          data={portfolio.data.hero_section}
+          locale={lang}
+          reachOutLabel={localize(uiLabels?.reachOut, lang) || undefined}
+          connectLabel={localize(uiLabels?.connect, lang) || undefined}
+        />
         {/* Add more sections here */}
         {(() => {
 // Consecutive "room" sections (skills / experience / projects) are
@@ -92,22 +103,36 @@ export default async function HomePage({lang}: {lang: LangId}) {
         brandName={localize(portfolio.data.hero_section.name, lang)}
         tagline={localize(portfolio.data.hero_section.headline, lang)}
         locale={lang}
+        exploreLabel={localize(uiLabels?.footerExplore, lang) || undefined}
+        connectLabel={localize(uiLabels?.footerConnect, lang) || undefined}
         navItems={(portfolio.data.header?.navItems ?? []).map((item: NonNullable<HeaderData['navItems']>[number]) => ({
           anchorId: item.anchorId,
           label: localize(item.label, lang),
         }))}
         socialLinks={(portfolio.data.hero_section.channels ?? [])
-          .filter((channel: NonNullable<HeroRawData['channels']>[number]) => Boolean(channel.url))
-          .map((channel: NonNullable<HeroRawData['channels']>[number]) => ({
-            label: localize(channel.label, lang) || channel.url,
-            href: channel.url,
-          }))}
+          .filter((channel: NonNullable<HeroRawData['channels']>[number]) => {
+            const kind = getChannelKind(channel)
+            return Boolean(channel.url) && kind !== 'phone'
+          })
+          .map((channel: NonNullable<HeroRawData['channels']>[number]) => {
+            const kind = getChannelKind(channel)
+            const uiLabelOverride =
+              kind === 'linkedin'
+                ? localize(uiLabels?.linkedin, lang)
+                : kind === 'mail'
+                  ? localize(uiLabels?.mail, lang)
+                  : ''
+            return {
+              label: uiLabelOverride || localize(channel.label, lang) || channel.url,
+              href: channel.url,
+            }
+          })}
       />
       
       {/* <SkillCloud skills={portfolio.data.skills} locale={portfolio.data.locale} /> */}
 
       {/* Fixed overlay — sits on top of everything */}
-      <FloatingControls />
+      <FloatingControls resumeSlug="jatin-kumar" />
     </LanguageProvider>
   )
 }

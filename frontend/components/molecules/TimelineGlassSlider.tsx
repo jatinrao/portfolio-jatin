@@ -122,6 +122,7 @@ export function TimelineGlassSlider() {
         aria-label="Scroll experience timeline"
         aria-valuemin={0}
         aria-valuemax={100}
+        aria-valuenow={0}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}

@@ -24,11 +24,11 @@
 .projects-section .cover-card-face {
   border: none !important;
   border-radius: 18px;
-  background: #ffffff;
+  background: var(--color-surface);
   box-shadow: none !important;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  color: #1d1d1f;
+  color: var(--color-on-surface);
 }
 
 .projects-section .cover-card-media {
@@ -42,7 +42,7 @@
   letter-spacing: -0.016em;
   line-height: 1.2857;
   text-transform: none;
-  color: #1d1d1f;
+  color: var(--color-on-surface);
 }
 
 .projects-section .cover-card-title {
@@ -61,7 +61,7 @@
   font-weight: 400;
   letter-spacing: -0.016em;
   line-height: 1.42859;
-  color: #6e6e73;
+  color: var(--color-on-surface-variant);
 }
 
 .page-control {

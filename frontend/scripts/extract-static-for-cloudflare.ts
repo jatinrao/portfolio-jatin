@@ -8,19 +8,35 @@
  *
  * It walks the existing .next output, finds routes that were pre-rendered as
  * pure static HTML (no ISR / revalidate), and copies just those + required
- * assets into ./cf-static, ready to upload to Cloudflare Pages.
+ * assets into ./cf-static, ready to upload to Cloudflare Pages. It also
+ * pre-generates the resume PDF for every language/theme combination (the
+ * Cloudflare deploy has no server, so it can't run the live `/api/resume/pdf`
+ * route — see generateResumePdfs below) and writes those into ./cf-static too.
  *
- * Run directly with Node (v22.18+/23.6+/24 — no ts-node/tsx required):
- *   node scripts/extract-static-for-cloudflare.ts
+ * Run with tsx (required — the PDF-generation step below imports .tsx
+ * component modules, which plain Node's built-in TS support can erase types
+ * from but can't transform JSX out of):
+ *   npx tsx scripts/extract-static-for-cloudflare.ts
  *   npx wrangler pages deploy cf-static --project-name=my-app
  *
- * On older Node versions, run with tsx instead:
- *   npx tsx scripts/extract-static-for-cloudflare.ts
+ * Prerequisites for the PDF step specifically:
+ *   - Playwright's Chromium must be installed: `npx playwright install chromium`
+ *   - The same Sanity env vars `next build` already needs (SSG also fetches
+ *     Sanity at build time), so no additional env plumbing is required.
  */
 
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { getResumeService } from "../lib/resume/service";
+import { renderResumeToHtml } from "../lib/rendering/resume-renderer";
+import { getPdfGenerator } from "../lib/pdf/get-pdf-generator";
+import { getPdfCompressor } from "../lib/pdf/get-pdf-compressor";
+import {
+  DEFAULT_RESUME_SLUG,
+  SUPPORTED_LANGUAGES,
+  RESUME_THEMES,
+} from "../lib/resume/validation";
 
 const ROOT = process.cwd();
 const NEXT_DIR = path.join(ROOT, ".next");
@@ -217,6 +233,49 @@ async function rewriteImagesInOutputDir(dir: string): Promise<number> {
   });
 
   return filesTouched;
+}
+
+/**
+ * Pre-generates the resume PDF for every supported language × theme
+ * combination and writes them into OUT_DIR, since the Cloudflare deploy
+ * has no server to run the live `/api/resume/pdf` route on. Reuses the
+ * exact same pipeline that route uses (service → renderer → generator →
+ * compressor) so there's one source of truth for how a resume PDF is
+ * built — this just calls it 12 times at build time instead of once per
+ * request.
+ *
+ * The resume document itself only needs fetching once (it's the same
+ * language-agnostic ResumeModel for every lang/theme combo — see
+ * ResumeService), so it's hoisted out of the loop.
+ *
+ * Naming (`<slug>-<lang>-<theme>.pdf`, under /resume/) is what
+ * DownloadResumeButton's NEXT_PUBLIC_DEPLOY_TARGET=cloudflare branch
+ * links to — keep the two in sync if either changes.
+ */
+async function generateResumePdfs(): Promise<void> {
+  const slug = DEFAULT_RESUME_SLUG;
+  const destDir = path.join(OUT_DIR, "resume");
+  fs.mkdirSync(destDir, { recursive: true });
+
+  console.log(
+    `\nGenerating ${SUPPORTED_LANGUAGES.length * RESUME_THEMES.length} resume PDF(s) for slug "${slug}"...`
+  );
+
+  const resume = await getResumeService().getResume(slug);
+  const generator = getPdfGenerator();
+  const compressor = getPdfCompressor();
+
+  for (const lang of SUPPORTED_LANGUAGES) {
+    for (const theme of RESUME_THEMES) {
+      const html = await renderResumeToHtml(resume, lang, theme);
+      const rawPdf = await generator.generate(html);
+      const pdf = await compressor.compress(rawPdf);
+
+      const dest = path.join(destDir, `${slug}-${lang}-${theme}.pdf`);
+      fs.writeFileSync(dest, pdf);
+      console.log(`   - ${slug}-${lang}-${theme}.pdf (${pdf.length} bytes)`);
+    }
+  }
 }
 
 async function main(): Promise<void> {
@@ -416,12 +475,23 @@ async function main(): Promise<void> {
   }
 
   console.log(`\nDone. Copied ${copiedCount} static route(s) into ${OUT_DIR}`);
+
+  await generateResumePdfs();
+
   console.log(
-    "Deploy with:  npx wrangler pages deploy cf-static --project-name=<your-project>"
+    "\nDeploy with:  npx wrangler pages deploy cf-static --project-name=<your-project>"
   );
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+main()
+  .then(() => {
+    // generateResumePdfs() launches a process-wide Chromium instance
+    // (see PlaywrightPdfGenerator) that's never explicitly closed — fine
+    // in a long-lived server, but left open it'd keep this one-shot
+    // script's Node process alive indefinitely.
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });

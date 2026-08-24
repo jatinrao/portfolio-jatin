@@ -8,9 +8,9 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval';
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: https://cdn.sanity.io;
+  img-src 'self' data: blob: https://cdn.sanity.io;
   font-src 'self';
-  connect-src 'self' https://*.api.sanity.io;
+  connect-src 'self' blob: https://*.api.sanity.io;
   worker-src 'self' blob:;
   frame-ancestors 'self' ${studioUrl};
 `;

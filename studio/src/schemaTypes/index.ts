@@ -32,6 +32,7 @@ import { navigation } from './documents/navigation'
 import navItem from './objects/navItem'
 import { ctaButton } from './objects/ctaButton'
 import { skillCategoryLabels } from './documents/category-labels'
+import { uiLabels } from './documents/ui-labels'
 export const schemaTypes: SchemaTypeDefinition[] = [
   // Localized primitives — must be registered before anything that uses them
   localeString,
@@ -66,4 +67,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   portfolio,
   navigation,
   skillCategoryLabels,
+  uiLabels,
 ]

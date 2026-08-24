@@ -60,4 +60,9 @@ if (typeof globalThis.IntersectionObserver === 'undefined') {
     IntersectionObserverMock as unknown as typeof IntersectionObserver
 }
 
-HTMLCanvasElement.prototype.getContext = () => null
+// Guarded: this setup file also runs for lib/pdf/*.test.ts, which opts
+// into the plain `node` environment (no DOM) since pdf-lib's Uint8Array
+// checks don't play well with jsdom's realm.
+if (typeof HTMLCanvasElement !== 'undefined') {
+  HTMLCanvasElement.prototype.getContext = () => null
+}

@@ -19,11 +19,7 @@ export function EducationCard({ education, locale }: EducationCardProps) {
       <div className="flex flex-col gap-4 md:items-center">
         <div className="w-full flex space-y-1 text-center ">
           {institutionName && (
-            // .education-card is a fixed white card regardless of site
-            // theme (timeline-section.css), so its text stays fixed dark
-            // too — text-heading-ink turns white in dark mode and
-            // disappears on this always-white background.
-            <p className="education-card-name font-headline-lg uppercase text-[#1d1d1f] md:font-headline-md text-headline-sm w-full">
+            <p className="education-card-name font-headline-lg uppercase text-on-surface md:font-headline-md text-headline-sm w-full">
               {institutionName}
             </p>
           )}
@@ -39,14 +35,21 @@ export function EducationCard({ education, locale }: EducationCardProps) {
               className="object-cover opacity-80 mix-blend-multiply"
             />
           ) : (
-            <Icon name="school" size={36} />
+            // .education-card-mark's background is hardcoded to #ffffff in
+            // both themes (timeline-section.css) so the logo's
+            // mix-blend-multiply always has a light backdrop to punch
+            // against. This fallback icon sits on that same fixed-white
+            // box, so its color must also stay fixed dark — a theme-following
+            // token (e.g. currentColor/on-surface) turns white in dark mode
+            // and disappears against it.
+            <Icon name="school" size={36} color="#1d1d1f" />
           )}
           <div className="absolute left-0 top-0 h-2 w-2 border-l border-t border-primary" aria-hidden="true" />
           <div className="absolute bottom-0 right-0 h-2 w-2 border-b border-r border-primary" aria-hidden="true" />
           
         </div>
 
-        <div className="flex flex-col gap-4 border-t pt-1 border-[rgba(0,0,0,0.12)] sm:flex-row sm:items-center w-full">
+        <div className="flex flex-col gap-4 border-t pt-1 border-outline-variant sm:flex-row sm:items-center w-full">
             {programLabel && (
                 <span className="education-card-program font-label-caps text-left pl-3 text-sm uppercase tracking-widest text-secondary whitespace-pre-wrap">
                   {programLabel}

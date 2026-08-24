@@ -3,10 +3,6 @@
   --rooms-copy-strong: #1d1d1f;
   --rooms-link: var(--color-primary);
   --room-projects-t: 0;
-  /* Drives the TV bezel's liquid-glass tint below — kept in sync with
-     whichever room is active so the frame reads as the same colour as
-     that room's rooms-copy-eyebrow icon background. */
-  --rooms-frame-color: var(--color-room-skills);
   /* Shared by .rooms-device's and .rooms-copy's shine layers below — one
      token so both stay in sync instead of two copies of the gradient. */
   --rooms-shine-gradient: linear-gradient(
@@ -29,18 +25,6 @@
 .dark .rooms-gallery {
   --rooms-copy-strong: var(--color-heading-ink);
   --rooms-link: var(--color-primary);
-}
-
-.rooms-gallery[data-active-kind='skills'] {
-  --rooms-frame-color: var(--color-room-skills);
-}
-
-.rooms-gallery[data-active-kind='experience'] {
-  --rooms-frame-color: var(--color-room-experience);
-}
-
-.rooms-gallery[data-active-kind='projects'] {
-  --rooms-frame-color: var(--color-room-projects);
 }
 
 .rooms-device {
@@ -246,8 +230,24 @@
 }
 
 .rooms-copy-heading {
+  margin: 0;
+  display: inline;
   color: var(--rooms-copy-strong);
+  font-family: var(--font-apple-display);
+  font-size: 21px;
   font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.19048;
+}
+
+.rooms-copy-subheading {
+  margin: 0;
+  display: inline;
+  font-family: var(--font-apple-display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.19048;
 }
 
 .rooms-copy-link {
@@ -288,15 +288,10 @@
   z-index: 1;
   pointer-events: none;
   border-radius: 0;
-  /* Liquid-glass frame experiment: same gradient shape as the flat
-     rooms-copy-eyebrow icon swatches, but softened into a translucent
-     sheet — a warm tint near the top-left easing into the existing glass
-     fill, so the bezel reads as coloured glass rather than a flat chip. */
-  background: linear-gradient(
-    165deg,
-    color-mix(in srgb, var(--rooms-frame-color) 60%, transparent) 0%,
-    color-mix(in srgb, var(--rooms-frame-color) 28%, transparent) 45%,
-    color-mix(in srgb, var(--glass-fill) calc(var(--glass-enabled) * 100%), transparent) 100%
+  background: color-mix(
+    in srgb,
+    var(--glass-fill) calc(var(--glass-enabled) * 100%),
+    transparent
   );
   border: 5px solid #000;
   /* Elevation: outer lift shadow + inset top/bottom bevel — same 3-layer
@@ -308,7 +303,6 @@
     inset 0 -1px 1px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(calc(var(--glass-blur) * var(--glass-enabled))) saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
   -webkit-backdrop-filter: blur(calc(var(--glass-blur) * var(--glass-enabled))) saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
-  transition: background 0.6s ease;
 }
 
 /* Glass-screen shine — ONE layer spanning the full section width (copy
@@ -410,6 +404,15 @@
   -webkit-backdrop-filter: none;
 }
 
+/* Liquid-glass screen experiment: each room's screen background is now a
+   gradient of that room's own colour — the same --color-room-* token
+   that fills its rooms-copy-eyebrow icon swatch — instead of a flat
+   hand-picked hex. The old ::before wash glow (a separate blurred blob
+   in the room's photo colours) has been removed so this gradient reads
+   clearly; a true frosted-glass layer sits on top via ::after below,
+   same recipe as .rooms-tv-bezel / .rooms-page-glass elsewhere in this
+   file, instead of relying on backdrop-filter on the gradient layer
+   itself. */
 .tv-screen-panel[data-kind='skills'],
 .tv-screen-panel[data-kind='experience'],
 .tv-screen-panel[data-kind='projects'] {
@@ -417,38 +420,48 @@
 }
 
 .tv-screen-panel[data-kind='skills'] {
-  background: #5ba3e8;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--color-room-skills) 45%, transparent) 0%,
+    color-mix(in srgb, var(--color-room-skills) 25%, transparent) 100%
+  );
 }
 
 .tv-screen-panel[data-kind='experience'] {
-  background: #161412;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--color-room-experience) 45%, transparent) 0%,
+    color-mix(in srgb, var(--color-room-experience) 25%, transparent) 100%
+  );
 }
 
 .tv-screen-panel[data-kind='projects'] {
-  background: #4a6fa5;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--color-room-projects) 45%, transparent) 0%,
+    color-mix(in srgb, var(--color-room-projects) 25%, transparent) 100%
+  );
 }
 
-.tv-screen-panel[data-kind='skills']::before,
-.tv-screen-panel[data-kind='experience']::before,
-.tv-screen-panel[data-kind='projects']::before {
+/* The glass material itself: translucent fill + blur/saturate, on top of
+   the gradient above and below the room's own content (children are
+   z-index: 1 via .tv-screen-panel > *). */
+.tv-screen-panel[data-kind='skills']::after,
+.tv-screen-panel[data-kind='experience']::after,
+.tv-screen-panel[data-kind='projects']::after {
   content: '';
   position: absolute;
-  inset: -22%;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
-  filter: blur(72px);
-}
-
-.tv-screen-panel[data-kind='skills']::before {
-  background: var(--skill-river-wash);
-}
-
-.tv-screen-panel[data-kind='experience']::before {
-  background: var(--timeline-section-wash);
-}
-
-.tv-screen-panel[data-kind='projects']::before {
-  background: var(--projects-section-wash);
+  background: var(--glass-fill);
+  opacity: var(--glass-enabled);
+  /* Higher blur than the shared --glass-blur default (30px) — this panel
+     sits over busy 3D/photo content rather than page text, so it can
+     take a heavier frost without losing legibility the way a card over
+     body copy would. */
+  backdrop-filter: blur(calc(var(--glass-blur) * 2 * var(--glass-enabled))) saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 2 * var(--glass-enabled))) saturate(calc(1 + (var(--glass-saturate) - 1) * var(--glass-enabled)));
 }
 
 .tv-screen-panel .skill-river,

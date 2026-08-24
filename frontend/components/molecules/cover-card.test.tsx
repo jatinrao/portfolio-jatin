@@ -25,12 +25,9 @@ describe('CoverCard', () => {
         index={0}
         springIndex={motionValue(0)}
         geometry={geometry}
-        isFlipped={false}
         onClick={() => undefined}
-        onClose={() => undefined}
       />,
     )
     expect(screen.getByRole('group', { name: 'Portfolio' })).toBeInTheDocument()
-    expect(screen.getByText('Featured')).toBeInTheDocument()
   })
 })

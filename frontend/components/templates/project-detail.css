@@ -1,0 +1,233 @@
+.project-detail {
+  --project-detail-ink: #1d1d1f;
+  --project-detail-muted: #6e6e73;
+  background: var(--color-surface, #fff);
+  color: var(--project-detail-ink);
+  font-family: var(--font-apple);
+}
+
+.dark .project-detail {
+  --project-detail-ink: var(--color-heading-ink, #f5f5f7);
+  --project-detail-muted: var(--color-on-surface-variant, #a1a1a6);
+}
+
+.project-detail-hero {
+  position: relative;
+  width: 100%;
+  height: min(70vh, 720px);
+  min-height: 320px;
+  padding: 40px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(60% 80% at 50% 0%, rgba(0, 0, 0, 0.06), transparent 70%),
+    var(--color-surface-container, #f5f5f7);
+}
+
+.dark .project-detail-hero {
+  background:
+    radial-gradient(60% 80% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 70%),
+    var(--color-surface-container, #1d1d1f);
+}
+
+/* Contained "screenshot" frame — object-contain (not cover) so app
+   screenshots keep their real aspect ratio instead of being cropped to
+   fill an arbitrary banner height, with a border/shadow so the image
+   reads as a distinct photo sitting on the page rather than a full-bleed
+   layout background. */
+.project-detail-hero-frame {
+  position: relative;
+  width: min(100%, 980px);
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 16px 48px rgba(0, 0, 0, 0.16);
+  background: var(--color-surface, #fff);
+}
+
+.dark .project-detail-hero-frame {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 16px 48px rgba(0, 0, 0, 0.5);
+}
+
+/* Scrim fading the hero into the page background so the framed image
+   reads as a discrete piece of content, not layout wallpaper bleeding
+   into the headline below it. */
+.project-detail-hero-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 120px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent, var(--color-surface, #fff));
+}
+
+.dark .project-detail-hero-overlay {
+  background: linear-gradient(to bottom, transparent, var(--color-surface, #1d1d1f));
+}
+
+.project-detail-column {
+  width: min(100%, 692px);
+  margin: 0 auto;
+  padding: 48px 22px 96px;
+}
+
+.project-detail-eyebrow {
+  margin: 0 0 8px;
+  font-family: var(--font-apple);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  color: var(--color-primary, #0071e3);
+}
+
+.project-detail-headline {
+  margin: 0 0 16px;
+  font-family: var(--font-apple-display);
+  font-size: 56px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.07143;
+  color: var(--project-detail-ink);
+}
+
+.project-detail-lede {
+  margin: 0 0 32px;
+  font-family: var(--font-apple-display);
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 0.009em;
+  line-height: 1.33341;
+  color: var(--project-detail-muted);
+}
+
+.project-detail-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.project-detail-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-detail-body {
+  border-top: 1px solid var(--color-outline-variant, #d2d2d7);
+  padding-top: 32px;
+}
+
+.project-detail-h2 {
+  margin: 40px 0 16px;
+  font-family: var(--font-apple-display);
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: 0.004em;
+  line-height: 1.125;
+  color: var(--project-detail-ink);
+}
+
+.project-detail-h3 {
+  margin: 32px 0 12px;
+  font-family: var(--font-apple-display);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.009em;
+  line-height: 1.16667;
+  color: var(--project-detail-ink);
+}
+
+.project-detail-p {
+  margin: 0 0 20px;
+  font-family: var(--font-apple);
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: 0.012em;
+  line-height: 1.42105;
+  color: var(--project-detail-ink);
+}
+
+.project-detail-quote {
+  margin: 32px 0;
+  padding-left: 20px;
+  border-left: 3px solid var(--color-primary, #0071e3);
+  font-family: var(--font-apple-display);
+  font-size: 24px;
+  font-style: italic;
+  line-height: 1.33341;
+  color: var(--project-detail-muted);
+}
+
+.project-detail-list {
+  margin: 0 0 20px;
+  padding-left: 22px;
+  font-family: var(--font-apple);
+  font-size: 19px;
+  line-height: 1.42105;
+  color: var(--project-detail-ink);
+}
+
+.project-detail-list li {
+  margin-bottom: 8px;
+}
+
+.project-detail-gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.project-detail-gallery-item {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+@media (max-width: 1068px) {
+  .project-detail-headline {
+    font-size: 44px;
+  }
+
+  .project-detail-lede {
+    font-size: 21px;
+  }
+}
+
+@media (max-width: 734px) {
+  .project-detail-hero {
+    height: min(50vh, 420px);
+  }
+
+  .project-detail-column {
+    padding: 32px 22px 64px;
+  }
+
+  .project-detail-headline {
+    font-size: 32px;
+    line-height: 1.125;
+  }
+
+  .project-detail-lede {
+    font-size: 17px;
+    line-height: 1.23536;
+  }
+
+  .project-detail-h2 {
+    font-size: 26px;
+  }
+
+  .project-detail-p,
+  .project-detail-list {
+    font-size: 17px;
+  }
+}

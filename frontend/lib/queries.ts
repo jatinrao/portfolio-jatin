@@ -180,6 +180,15 @@ export async function fetchPortfolioData(slug: string): Promise<any> {
     }
   },
 "category_labels": *[_type == "skillCategoryLabels"][0],
+"uiLabels": *[_type == "uiLabels"][0]{
+  learnMore,
+  reachOut,
+  connect,
+  footerExplore,
+  footerConnect,
+  linkedin,
+  mail,
+},
   skills[]->{
     _id,
     name,

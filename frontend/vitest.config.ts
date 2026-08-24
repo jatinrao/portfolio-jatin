@@ -25,7 +25,14 @@ export default defineConfig({
         test: {
           name: 'unit',
           environment: 'jsdom',
-          include: ['components/**/*.{test,spec}.{ts,tsx}'],
+          include: [
+            'components/**/*.{test,spec}.{ts,tsx}',
+            // Only lib/pdf/, not all of lib/** — several pre-existing
+            // lib/resume/*.test.ts files fail against current code (a
+            // stale-test issue, not something this change touches) and
+            // were never wired into `include` for that reason.
+            'lib/pdf/**/*.{test,spec}.{ts,tsx}',
+          ],
           exclude: ['node_modules', '.next', 'storybook-static'],
           setupFiles: ['./vitest.setup.tsx'],
         },

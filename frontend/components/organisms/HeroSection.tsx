@@ -126,6 +126,8 @@ interface HeroLayoutProps {
   openToWorkLabel?: string
   reachOutHref?: string
   connectHref?: string
+  reachOutLabel?: string
+  connectLabel?: string
   heading?: boolean
   tilt?: boolean
   preview?: 'full' | 'lqip'
@@ -144,6 +146,8 @@ function HeroLayout({
   openToWorkLabel,
   reachOutHref,
   connectHref,
+  reachOutLabel = 'Reach out',
+  connectLabel = 'Connect',
   heading = false,
   tilt = false,
   preview = 'full',
@@ -195,7 +199,7 @@ function HeroLayout({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <span className="hero-link-copy">Reach out</span>
+                  <span className="hero-link-copy">{reachOutLabel}</span>
                 </Link>
               ) : null}
               {connectHref ? (
@@ -205,7 +209,7 @@ function HeroLayout({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <span className="hero-link-copy">Connect</span>
+                  <span className="hero-link-copy">{connectLabel}</span>
                 </Link>
               ) : null}
             </div>
@@ -231,9 +235,11 @@ function HeroLayout({
 interface HeroSectionProps {
   data: HeroRawData
   locale: LangId
+  reachOutLabel?: string
+  connectLabel?: string
 }
 
-export function HeroSection({ data, locale = 'en' }: HeroSectionProps) {
+export function HeroSection({ data, locale = 'en', reachOutLabel, connectLabel }: HeroSectionProps) {
   const { trackRef, style, phone, z } = useHeroScale()
 
   const name = localize(data.name, locale) || ''
@@ -275,6 +281,8 @@ export function HeroSection({ data, locale = 'en' }: HeroSectionProps) {
     openToWorkLabel,
     reachOutHref,
     connectHref,
+    reachOutLabel,
+    connectLabel,
   }
 
   return (

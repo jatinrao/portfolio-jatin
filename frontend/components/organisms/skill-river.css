@@ -123,8 +123,7 @@
   padding: 0.3rem 0.9rem;
   border: none;
   border-radius: 10px;
-  /* background: color-mix(in srgb, var(--color-surface) 38%, transparent); */
-  background: #fff;
+  background: var(--color-surface);
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -173,11 +172,7 @@
   min-height: 0;
   flex-direction: column;
   gap: 0.28rem;
-  /* .skill-poster-inner is a fixed white card (matches .timeline-step-card
-     and .cover-card-face's convention) regardless of site theme, so its
-     text must stay fixed dark too — var(--color-heading-ink) turns white
-     in dark mode and disappears on this always-white background. */
-  color: #1d1d1f;
+  color: var(--color-on-surface);
 }
 
 .skill-poster-meta {
@@ -206,7 +201,7 @@
   font-weight: 600;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: #6e6e73;
+  color: var(--color-on-surface-variant);
 }
 
 .skill-poster-proficiency {
@@ -220,7 +215,7 @@
   flex: 1;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.12);
+  background: var(--color-outline-variant);
 }
 
 .skill-poster-bar-fill {
@@ -239,7 +234,7 @@
   font-size: var(--text-label-xs);
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: #6e6e73;
+  color: var(--color-on-surface-variant);
 }
 
 @media (max-width: 1068px) {

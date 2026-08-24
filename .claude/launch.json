@@ -3,7 +3,9 @@
   "configurations": [
     {
       "name": "frontend-dev",
-      "url": "http://localhost:3000"
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd frontend && npx next dev"],
+      "port": 3000
     }
   ]
 }

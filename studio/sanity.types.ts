@@ -15,6 +15,31 @@
 export declare const internalGroqTypeReferenceTo: unique symbol
 
 // Source: ../sanity.schema.json
+export type UiLabels = {
+  _id: string
+  _type: 'uiLabels'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  learnMore?: LocaleString
+  reachOut?: LocaleString
+  connect?: LocaleString
+  footerExplore?: LocaleString
+  footerConnect?: LocaleString
+  linkedin?: LocaleString
+  mail?: LocaleString
+}
+
+export type LocaleString = {
+  _type: 'localeString'
+  en?: string
+  es?: string
+  zh?: string
+  hi?: string
+  fr?: string
+  ar?: string
+}
+
 export type SkillCategoryLabels = {
   _id: string
   _type: 'skillCategoryLabels'
@@ -36,16 +61,6 @@ export type SkillCategoryLabels = {
   frontend?: LocaleString
   backend?: LocaleString
   ai?: LocaleString
-}
-
-export type LocaleString = {
-  _type: 'localeString'
-  en?: string
-  es?: string
-  zh?: string
-  hi?: string
-  fr?: string
-  ar?: string
 }
 
 export type PersonReference = {
@@ -996,8 +1011,9 @@ export type Geopoint = {
 }
 
 export type AllSanitySchemaTypes =
-  | SkillCategoryLabels
+  | UiLabels
   | LocaleString
+  | SkillCategoryLabels
   | PersonReference
   | Navigation
   | NavItem

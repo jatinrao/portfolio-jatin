@@ -95,15 +95,10 @@ function RoomCopy({ room, isMobile }: { room: RoomDef; isMobile: boolean }) {
           )}
         </div>
         {(room.heading || room.subheading) && (
-          <p className="rooms-copy-body">
-            {room.heading && (
-              <>
-                <strong className="rooms-copy-heading">{room.heading}</strong>
-                {room.subheading ? ' ' : null}
-              </>
-            )}
-            {room.subheading}
-          </p>
+          <div className="rooms-copy-body">
+            {room.heading && <h2 className="rooms-copy-heading">{room.heading}</h2>}
+            {room.subheading && <p className="rooms-copy-subheading">{room.subheading}</p>}
+          </div>
         )}
       </div>
     </div>

@@ -101,7 +101,15 @@ export function buildRoomDef(section: Section, person: Person, locale: LangId = 
             ? Math.max(2, Math.ceil((((person as any)?.projects?.length ?? 4) as number) / 2))
             : 1,
     isProject: section.sectionType === "projects" ? true:false,
-    content: <Component key={section._id} data={data} section={section} locale={locale} />,
+    content: (
+      <Component
+        key={section._id}
+        data={data}
+        section={section}
+        locale={locale}
+        learnMoreLabel={localize((person as any)?.uiLabels?.learnMore, locale)}
+      />
+    ),
   };
 }
 

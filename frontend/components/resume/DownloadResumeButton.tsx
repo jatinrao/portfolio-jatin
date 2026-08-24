@@ -49,9 +49,17 @@ export function DownloadResumeButton({ slug, lang, label }: DownloadResumeButton
     return () => observer.disconnect()
   }, [])
 
-  const params = new URLSearchParams({ slug, lang, theme })
-  const href = `/api/resume/pdf?${params.toString()}`
+  // The Cloudflare static deploy has no server behind it (see
+  // scripts/extract-static-for-cloudflare.ts) — `/api/resume/pdf` 404s
+  // there. That build sets NEXT_PUBLIC_DEPLOY_TARGET=cloudflare (inlined
+  // at build time by webpack), which routes the button at pre-generated
+  // static files instead. Vercel — where the flag is unset — keeps
+  // hitting the live route, always reflecting current Sanity content.
+  const isCloudflareStatic = process.env.NEXT_PUBLIC_DEPLOY_TARGET === 'cloudflare'
   const filename = `${slug}-${lang}-${theme}-resume.pdf`
+  const href = isCloudflareStatic
+    ? `/resume/${slug}-${lang}-${theme}.pdf`
+    : `/api/resume/pdf?${new URLSearchParams({ slug, lang, theme }).toString()}`
 
   return (
     <a

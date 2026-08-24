@@ -100,6 +100,45 @@ export const pagesSlugs = defineQuery(`
   {"slug": slug.current}
 `)
 
+export const projectSlugs = defineQuery(`
+  *[_type == "project" && defined(slug.current)]
+  {"slug": slug.current}
+`)
+
+export const PROJECT_BY_SLUG_QUERY = defineQuery(`
+*[_type == "project" && slug.current == $slug][0]{
+  title,
+  slug,
+  description,
+  body,
+  projectUrl,
+  repositoryUrl,
+  startDate,
+  endDate,
+  isFeatured,
+  coverImage{
+    asset->{
+      _id,
+      url,
+      metadata { lqip, dimensions }
+    },
+    alt,
+    caption,
+    credit
+  },
+  gallery[]{
+    asset->{
+      _id,
+      url,
+      metadata { lqip, dimensions }
+    },
+    alt,
+    caption,
+    credit
+  },
+}
+`)
+
 export const RESUME_BY_SLUG_QUERY = defineQuery(`
 *[_type == "person" && slug.current == $slug][0]{
 _id,

@@ -3,6 +3,7 @@ import { parseResumeQuery } from "@/lib/resume/validation";
 import { getResumeService } from "@/lib/resume/service";
 import { renderResumeToHtml } from "@/lib/rendering/resume-renderer";
 import { getPdfGenerator } from "@/lib/pdf/get-pdf-generator";
+import { getPdfCompressor } from "@/lib/pdf/get-pdf-compressor";
 import { toAppError, buildErrorBody } from "@/lib/shared/errors";
 import { logger } from "@/lib/shared/logger";
 
@@ -32,9 +33,19 @@ export async function GET(request: NextRequest) {
     const html = await renderResumeToHtml(resume, lang, theme);
 
     // 4. Hand the HTML to whichever PdfGenerator implementation is configured
-    const pdfBuffer = await getPdfGenerator().generate(html);
+    const rawPdfBuffer = await getPdfGenerator().generate(html);
 
-    logger.info("resume_pdf.request_succeeded", { requestId, slug, lang, theme });
+    // 5. Shrink the file before it goes out over the wire.
+    const pdfBuffer = await getPdfCompressor().compress(rawPdfBuffer);
+
+    logger.info("resume_pdf.request_succeeded", {
+      requestId,
+      slug,
+      lang,
+      theme,
+      rawBytes: rawPdfBuffer.length,
+      compressedBytes: pdfBuffer.length,
+    });
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,

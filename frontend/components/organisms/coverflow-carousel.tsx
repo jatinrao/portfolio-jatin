@@ -22,6 +22,8 @@ export interface CoverflowCarouselProps {
   locale: LangId;
   section: Section;
   initialIndex?: number;
+  /** CMS-driven "Learn More" button text (falls back inside CoverCard if omitted). */
+  learnMoreLabel?: string;
 }
 
 const CLICK_SUPPRESSION_THRESHOLD = 6;
@@ -31,6 +33,7 @@ export function ProjectCarousel({
   locale,
   section,
   initialIndex,
+  learnMoreLabel,
 }: CoverflowCarouselProps) {
   const reducedMotion = useReducedMotion();
   const geometry = useCarouselGeometry();
@@ -46,17 +49,12 @@ export function ProjectCarousel({
       reducedMotion: Boolean(reducedMotion),
     });
 
-  const [flippedIndex, setFlippedIndex] = useState<number | null>(null);
   const draggedPastThresholdRef = useRef(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    setFlippedIndex(null);
-  }, [activeIndex]);
 
   // Rooms with a scroll-jack budget (renderSection.tsx) page this carousel
   // as the user scrolls through the room, same as skills/experience. Anchored
@@ -99,33 +97,16 @@ export function ProjectCarousel({
   const handleCardClick = useCallback(
     (index: number) => {
       if (draggedPastThresholdRef.current) return;
-      if (flippedIndex === index) {
-        setFlippedIndex(null);
-        return;
-      }
-      if (index === activeIndex) {
-        setFlippedIndex(index);
-        return;
-      }
       goTo(index);
     },
-    [activeIndex, flippedIndex, goTo],
+    [goTo],
   );
-
-  const handleCloseFlip = useCallback((index: number) => {
-    setFlippedIndex((current) => (current === index ? null : current));
-  }, []);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === "Escape" && flippedIndex !== null) {
-        event.preventDefault();
-        setFlippedIndex(null);
-        return;
-      }
       onKeyDown(event);
     },
-    [flippedIndex, onKeyDown],
+    [onKeyDown],
   );
 
   const handleDragEnd = useCallback(
@@ -187,20 +168,15 @@ export function ProjectCarousel({
               index={index}
               springIndex={springIndex}
               geometry={geometry}
-              isFlipped={flippedIndex === index}
               onClick={handleCardClick}
-              onClose={handleCloseFlip}
+              learnMoreLabel={learnMoreLabel}
             />
           ))}
         </motion.div>
       </div>
 
       <p aria-live="polite" className="sr-only">
-        {active
-          ? flippedIndex !== null
-            ? `${localize(active.title, locale)} detail expanded`
-            : `${localize(active.title, locale)} of ${data.length}`
-          : ""}
+        {active ? `${localize(active.title, locale)} of ${data.length}` : ""}
       </p>
 
       {deskTarget && desk ? createPortal(desk, deskTarget) : desk}
