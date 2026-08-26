@@ -74,6 +74,7 @@ function HeroImage({ src, alt, lqip, openToWork, openToWorkLabel, tilt = false, 
         placeholder={lqip ? 'blur' : 'empty'}
         blurDataURL={lqip}
         preload={tilt}
+        fetchPriority={tilt ? 'high' : undefined}
       />
       {lqip ? (
         <div
@@ -296,9 +297,9 @@ export function HeroSection({ data, locale = 'en', reachOutLabel, connectLabel }
                 <HeroLayout {...layout} heading tilt />
               </div>
             </div>
-            <div className="hero-phone-slot" aria-hidden="true">
+            {/* <div className="hero-phone-slot" aria-hidden="true">
               <HeroDiamondSlot phone={phone} z={z} />
-            </div>
+            </div> */}
             <Image
               src="/images/hero_tv_shadow_color.png"
               alt=""
@@ -306,6 +307,15 @@ export function HeroSection({ data, locale = 'en', reachOutLabel, connectLabel }
               height={108}
               className="hero-glow-image hero-glow-image-light"
               aria-hidden="true"
+              // Static /public asset, not a Sanity CDN one — Next's default
+              // loader would otherwise route it through /_next/image, which
+              // only exists on Vercel. The Cloudflare static export has no
+              // server for that endpoint, so the image 404s there (see
+              // scripts/extract-static-for-cloudflare.ts's image-rewriting
+              // step, which only handles cdn.sanity.io URLs). `unoptimized`
+              // makes Next emit the plain /images/... path instead, which
+              // works identically on both deploys.
+              unoptimized
             />
             <Image
               src="/images/hero_tv_shadow_color_dark.png"
@@ -314,6 +324,7 @@ export function HeroSection({ data, locale = 'en', reachOutLabel, connectLabel }
               height={108}
               className="hero-glow-image hero-glow-image-dark"
               aria-hidden="true"
+              unoptimized
             />
           </div>
         </div>

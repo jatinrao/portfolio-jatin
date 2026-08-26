@@ -15,9 +15,16 @@
  *
  * Run with tsx (required — the PDF-generation step below imports .tsx
  * component modules, which plain Node's built-in TS support can erase types
- * from but can't transform JSX out of):
- *   npx tsx scripts/extract-static-for-cloudflare.ts
+ * from but can't transform JSX out of), preloading mock-server-only.cjs
+ * (required — see that file's own comment for why) and loading .env.local
+ * if present (unlike `next build`, a standalone tsx process doesn't load it
+ * automatically; `--env-file-if-exists`, not `--env-file`, so this doesn't
+ * hard-fail in CI environments that inject Sanity env vars directly instead
+ * of via a physical .env.local file):
+ *   NODE_OPTIONS="--require $(pwd)/scripts/mock-server-only.cjs" npx tsx --env-file-if-exists=.env.local scripts/extract-static-for-cloudflare.ts
  *   npx wrangler pages deploy cf-static --project-name=my-app
+ *
+ * (the `build:cf-static` npm script already wires all of this up)
  *
  * Prerequisites for the PDF step specifically:
  *   - Playwright's Chromium must be installed: `npx playwright install chromium`
@@ -25,10 +32,18 @@
  *     Sanity at build time), so no additional env plumbing is required.
  */
 
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { getResumeService } from "../lib/resume/service";
+import {
+  SANITY_LOCAL_IMAGE_DIR,
+  localSanityImagePath,
+  normalizedSanityUrl,
+} from "../lib/sanity-cf-image";
+import { client } from "../sanity/lib/client";
+import { RESUME_BY_SLUG_QUERY } from "../sanity/lib/queries";
+import { ResumeMapper } from "../lib/resume/mapper";
+import type { ResumeQueryResult } from "../lib/resume-query-result";
+import type { ResumeModel } from "../lib/resume/types";
 import { renderResumeToHtml } from "../lib/rendering/resume-renderer";
 import { getPdfGenerator } from "../lib/pdf/get-pdf-generator";
 import { getPdfCompressor } from "../lib/pdf/get-pdf-compressor";
@@ -85,41 +100,43 @@ const EXTERNAL_IMAGE_CDN_HOSTS = ["cdn.sanity.io"];
 // (which gets wiped on every clean build) so re-running the script doesn't
 // re-download unchanged images every time.
 const IMAGE_CACHE_DIR = path.join(ROOT, ".cache", "sanity-images");
-const LOCAL_IMAGE_DIR_NAME = "_sanity-images";
 const MAX_CONCURRENT_DOWNLOADS = 8;
 
-function hashUrl(url: string): string {
-  return crypto.createHash("sha1").update(url).digest("hex").slice(0, 16);
-}
-
-function extensionFromUrl(url: string): string {
-  const match = new URL(url).pathname.match(/\.([a-z0-9]+)$/i);
-  return match ? match[1].toLowerCase() : "jpg";
-}
-
-async function downloadAndCacheImage(url: string): Promise<string | null> {
-  const filename = `${hashUrl(url)}.${extensionFromUrl(url)}`;
+// Filename hashing lives in lib/sanity-cf-image.ts, shared with
+// lib/sanity-cf-image-loader.ts (the custom next/image loader used for the
+// Cloudflare build) — both sides must land on the identical filename for
+// the same (url, width, quality), or a client-side-only image mount (never
+// present in this script's server-rendered HTML input) asks for a file
+// this step never downloaded. See that module's doc comment for why.
+async function downloadAndCacheImage(
+  originalUrl: string,
+  width: number,
+  quality: number
+): Promise<string | null> {
+  const fetchUrl = normalizedSanityUrl(originalUrl, width, quality);
+  const localPath = localSanityImagePath(originalUrl, width, quality);
+  const filename = path.basename(localPath);
   const cachePath = path.join(IMAGE_CACHE_DIR, filename);
 
   if (!fs.existsSync(cachePath)) {
     try {
-      const res = await fetch(url);
+      const res = await fetch(fetchUrl);
       if (!res.ok) {
-        console.warn(`   ! Failed to download image (${res.status}): ${url}`);
+        console.warn(`   ! Failed to download image (${res.status}): ${fetchUrl}`);
         return null;
       }
       const buf = Buffer.from(await res.arrayBuffer());
       fs.mkdirSync(IMAGE_CACHE_DIR, { recursive: true });
       fs.writeFileSync(cachePath, buf);
     } catch (err) {
-      console.warn(`   ! Error downloading image: ${url} (${(err as Error).message})`);
+      console.warn(`   ! Error downloading image: ${fetchUrl} (${(err as Error).message})`);
       return null;
     }
   }
 
-  const dest = path.join(OUT_DIR, LOCAL_IMAGE_DIR_NAME, filename);
+  const dest = path.join(OUT_DIR, localPath);
   copyFile(cachePath, dest);
-  return `/${LOCAL_IMAGE_DIR_NAME}/${filename}`;
+  return localPath;
 }
 
 /** Runs async tasks with a concurrency cap so we don't open hundreds of
@@ -185,13 +202,10 @@ async function buildImageDownloadMap(
     if (!isKnownCdn) return;
 
     const width = parsed.searchParams.get("w");
+    if (!width) return;
     const quality = parsed.searchParams.get("q") ?? "75";
-    if (width) target.searchParams.set("w", width);
-    target.searchParams.set("q", quality);
-    if (!target.searchParams.has("auto")) target.searchParams.set("auto", "format");
-    if (!target.searchParams.has("fit")) target.searchParams.set("fit", "max");
 
-    const localPath = await downloadAndCacheImage(target.toString());
+    const localPath = await downloadAndCacheImage(originalUrl, Number(width), Number(quality));
     if (localPath) map.set(match, localPath);
   });
 
@@ -236,17 +250,44 @@ async function rewriteImagesInOutputDir(dir: string): Promise<number> {
 }
 
 /**
+ * Fetches and maps a resume the same way ResumeService/SanityResumeRepository
+ * do (see lib/resume/service.ts), but via the plain `sanity/lib/client`
+ * instead of `sanityFetch` (lib/resume/repository.ts's usual fetcher,
+ * from sanity/lib/live.ts). `defineLive`'s live/draft-mode-aware fetch
+ * only works inside Next's own React Server Component graph — it checks
+ * for Node's "react-server" export condition, which is never set when
+ * this script runs standalone via tsx, and throws
+ * ("defineLive can't be imported by a client component") if used here.
+ * The plain client has no such restriction and is already used the same
+ * way in other build/generateStaticParams-time code (see
+ * app/[lang]/projects/[slug]/page.tsx). `stega: false` for the same
+ * reason repository.ts sets it: stega-encoded characters must never end
+ * up in the PDF's text layer.
+ */
+async function fetchResumeForBuild(slug: string): Promise<ResumeModel> {
+  const doc = await client.fetch<ResumeQueryResult | null>(
+    RESUME_BY_SLUG_QUERY,
+    { slug },
+    { perspective: "published", stega: false }
+  );
+  if (!doc) {
+    throw new Error(`Resume not found for slug "${slug}"`);
+  }
+  return ResumeMapper.toResumeModel(doc);
+}
+
+/**
  * Pre-generates the resume PDF for every supported language × theme
  * combination and writes them into OUT_DIR, since the Cloudflare deploy
  * has no server to run the live `/api/resume/pdf` route on. Reuses the
- * exact same pipeline that route uses (service → renderer → generator →
- * compressor) so there's one source of truth for how a resume PDF is
- * built — this just calls it 12 times at build time instead of once per
- * request.
+ * same renderer → generator → compressor pipeline that route uses (see
+ * fetchResumeForBuild's doc comment for why fetching itself can't reuse
+ * ResumeService) — this just calls it 12 times at build time instead of
+ * once per request.
  *
  * The resume document itself only needs fetching once (it's the same
- * language-agnostic ResumeModel for every lang/theme combo — see
- * ResumeService), so it's hoisted out of the loop.
+ * language-agnostic ResumeModel for every lang/theme combo), so it's
+ * hoisted out of the loop.
  *
  * Naming (`<slug>-<lang>-<theme>.pdf`, under /resume/) is what
  * DownloadResumeButton's NEXT_PUBLIC_DEPLOY_TARGET=cloudflare branch
@@ -261,7 +302,7 @@ async function generateResumePdfs(): Promise<void> {
     `\nGenerating ${SUPPORTED_LANGUAGES.length * RESUME_THEMES.length} resume PDF(s) for slug "${slug}"...`
   );
 
-  const resume = await getResumeService().getResume(slug);
+  const resume = await fetchResumeForBuild(slug);
   const generator = getPdfGenerator();
   const compressor = getPdfCompressor();
 

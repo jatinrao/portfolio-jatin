@@ -85,12 +85,6 @@
   width: max-content;
   flex-wrap: nowrap;
   will-change: transform;
-  /* applySkillRiverProgress (lib/skill-room-filters.ts) now quantizes
-     progress to one discrete position per skill, so the track only gets a
-     handful of new transform values instead of one every scroll pixel —
-     this eases between them so scrolling reads as "advance one card" (a
-     snap) rather than a smooth pan. */
-  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .skill-poster {
@@ -329,7 +323,6 @@
 @media (prefers-reduced-motion: reduce) {
   .skill-river-track {
     will-change: auto;
-    transition: none;
   }
 
   .skill-poster,

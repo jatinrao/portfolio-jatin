@@ -35,7 +35,7 @@ export function useTimelineScrollContext() {
  * this reads only changes across responsive breakpoints, not per-frame, so
  * it's safe to compute once and only invalidate on resize.
  */
-let boundsCache = new WeakMap<HTMLElement, { start: number; max: number }>();
+let boundsCache = new WeakMap<HTMLElement, { start: number; max: number; paddingLeft: number; scrollWidth: number }>();
 
 export function getTimelineScrollBounds(el: HTMLElement) {
   const cached = boundsCache.get(el);
@@ -44,7 +44,16 @@ export function getTimelineScrollBounds(el: HTMLElement) {
   const paddingLeft = inner ? parseFloat(getComputedStyle(inner).paddingLeft) || 0 : 0;
   const start = Math.max(0, paddingLeft - 20);
   const max = Math.max(start, el.scrollWidth - el.clientWidth);
-  const bounds = { start, max };
+  // paddingLeft/scrollWidth exposed for TimelineGlassSlider: its track div
+  // is `inset-inline: 0` inside the node-marker row, but that row is a
+  // `flex-nowrap` container whose *own* box stays at its CSS-computed
+  // width even though its shrink-0 columns overflow it (that's how the
+  // horizontal-scroll gallery works at all) — so the row's rendered width
+  // is not the true scrollable extent. Deriving the knob's position from
+  // `el.scrollWidth` (this scroller's real, browser-measured overflow)
+  // instead of the track's own box is what keeps the knob from scrolling
+  // off past whatever point the row's box happens to end.
+  const bounds = { start, max, paddingLeft, scrollWidth: el.scrollWidth };
   boundsCache.set(el, bounds);
   return bounds;
 }

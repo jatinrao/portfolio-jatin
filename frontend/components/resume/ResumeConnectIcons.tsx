@@ -69,6 +69,17 @@ function findChannelUrl(channels: any[] | undefined, locale: LangId, label: stri
   return channels?.find((channel) => localize(channel.label, locale)?.toLowerCase() === label.toLowerCase())?.url;
 }
 
+/**
+ * Plain email address for display as visible text — a `mailto:` href
+ * alone (as on the Mail icon below) isn't part of a PDF's extractable
+ * text layer, so a plain-text ATS parser sees no email address anywhere
+ * in the document without this.
+ */
+export function getEmailAddress(channels: any[] | undefined, locale: LangId): string | undefined {
+  const mailUrl = findChannelUrl(channels, locale, 'Mail');
+  return mailUrl?.replace(/^mailto:/, '');
+}
+
 interface ConnectIconProps {
   href: string;
   label: string;

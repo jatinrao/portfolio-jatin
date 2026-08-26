@@ -438,11 +438,19 @@ ${DARK_TOKENS}
     white-space: nowrap;
   }
 
-  /* Skills rail: fixed three-up grid of icon-over-label chiclets. */
+  /* Skills rail: fixed three-up grid of icon-over-label chiclets. Now a
+     real ul/li (Check 2 — skills read as a list to a parser, not a row of
+     anonymous spans), so the UA's default list box/marker/indent needs
+     resetting; the grid layout itself is unaffected since setting
+     display:grid on the ul overrides its default list-item display
+     entirely. */
   .resume-chiclet-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 4.5pt;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
   .resume-chiclet {

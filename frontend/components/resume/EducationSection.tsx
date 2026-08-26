@@ -14,14 +14,13 @@ function EducationEntry({ entry, lang }: EducationEntryProps) {
   const degree       = localize(entry.degree, lang) || ''
   const fieldOfStudy = localize(entry.fieldOfStudy, lang)
   const institutionName = localize(entry.institution,lang);
-  console.log('Education debug',entry);
 
   return (
     <article className="resume-surface resume-role">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '6pt' }}>
-        <span style={{ fontSize: '10pt', fontWeight: 600, color: 'var(--r-text-primary)' }}>
+        <h3 style={{ margin: 0, fontSize: '10pt', fontWeight: 600, color: 'var(--r-text-primary)' }}>
           {institutionName}
-        </span>
+        </h3>
         <span style={{ fontSize: '8pt', color: 'var(--r-text-tertiary)', whiteSpace: 'nowrap' }}>
           {formatDateRange(entry.startDate, entry.endDate, lang)}
         </span>

@@ -30,3 +30,14 @@ export const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2025-09
  * Used to configure edit intent links, for Presentation Mode, as well as to configure where the Studio is mounted in the router.
  */
 export const studioUrl = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'http://localhost:3333'
+
+/**
+ * Stega-encodes query results with hidden Sanity metadata so the
+ * Presentation Tool's overlay can click-to-select content. Defaults to on
+ * in development and off in production; set NEXT_PUBLIC_SANITY_STEGA_ENABLED
+ * explicitly ("true"/"false") to override either default.
+ */
+export const stegaEnabled =
+  process.env.NEXT_PUBLIC_SANITY_STEGA_ENABLED === undefined
+    ? process.env.NODE_ENV !== 'production'
+    : process.env.NEXT_PUBLIC_SANITY_STEGA_ENABLED === 'true'

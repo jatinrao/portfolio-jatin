@@ -211,6 +211,13 @@ export const person = defineType({
     defineField({ name: 'phone', title: 'Phone', type: 'string', group: 'contact' }),
     defineField({ name: 'location', title: 'Location', type: 'localeString', group: 'contact' }),
     defineField({ name: 'skills', title: 'Skills', type: 'array', of: [{ type: 'reference', to: [{ type: 'skill' }] }] }),
+    defineField({
+      name: 'projects',
+      title: 'Projects',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'project' }] }],
+      description: 'Drag to reorder. Controls project order on the portfolio and resume.',
+    }),
     defineField({ name: 'socialProfiles', title: 'Social profiles', type: 'array', of: [{ type: 'socialProfile' }] }),
 
     defineField({

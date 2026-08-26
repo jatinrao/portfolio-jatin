@@ -80,13 +80,13 @@ function RoomCopy({ room, isMobile }: { room: RoomDef; isMobile: boolean }) {
   // (passed down from RoomsSection's own already-corrected value, not a
   // second independent useIsMobile() instance in here) is the actual gate.
   const { activeKind } = useRoomPlayback();
-  const showIcon = !isMobile && activeKind === room.kind && !prefersReducedMotion();
+  // const showIcon = activeKind === room.kind && !prefersReducedMotion();
 
   return (
     <div className="rooms-copy">
       <div className="rooms-copy-inner">
         <div className="rooms-copy-eyebrow" data-kind={room.kind} aria-hidden="true">
-          {showIcon && (
+          {true && (
             <div className="rooms-copy-eyebrow-icon">
               {room.kind === 'skills' && <RoomIconSkills />}
               {room.kind === 'experience' && <RoomIconExperience />}

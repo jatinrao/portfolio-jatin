@@ -42,7 +42,7 @@ export function ProjectMiniCard({ project, locale }: ProjectMiniCardProps) {
 >
   {/* Row 1: title */}
   <div style={{ display: 'flex', }}>
-    <p
+    <h3
       style={{
         overflow: 'hidden',
         textOverflow: 'ellipsis',
@@ -54,7 +54,7 @@ export function ProjectMiniCard({ project, locale }: ProjectMiniCardProps) {
       }}
     >
       {title}
-    </p>
+    </h3>
   </div>
 
   {/* Row 2: image + description */}

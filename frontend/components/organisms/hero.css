@@ -137,6 +137,14 @@
   z-index: -1;
   width: 157%;
   height: 22%;
+  /* This box's ratio is decoupled from the PNG's own 1192×108 (~11:1)
+     ratio on purpose — width/height each track the TV frame independently
+     (see use-hero-scale.ts's introGap comment, which depends on height
+     being exactly 22% of frameH). Without object-fit, the browser
+     stretches the source pixels non-uniformly to fill that mismatched
+     box (Lighthouse's "incorrect aspect ratio" flag); `cover` keeps the
+     glow's own proportions intact and crops instead of squashing it. */
+  object-fit: cover;
   pointer-events: none;
    animation: fadeIn linear both;
   animation-timeline: view();
@@ -438,7 +446,9 @@
 }
 
 .hero-cta {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
   padding: 0;
   border: 0;
   background: none;
@@ -628,46 +638,6 @@
   background: var(--color-primary);
   color: var(--color-on-primary);
   font-size: var(--text-label-xs);
-}
-
-@container (max-width: 430px) {
-  .hero-inner {
-    gap: 1.25rem;
-    padding: 4.5rem 1.35rem 2.5rem;
-  }
-
-
-  .hero-copy {
-    gap: 1rem;
-  }
-
-  .hero-name {
-    font-size: 36px;
-    line-height: 1.08;
-  }
-
-  .hero-headline {
-    font-size: 21px;
-    line-height: 1.19;
-  }
-
-  .hero-bio {
-    font-size: 15px;
-    line-height: 1.27;
-  }
-
-  .hero-cta {
-    font-size: 15px;
-  }
-
-  .hero-stat-value {
-    font-size: 17px;
-  }
-
-  .hero-portrait-photo {
-    width: 148px;
-    height: 176px;
-  }
 }
 
 @container (min-width: 640px) {
@@ -880,10 +850,85 @@
   }
 
   .hero-intro {
+    /* --hero-intro-gap (see use-hero-scale.ts) pulls this up to sit flush
+       with the glow image's top, sized for the desktop-proportion settled
+       frame. On phones the settled frame is much shorter (16:9 of a ~86%-
+       viewport-width screen), so the same gap leaves only a few px between
+       the frame's bottom edge and this section — the +107px restores a real
+       gap on mobile without touching the desktop/tablet calc. */
+    margin-top: calc(-1 * var(--hero-intro-gap, 0px) + 107px);
     padding: 20px var(--hero-gutter, 22px) 100px;
   }
 
   .hero-repo-intro {
     margin-top: 28px;
+  }
+}
+
+/* .hero-scale's min-height:540px (above) is a floor for the *settled*
+   (scrolled/zoomed) TV-frame size on desktop — on phones the settled frame
+   is already far smaller than that (screenW = sw * 0.86, screenH =
+   screenW * 9/16), so the 540px floor only ever fires on the *initial*
+   unscrolled frame, forcing it taller than the viewport on short phones
+   (< ~592px tall) and pushing the bezel border above the header. */
+@media (max-width: 430px) {
+  .hero-scale {
+    min-height: 0;
+  }
+}
+
+/* Placed after the @media(max-width:1068px)/(max-width:734px) blocks
+   above (rather than up near .hero-portrait etc.) so these mobile-phone
+   overrides win the cascade at equal specificity — @container and @media
+   don't participate in the same specificity bucket as each other, so
+   source order is what decides ties, and this block needs to be last. */
+@container (max-width: 430px) {
+  .hero-inner {
+    /* `safe center` matches desktop's centered composition (.hero-layout's
+       own align-items:center) while never clipping: on a viewport tall
+       enough for the content it centers exactly like desktop; the `safe`
+       keyword only kicks in on very short phones, where a plain `center`
+       would push the greeting/name above the header — there it falls back
+       to start-aligned instead of clipping. Plain `flex-start` used to be
+       here so *every* phone got the start-aligned fallback, which is what
+       left a large dead gap under the portrait on any phone taller than
+       the content actually needs. */
+    align-self: safe center;
+    gap: 1rem;
+    /* Was 4.5rem — sized for the desktop-scale hero, not mobile; it read
+       as a big empty gap under the header before any content appeared. */
+    padding: 2.5rem 1.35rem 2.5rem;
+  }
+
+  .hero-copy {
+    gap: 0.85rem;
+  }
+
+  .hero-name {
+    font-size: 36px;
+    line-height: 1.08;
+  }
+
+  .hero-headline {
+    font-size: 21px;
+    line-height: 1.19;
+  }
+
+  .hero-bio {
+    font-size: 15px;
+    line-height: 1.27;
+  }
+
+  .hero-cta {
+    font-size: 15px;
+  }
+
+  .hero-stat-value {
+    font-size: 17px;
+  }
+
+  .hero-portrait-photo {
+    width: 124px;
+    height: 144px;
   }
 }

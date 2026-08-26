@@ -113,9 +113,9 @@ export async function fetchHeroData(slug: string): Promise<any> {
       alt,
       caption,
       credit
-    }  
+    }
     }`)
-  return await sanityFetch({query: heroQuery});
+  return await sanityFetch({query: heroQuery, stega: false});
 }
 export async function fetchPortfolioData(slug: string): Promise<any> {
   const heroQuery = defineQuery(`*[_type == "person" && slug.current == "${slug}"][0]{
@@ -284,7 +284,7 @@ export async function fetchPortfolioData(slug: string): Promise<any> {
   "anchorId": sectionId.current,
   "label": navLabel
   },
-  "projects": *[_type == "project" ]{
+  "projects": projects[]->{
     title,
      slug,
   description,
@@ -349,7 +349,7 @@ export async function fetchPortfolioData(slug: string): Promise<any> {
 }
 
   }`)
-  return await sanityFetch({query: heroQuery});
+  return await sanityFetch({query: heroQuery, stega: false});
 }
 
 export const SKILLS_QUERY = defineQuery(`*[_type == "skill"] | order(category asc, name.en asc){

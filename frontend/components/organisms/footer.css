@@ -43,6 +43,9 @@
 }
 
 .site-footer-crumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
   color: var(--footer-link);
   text-decoration: none;
 }
@@ -77,8 +80,11 @@
 }
 
 .site-footer-list a {
-  display: inline-block;
-  padding: 4px 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 6px;
+  margin: 0 -6px;
   color: var(--footer-link);
   text-decoration: none;
 }
@@ -96,11 +102,8 @@
 
 .site-footer-shop a {
   color: var(--footer-cta);
-  text-decoration: none;
-}
-
-.site-footer-shop a:hover {
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .site-footer-end {

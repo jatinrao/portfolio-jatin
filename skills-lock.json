@@ -13,11 +13,29 @@
       "skillPath": "plugins/design-assets/skills/image-processing/SKILL.md",
       "computedHash": "249258ab63a60f89411f6e2d60da45ecf1675022e4f6f565d0efeea6b978d2b0"
     },
+    "motion-framer": {
+      "source": "freshtechbro/claudedesignskills",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/motion-framer/SKILL.md",
+      "computedHash": "16d7c6f24f1d1208500635331e0cf6e06555a44df461e6b1069e4ddb203fd737"
+    },
     "react-patterns": {
       "source": "jezweb/claude-skills",
       "sourceType": "github",
       "skillPath": "plugins/frontend/skills/react-patterns/SKILL.md",
       "computedHash": "28c2718c8b74b38c21fc03a83cb6c2a4efee86c92cf5b2d1e0e42cdf1674eeed"
+    },
+    "react-spring-physics": {
+      "source": "freshtechbro/claudedesignskills",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/react-spring-physics/SKILL.md",
+      "computedHash": "df2dd730f887868d8586ce94b503ef10cf1a4538651705ecd23be878017ca5de"
+    },
+    "react-three-fiber": {
+      "source": "freshtechbro/claudedesignskills",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/react-three-fiber/SKILL.md",
+      "computedHash": "d672dfba48620140185d451bc9b6841833eed4306277776efab2e2a82c7b8fbf"
     },
     "responsiveness-check": {
       "source": "jezweb/claude-skills",
@@ -30,6 +48,12 @@
       "sourceType": "github",
       "skillPath": "skills/sanity-live-cache-components/SKILL.md",
       "computedHash": "354498f97fd57877d48f4cfe6e8838de610995a6d53bef0cee3fe5b5ef9fad7e"
+    },
+    "web3d-integration-patterns": {
+      "source": "freshtechbro/claudedesignskills",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/web3d-integration-patterns/SKILL.md",
+      "computedHash": "e411bbc6e7f7f928b6fd2f209530446cf74dfa1ff9cfd6adb17ba37317d89e9a"
     }
   }
 }

@@ -42,7 +42,7 @@ export function HeroFeatureGroup({ features, intro, linkUrl, linkLabel }: HeroFe
         ))}
       </ul>
       {intro && <p className="hero-repo-intro">{intro}</p>}
-      {linkUrl && (
+      {/* {linkUrl && (
         <Link
           href={linkUrl}
           className="hero-more"
@@ -51,7 +51,7 @@ export function HeroFeatureGroup({ features, intro, linkUrl, linkLabel }: HeroFe
         >
           <span className="hero-link-copy">{linkLabel || 'Learn more'}</span>
         </Link>
-      )}
+      )} */}
     </div>
   )
 }

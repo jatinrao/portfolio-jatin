@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useDisclosure } from '@/hooks/use-disclousre';
-import { GlassButton } from '@/components/atoms/GlassButton';
 import { HamburgerIcon } from '@/components/atoms/HamburgerIcon';
 import Button from '@/components/atoms/Button';
 
@@ -95,16 +94,16 @@ export function MobileNavToggle({ navItems, activeHref, contactHref }: MobileNav
 
   return (
     <div className="md:hidden">
-      <GlassButton
+      <button
+        type="button"
         onClick={toggle}
         aria-expanded={isOpen}
         aria-controls="mobile-nav-menu"
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
-        rimHighlight={false}
-        className="hig-circle-button relative z-[110] h-9 w-9 min-h-9 min-w-9 p-0"
+        className="relative z-[110] flex h-9 w-9 min-h-9 min-w-9 items-center justify-center p-0"
       >
         <HamburgerIcon isOpen={isOpen} />
-      </GlassButton>
+      </button>
 
       {/* Portalled to body — header's own backdrop-filter makes it a
           containing/stacking context for fixed descendants, which would

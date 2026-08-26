@@ -50,12 +50,19 @@ export function useHeroScale() {
   const trackRef = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
 
   const rawZ = useMotionValue(0);
-  // Damping is kept high enough that this settles without visibly
-  // overshooting — see the clamp in the write effect below for why an
-  // actual overshoot can't be allowed to reach the DOM (it'd feed
+  // Higher tension than a plain scroll-linked value: stiffness (and
+  // damping raised to match, same ~1.65 damping ratio as before) pulls
+  // harder toward whatever `rawZ` scroll sets as the target, so the
+  // rubber-band lag/give is tighter and resolves faster — but it's still
+  // comfortably overdamped, so it never overshoots past its target on the
+  // way there. That matters because the two rest positions this is
+  // supposed to snap to cleanly are 0 (first render — the untouched hero,
+  // before any scroll) and 1 (the settled TV frame with .hero-intro
+  // visible) — see the clamp in the write effect below for why an actual
+  // overshoot past those can't be allowed to reach the DOM (it'd feed
   // straight into --hero-frame-w/h and can briefly explode the frame to
   // an invalid size, corrupting layout/paint until it settles back).
-  const z = useSpring(rawZ, { stiffness: 300, damping: 40, mass: 0.5 });
+  const z = useSpring(rawZ, { stiffness: 450, damping: 50, mass: 0.5 });
 
   const stageW = useMotionValue(0);
   const stageH = useMotionValue(0);
@@ -92,12 +99,29 @@ export function useHeroScale() {
     measureScroll();
     const observer = new ResizeObserver(measureStage);
     observer.observe(stageTarget);
-    window.addEventListener('scroll', measureScroll, { passive: true });
-    window.addEventListener('resize', measureScroll);
+
+    // rAF-throttled, matching use-room-wipe.ts's scroll handler: without
+    // this, `measureScroll` ran on every raw `scroll` event (many per
+    // frame under fast/trackpad scrolling), each one reading
+    // getBoundingClientRect() and then synchronously writing through
+    // `.set()` into the `write()` effect below (~10 style.setProperty
+    // calls) — a read-after-write forced the browser to flush layout on
+    // the next event's read instead of batching once per frame.
+    let raf = 0;
+    const onScrollOrResize = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        measureScroll();
+      });
+    };
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize);
     return () => {
+      window.cancelAnimationFrame(raf);
       observer.disconnect();
-      window.removeEventListener('scroll', measureScroll);
-      window.removeEventListener('resize', measureScroll);
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
     };
   }, [rawZ, stageW, stageH, shineFalloff]);
 

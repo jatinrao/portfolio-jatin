@@ -1,9 +1,8 @@
 'use client';
 
 import { useLayoutEffect, useState, type RefObject } from 'react';
-import { applySkillRiverProgress, quantizeProgress } from '@/lib/skill-room-filters';
+import { applySkillRiverProgress, invalidateSkillRiverTrackMetrics } from '@/lib/skill-room-filters';
 import { getTimelineScrollBounds } from '@/context/timeline-scroll-context';
-import { createScrollSettle } from '@/lib/scroll-settle';
 import type { RoomPlayback } from '@/context/room-playback-context';
 
 const ENABLE_SLIDE_OUT = true;
@@ -22,8 +21,14 @@ export function clipProgress(clipY: number, stackTop: number, stackHeight: numbe
   return (stackBottom - clipY) / stackHeight;
 }
 
+/**
+ * Takes already-read `offsetHeight`/rect-top values rather than the
+ * element itself — see the read-phase comment in `apply()` below for why
+ * this can't read the DOM itself anymore.
+ */
 function settledInnerProgress(
-  roomEl: HTMLElement,
+  roomOffsetHeight: number,
+  roomTop: number,
   enter: number,
   exit: number,
   stackTop: number,
@@ -31,8 +36,8 @@ function settledInnerProgress(
 ) {
   if (enter < 1) return 0;
   if (exit > 0) return 1;
-  const travel = Math.max(1, roomEl.offsetHeight - stackHeight);
-  return Math.min(1, Math.max(0, (stackTop - roomEl.getBoundingClientRect().top) / travel));
+  const travel = Math.max(1, roomOffsetHeight - stackHeight);
+  return Math.min(1, Math.max(0, (stackTop - roomTop) / travel));
 }
 
 function smoothstep(t: number) {
@@ -96,31 +101,20 @@ export function useRoomWipe(
     const last = layers.length - 1;
     let raf = 0;
 
-    // Skills pans continuously (instantly, 1:1 with scroll) every frame
-    // below — smooth by construction, never a visible step. Once scrolling
-    // pauses for a beat, this idle "settle" callback nudges the nearest
-    // skill into a clean, centered rest position instead — a soft
-    // correction, not a ratchet. Reads the latest captured element/
-    // progress at the time it actually fires (140ms after the last scroll
-    // frame), not at schedule time.
-    //
-    // Experience deliberately does NOT get this treatment: it had it
-    // (quantized settle-to-card-center), but that fought the glass slider's
-    // own drag — a pending settle timer from the last window-scroll frame
-    // would fire mid-drag and yank scrollLeft out from under the user's
-    // pointer. Plain continuous scrollLeft, 1:1 with scroll, is what the
-    // timeline actually wants; TimelineGlassSlider.tsx's own rubber-band
-    // easing (not a hard settle-snap) handles landing cleanly at the ends.
-    let lastSkillsClip: HTMLElement | null = null;
-    let lastSkillsInner = 0;
-    const skillsSettle = createScrollSettle(() => {
-      if (lastSkillsClip) {
-        applySkillRiverProgress(lastSkillsClip, lastSkillsInner, { instant: reduced, quantize: true });
-      }
-    });
-
     const apply = () => {
+      // Read phase: capture every geometry read up front, before any
+      // style/scroll writes below. The original shape of this function
+      // interleaved a getBoundingClientRect()/offsetHeight read per room
+      // with style writes from the *previous* room in the same forEach
+      // pass — each subsequent read then forced the browser to
+      // synchronously flush the prior write's layout impact instead of
+      // batching it, once per room, every scroll frame. Reading
+      // everything first (this only needs one flush, for the very first
+      // read below) and writing everything after removes that thrashing.
       const stackBox = stack.getBoundingClientRect();
+      const roomTops = roomEls.map((el) => el.getBoundingClientRect().top);
+      const roomOffsetHeights = roomEls.map((el) => el.offsetHeight);
+
       let nextActive = 0;
       let skillsProgress = 0;
       let experienceProgress = 0;
@@ -142,12 +136,12 @@ export function useRoomWipe(
         const enter =
           index === 0
             ? 1
-            : clipProgress(roomEl.getBoundingClientRect().top, stackBox.top, stackBox.height);
+            : clipProgress(roomTops[index], stackBox.top, stackBox.height);
 
         const nextRoom = roomEls[index + 1];
         const exit =
           index < last && nextRoom
-            ? clipProgress(nextRoom.getBoundingClientRect().top, stackBox.top, stackBox.height)
+            ? clipProgress(roomTops[index + 1], stackBox.top, stackBox.height)
             : 0;
 
         if (enter >= 0.5) nextActive = index;
@@ -156,7 +150,14 @@ export function useRoomWipe(
         const settled = enter >= 1 && exit <= 0;
         layer.style.pointerEvents = settled ? 'auto' : 'none';
 
-        const inner = settledInnerProgress(roomEl, enter, exit, stackBox.top, stackBox.height);
+        const inner = settledInnerProgress(
+          roomOffsetHeights[index],
+          roomTops[index],
+          enter,
+          exit,
+          stackBox.top,
+          stackBox.height,
+        );
         const kind = roomEl.dataset.roomKind;
         if (kind === 'projects') {
           projectsReveal = Math.min(1, Math.max(0, enter));
@@ -167,10 +168,7 @@ export function useRoomWipe(
           const lanes = layer.querySelector<HTMLElement>('.skill-river-lanes');
           const clip = lanes ?? layer.querySelector<HTMLElement>('.skill-river-overflow');
           if (clip) {
-            applySkillRiverProgress(clip, inner, { instant: true, quantize: false });
-            lastSkillsClip = clip;
-            lastSkillsInner = inner;
-            skillsSettle.notify();
+            applySkillRiverProgress(clip, inner);
           }
         }
         if (kind === 'experience') {
@@ -182,7 +180,6 @@ export function useRoomWipe(
             // — all three have to agree on what "all the way left" means.
             const { start, max } = getTimelineScrollBounds(scroller);
             const travel = Math.max(0, max - start);
-            // Continuous, immediate, 1:1 with scroll — no quantized settle.
             if (travel > 0) scroller.scrollLeft = start + inner * travel;
           }
         }
@@ -234,13 +231,16 @@ export function useRoomWipe(
         apply();
       });
     };
+    const onResize = () => {
+      invalidateSkillRiverTrackMetrics();
+      onScrollOrResize();
+    };
     window.addEventListener('scroll', onScrollOrResize, { passive: true });
-    window.addEventListener('resize', onScrollOrResize);
+    window.addEventListener('resize', onResize);
     return () => {
       window.cancelAnimationFrame(raf);
-      skillsSettle.cancel();
       window.removeEventListener('scroll', onScrollOrResize);
-      window.removeEventListener('resize', onScrollOrResize);
+      window.removeEventListener('resize', onResize);
     };
   }, [galleryRef, slideOutEnabled, resetKey]);
 

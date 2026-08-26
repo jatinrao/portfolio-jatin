@@ -20,6 +20,14 @@ export interface CoverCardProps {
   onClick: (index: number) => void;
   /** CMS-driven "Learn More" button text — falls back to the English default when unset. */
   learnMoreLabel?: string;
+  /**
+   * True only for the card rendered as the carousel's initial/active slide.
+   * `project.isFeatured` is a CMS content flag that can be true on several
+   * projects at once — using it here would mark every featured card's
+   * (offscreen) cover image `priority`, preloading images that compete
+   * with the actual hero LCP image for bandwidth on first load.
+   */
+  isInitial?: boolean;
 }
 
 const RESIZE_TRANSITION = { duration: 0.3, ease: "easeOut" } as const;
@@ -32,6 +40,7 @@ export function CoverCard({
   geometry,
   onClick,
   learnMoreLabel,
+  isInitial = false,
 }: CoverCardProps) {
   const { cardWidth, cardHeight, xOffsets, zDepths } = geometry;
 
@@ -47,6 +56,14 @@ export function CoverCard({
   const opacity = useTransform(absDistance, [0, 1, 2, 3], [1, 0.85, 0.4, 0], { clamp: true });
   const zIndex = useTransform(absDistance, (value) => Math.round(50 - value * 15));
   const pointerEvents = useTransform(absDistance, (value) => (value > 2.4 ? "none" : "auto"));
+  // The repo/live-project icon links are a fixed 32px box, but the 3D
+  // coverflow's own scale+rotateY+perspective (not just `distanceScale`
+  // above) shrinks off-center cards well below that — down to ~19px on
+  // mobile, under the 24px min tap-target size. Off-center cards are
+  // previews you bring to front by tapping the card itself (`onClick`
+  // below), not places to hit a micro icon, so only the near-active card
+  // exposes these as real tap targets.
+  const iconPointerEvents = useTransform(absDistance, (value) => (value < 0.5 ? "auto" : "none"));
   const filter = useTransform(absDistance, (value) =>
     value > 0.4 ? "grayscale(1) contrast(1.15)" : "grayscale(0) contrast(1)",
   );
@@ -91,36 +108,56 @@ export function CoverCard({
               fill
               sizes="(max-width: 560px) 210px, (max-width: 900px) 300px, 380px"
               className="object-cover"
-              priority={isFeatured}
+              priority={isInitial}
             />
           )}
 
-          <div className="absolute bottom-2 right-2 z-10 flex gap-2">
-            {project.repositoryUrl && (
-              <a
-                href={project.repositoryUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(event) => event.stopPropagation()}
-                aria-label={`View repository for ${title}`}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
-              >
-                <Icon name="github" size={16} />
-              </a>
-            )}
-            {project.projectUrl && (
-              <a
-                href={project.projectUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(event) => event.stopPropagation()}
-                aria-label={`View live project: ${title}`}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
-              >
-                <Icon name="open_in_new" size={16} />
-              </a>
-            )}
-          </div>
+          {/* Self-contained glass pill (not the shared LiquidGlass/GlassToolbar
+              atoms — scoped to this card only) keeps the repo/live-project
+              icons legible over any cover image, without a flat scrim
+              dimming the artwork underneath. */}
+          <motion.div
+            style={{ pointerEvents: iconPointerEvents }}
+            className="absolute bottom-2 right-2 z-10"
+          >
+            <div
+              role="toolbar"
+              aria-label={`Links for ${title}`}
+              className="flex items-center gap-0.5 rounded-full p-1"
+              style={{
+                background: "var(--glass-fill)",
+                border: "0.5px solid var(--glass-hairline)",
+                boxShadow: "var(--glass-shadow)",
+                backdropFilter: "blur(20px) saturate(1.8)",
+                WebkitBackdropFilter: "blur(20px) saturate(1.8)",
+              }}
+            >
+              {project.repositoryUrl && (
+                <a
+                  href={project.repositoryUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(event) => event.stopPropagation()}
+                  aria-label={`View repository for ${title}`}
+                  className="flex h-8 w-8 items-center justify-center text-primary transition-opacity hover:opacity-80"
+                >
+                  <Icon name="git" size={18} />
+                </a>
+              )}
+              {project.projectUrl && (
+                <a
+                  href={project.projectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(event) => event.stopPropagation()}
+                  aria-label={`View live project: ${title}`}
+                  className="flex h-8 w-8 items-center justify-center text-primary transition-opacity hover:opacity-80"
+                >
+                  <Icon name="open_in_new" size={18} />
+                </a>
+              )}
+            </div>
+          </motion.div>
         </motion.div>
         <div className="flex flex-1 flex-col justify-between p-4 md:p-6">
           <div>
@@ -156,9 +193,14 @@ export function CoverCard({
                 variant="primary"
                 href={`/${locale}/projects/${slug}`}
                 className="!mx-0 !my-0 self-start !translate-y-0"
-                aria-label={`${learnMoreLabel || "Learn More"} about ${title}`}
               >
                 {learnMoreLabel || "Learn More"}
+                {/* aria-label alone doesn't help here: search-engine crawlers
+                    and Lighthouse's "descriptive link text" SEO audit read
+                    the link's rendered text content, not its accessible
+                    name — so the project title has to be part of the DOM
+                    text too, just visually hidden. */}
+                <span className="sr-only"> about {title}</span>
               </Button>
             </div>
           )}

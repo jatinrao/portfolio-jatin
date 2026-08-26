@@ -4,85 +4,22 @@ import {Inter, IBM_Plex_Mono} from 'next/font/google'
 import {draftMode} from 'next/headers'
 import {VisualEditing} from 'next-sanity/visual-editing'
 import {Toaster} from 'sonner'
-import {sanityFetch, SanityLive} from '@/sanity/lib/live'
-import {METADATA_QUERY} from '@/sanity/lib/queries'
+import {SanityLive} from '@/sanity/lib/live'
 import {defaultLocale} from '@/i18n/config'
-import { isRtlLocale, localize } from '@/lib/locale'
+import { isRtlLocale } from '@/lib/locale'
 import GoogleAnalytics from '@/components/shared/GoogleAnalytics'
 import DraftModeToast from '@/components/sanity-cms/DraftModeToast'
 import {handleError} from '@/app/client-utils'
 
 /**
- * Generate metadata for the page.
- * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
- *
- * Not locale-aware yet: this lives on the true root layout (above
- * app/[lang]/**), so it has no `lang` param to key off of. If `settings`
- * ever becomes localized in Sanity, move this into app/[lang]/layout.tsx
- * (which does receive `params`) so it can fetch/return per-locale copy.
+ * Static fallback only. The true root layout sits above app/[lang]/**, so it
+ * never receives a `lang` param — the real, Sanity-driven, locale-aware SEO
+ * metadata lives in app/[lang]/layout.tsx, which does receive it. This just
+ * covers routes outside [lang] (the no-JS "/" redirect shell, /resume falls
+ * back to its own generateMetadata) so they're never left titleless.
  */
-export async function generateMetadata({params}:any): Promise<Metadata> {
-  const { lang, slug } = params;
-  
-  const res = await sanityFetch({
-    query: METADATA_QUERY,
-    // Metadata should never contain stega
-    stega: false,
-  })
-  const seo = res.data?.seo
-  if (!seo) {
-    return {
-      title: "Jatin Kumar | Software Engineer",
-      
-    };
-  }
-
-  const title = localize(seo.metaTitle,lang) ?? "Jatin Kumar | Software Engineer";
-  const description = localize(seo.metaDescription,lang) ?? "Desc";
-  const ogImageUrl = seo.ogImage?.asset?.url;
-  const twitterImageUrl = seo.twitterImage?.asset?.url ?? ogImageUrl;
-
-  return {
-    title,
-    description,
-    keywords: seo.keywords ?? undefined,
-    robots: {
-      index: !seo.noIndex,
-      follow: !seo.noFollow,
-    },
-    openGraph: {
-      title: seo.ogTitle?.en ?? title,
-      description: seo.ogDescription?.en ?? description,
-      siteName: seo.ogSiteName ?? "Jatin Kumar — Portfolio",
-      type: (seo.ogType as "website" | "profile" | "article") ?? "website",
-      images: ogImageUrl
-        ? [
-            {
-              url: ogImageUrl,
-              width: seo.ogImage?.asset?.metadata?.dimensions?.width ?? 1200,
-              height: seo.ogImage?.asset?.metadata?.dimensions?.height ?? 630,
-              alt: seo.ogImage?.alt?.en ?? title,
-            },
-          ]
-        : undefined,
-    },
-    twitter: {
-      card: (seo.twitterCard as "summary" | "summary_large_image") ?? "summary_large_image",
-      title: seo.twitterTitle?.en ?? title,
-      description: seo.twitterDescription?.en ?? description,
-      images: twitterImageUrl ? [twitterImageUrl] : undefined,
-    },
-    // alternates: {
-    //   canonical: `https://jatin.getresume.dev/${lang}/${slug}`,
-    //   languages: {
-    //     "en": `https://jatin.getresume.dev/en/${slug}`,
-    //     "en-US": `https://jatin.getresume.dev/en/${slug}`,
-    //     "es": `https://jatin.getresume.dev/es/${slug}`,
-    //     "fr": `https://jatin.getresume.dev/fr/${slug}`,
-    //     "x-default": `https://jatin.getresume.dev/en/${slug}`, // fallback for unmatched locales
-    //   },
-    // },
-  };
+export const metadata: Metadata = {
+  title: "Jatin Kumar | Software Engineer",
 }
 
 const inter = Inter({
@@ -99,7 +36,16 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 
  export default async function RootLayout({children}: LayoutProps<'/'>) {
-  const isDraftMode = (await draftMode()).isEnabled
+  // The Cloudflare static export has no server: Sanity Live's connection
+  // and Presentation/Visual Editing both need one (draft-mode cookies,
+  // a live subscription endpoint, the Presentation Tool iframing this
+  // site), and there's nowhere for `SanityLive` to connect to on that
+  // deploy — that's the "Sanity Live couldn't connect / CORS policy"
+  // toast users see there. Same NEXT_PUBLIC_DEPLOY_TARGET flag
+  // DownloadResumeButton already branches on (see package.json's
+  // build:cf-static script).
+  const isCloudflareStatic = process.env.NEXT_PUBLIC_DEPLOY_TARGET === 'cloudflare'
+  const isDraftMode = !isCloudflareStatic && (await draftMode()).isEnabled
 
   return (
     // `lang` is kept at the build-time default here on purpose — this
@@ -127,8 +73,10 @@ const ibmPlexMono = IBM_Plex_Mono({
           <main className="">{children}</main>
         </section>
         <GoogleAnalytics/>
-        {/* Makes all sanityFetch calls in the app live — always rendered */}
-        <SanityLive onError={handleError} />
+        {/* Makes all sanityFetch calls in the app live — always rendered,
+            except on the Cloudflare static export, which has no server
+            for it to connect to. */}
+        {!isCloudflareStatic && <SanityLive onError={handleError} />}
       </body>
     </html>
   )

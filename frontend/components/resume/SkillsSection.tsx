@@ -200,16 +200,16 @@ export function SkillsSection({ skills, locale, categoryLabels }: SkillsSectionP
       <div style={CATEGORY_LABEL_STYLE}>
         {group.label}
       </div>
-      <div className="resume-chiclet-grid">
+      <ul className="resume-chiclet-grid">
         {group.skills.map((skill, i) => (
-          <span key={skill._id ?? 'key' + i} className="resume-chiclet">
+          <li key={skill._id ?? 'key' + i} className="resume-chiclet">
             <span style={GLYPH_WRAPPER_STYLE}>
               <SkillGlyph skill={skill} />
             </span>
             <span>{localize(skill.name, locale)}</span>
-          </span>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   ))}
 
@@ -218,16 +218,16 @@ export function SkillsSection({ skills, locale, categoryLabels }: SkillsSectionP
       <div style={CATEGORY_LABEL_STYLE}>
         Other
       </div>
-      <div className="resume-chiclet-grid">
+      <ul className="resume-chiclet-grid">
         {uncategorized.map((skill, i) => (
-          <span key={skill._id ?? 'key' + i} className="resume-chiclet">
+          <li key={skill._id ?? 'key' + i} className="resume-chiclet">
             <span style={GLYPH_WRAPPER_STYLE}>
               <SkillGlyph skill={skill} />
             </span>
             <span>{localize(skill.name, locale)}</span>
-          </span>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   )}
 </section>

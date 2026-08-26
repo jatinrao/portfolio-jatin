@@ -52,9 +52,9 @@ function ExperienceEntry({ entry, lang }: ExperienceEntryProps) {
   return (
     <article className="resume-surface resume-role">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '6pt', flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '11pt', fontWeight: 600, lineHeight: 1.3, color: 'var(--r-text-primary)' }}>
+        <h3 style={{ margin: 0, fontSize: '11pt', fontWeight: 600, lineHeight: 1.3, color: 'var(--r-text-primary)' }}>
           {role}
-        </span>
+        </h3>
         <span style={{ fontSize: '8pt', color: 'var(--r-text-tertiary)', whiteSpace: 'nowrap' }}>
           {formatDateRange(entry.startDate, entry.endDate, lang)}
         </span>

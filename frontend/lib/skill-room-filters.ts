@@ -78,75 +78,56 @@ function wrapOffset(distance: number, loopWidth: number) {
 }
 
 /**
- * Snaps a continuous 0-1 scroll progress to the nearest of `steps` discrete
- * positions — the shared primitive behind "scroll advances one card at a
- * time" for both the skill river and the experience timeline, on desktop's
- * scroll-jack and mobile's native scroll alike.
+ * `applySkillRiverProgress` (below) calls this twice per track on every
+ * single scroll/resize frame while the skills room is active — each call
+ * reads `track.scrollWidth`, a layout-dependent property that forces the
+ * browser to flush any pending layout before returning it. That's a
+ * synchronous reflow risked every frame for a value that only actually
+ * changes on resize or when the skill list itself changes, neither of
+ * which happens mid-scroll. Cached the same way
+ * context/timeline-scroll-context.tsx caches its own scroll bounds:
+ * WeakMap keyed by element, invalidated explicitly by callers on resize.
  */
-export function quantizeProgress(progress: number, steps: number): number {
-  if (steps <= 1) return 0;
-  const clamped = Math.min(1, Math.max(0, progress));
-  return Math.round(clamped * (steps - 1)) / (steps - 1);
+let trackMetricsCache = new WeakMap<HTMLElement, { uniqueWidth: number; loopWidth: number }>();
+
+/** Called by consumers' own resize listeners — mirrors invalidateTimelineScrollBounds. */
+export function invalidateSkillRiverTrackMetrics() {
+  trackMetricsCache = new WeakMap();
 }
 
 /** Pixel span of one unique pass vs one looping unit, from a duplicated track. */
 export function skillRiverTrackMetrics(track: HTMLElement) {
+  const cached = trackMetricsCache.get(track);
+  if (cached) return cached;
   const childCount = track.childElementCount;
   const uniqueCount = Math.max(0, Number(track.dataset.uniqueCount) || 0);
   const loopItems = Math.max(1, Number(track.dataset.loopItems) || Math.floor(childCount / SKILL_RIVER_COPIES) || 1);
   const uniqueWidth = childCount > 0 ? track.scrollWidth * (uniqueCount / childCount) : 0;
   const loopWidth = childCount > 0 ? track.scrollWidth * (loopItems / childCount) : track.scrollWidth / SKILL_RIVER_COPIES;
-  return { uniqueWidth, loopWidth };
-}
-
-export interface SkillRiverProgressOptions {
-  /**
-   * `true` (default): write the transform with no CSS transition, for
-   * per-scroll-frame updates — the pan has to track the finger/wheel 1:1
-   * with zero lag, or it reads as laggy rather than smooth. `false`: leave
-   * the transition running (skill-river.css's `.skill-river-track` has a
-   * standing 380ms ease) so a `quantize: true` settle call glides into
-   * place instead of jumping.
-   */
-  instant?: boolean;
-  /**
-   * `false` (default): use `progress` as-is, for continuous scroll-linked
-   * panning. `true`: snap to the nearest one-step-per-skill position —
-   * used only by the idle "settle" callback (lib/scroll-settle.ts) once
-   * scrolling has stopped, so cards land centered without the pan ever
-   * visibly stepping while the user is actually scrolling.
-   */
-  quantize?: boolean;
+  const metrics = { uniqueWidth, loopWidth };
+  trackMetricsCache.set(track, metrics);
+  return metrics;
 }
 
 /**
  * Drives every `.skill-river-track` under `clip` from a single 0-1 progress
  * value — shared by desktop's scroll-jack (use-room-wipe.ts) and mobile's
  * natural-scroll-linked equivalent (use-skill-river-scroll.ts) so both
- * produce the exact same per-row pan (skillRiverLoopTranslateX).
+ * produce the exact same per-row pan (skillRiverLoopTranslateX). Always
+ * instant/1:1 with scroll — no snap-to-nearest-card settle once scrolling
+ * stops (that idle "rubber-band" correction was removed as an unnecessary
+ * cost: a 140ms debounce plus a 380ms eased transition running on every
+ * skills-room scroll stop, for a visual nicety nobody noticed).
  */
-export function applySkillRiverProgress(
-  clip: HTMLElement,
-  progress: number,
-  options?: SkillRiverProgressOptions,
-) {
-  const instant = options?.instant ?? true;
-  const quantize = options?.quantize ?? false;
+export function applySkillRiverProgress(clip: HTMLElement, progress: number) {
   const tracks = clip.querySelectorAll<HTMLElement>('.skill-river-track');
   let longestUnique = 0;
-  let longestUniqueCount = 0;
   tracks.forEach((track) => {
     longestUnique = Math.max(longestUnique, skillRiverTrackMetrics(track).uniqueWidth);
-    longestUniqueCount = Math.max(longestUniqueCount, Number(track.dataset.uniqueCount) || 0);
   });
-  const applied = quantize ? quantizeProgress(progress, Math.max(1, longestUniqueCount)) : progress;
   tracks.forEach((track, rowIndex) => {
     const { loopWidth } = skillRiverTrackMetrics(track);
-    const x = skillRiverLoopTranslateX(applied, rowIndex, loopWidth, longestUnique);
-    // Inline 'none' beats the CSS transition for continuous frames; an
-    // empty string clears the inline override so the CSS transition (only
-    // meant for the settle snap) takes over again.
-    track.style.transition = instant ? 'none' : '';
+    const x = skillRiverLoopTranslateX(progress, rowIndex, loopWidth, longestUnique);
     track.style.transform = `translate3d(${x}px, 0, 0)`;
   });
 }

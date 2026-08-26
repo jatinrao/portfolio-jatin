@@ -4,7 +4,6 @@ import { ResumeHeader } from '@/components/resume/ResumeHeader'
 import { SummarySection } from '@/components/resume/SummarySection'
 import { ExperienceSection } from '@/components/resume/ExperienceSection'
 import { EducationSection } from '@/components/resume/EducationSection'
-import { ProjectsSection } from '@/components/resume/ProjectsSection'
 import { SkillsSection } from '@/components/resume/SkillsSection'
 import { PRINT_STYLES } from '@/components/resume/print.styles'
 import { localize } from '@/lib/locale'
@@ -84,7 +83,7 @@ export function ResumeDocument({ resume, lang }: ResumeDocumentProps) {
             {/* Right column — Engineering Chronology. */}
             <section className="resume-main">
               <ExperienceSection entries={resume.experience} lang={lang} />
-              <EducationSection entries={resume.education} lang={lang} /> 
+              <EducationSection entries={resume.education} lang={lang} />
               <section>
                     <SectionHeading>Projects</SectionHeading>
                      {resume.projects?.slice(0, 3).map(project => (<ProjectMiniCard key={project._id} project={project} locale={lang}/>))}
@@ -119,7 +118,7 @@ export function ResumeDocument({ resume, lang }: ResumeDocumentProps) {
             color: 'var(--r-text-tertiary)',
           }}
         >
-          {'Generated on'} {new Date().getDate()}/{new Date().getMonth()}/{new Date().getFullYear()}  
+          {'Generated on'} {new Date().getDate()}/{new Date().getMonth() + 1}/{new Date().getFullYear()}
         </footer>
       </div>
     </div>

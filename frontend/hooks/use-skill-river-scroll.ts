@@ -1,8 +1,7 @@
 'use client';
 
 import { useLayoutEffect, type RefObject } from 'react';
-import { applySkillRiverProgress } from '@/lib/skill-room-filters';
-import { createScrollSettle } from '@/lib/scroll-settle';
+import { applySkillRiverProgress, invalidateSkillRiverTrackMetrics } from '@/lib/skill-room-filters';
 
 /**
  * Mobile counterpart to use-room-wipe's skill-river pan — same
@@ -24,13 +23,6 @@ export function useSkillRiverScroll(containerRef: RefObject<HTMLElement | null>)
     if (reduced) return;
 
     let raf = 0;
-    let lastProgress = 0;
-    // Continuous pan tracks scroll 1:1 (below); once scrolling pauses for a
-    // beat this nudges the nearest skill into a centered rest position —
-    // see the matching desktop logic in use-room-wipe.ts for why.
-    const settle = createScrollSettle(() => {
-      applySkillRiverProgress(container, lastProgress, { instant: false, quantize: true });
-    });
 
     const apply = () => {
       const rect = container.getBoundingClientRect();
@@ -42,9 +34,7 @@ export function useSkillRiverScroll(containerRef: RefObject<HTMLElement | null>)
         1,
         Math.max(0, (viewportHeight - rect.top) / (viewportHeight + rect.height)),
       );
-      lastProgress = progress;
-      applySkillRiverProgress(container, progress, { instant: true, quantize: false });
-      settle.notify();
+      applySkillRiverProgress(container, progress);
     };
 
     apply();
@@ -55,13 +45,16 @@ export function useSkillRiverScroll(containerRef: RefObject<HTMLElement | null>)
         apply();
       });
     };
+    const onResize = () => {
+      invalidateSkillRiverTrackMetrics();
+      onScrollOrResize();
+    };
     window.addEventListener('scroll', onScrollOrResize, { passive: true });
-    window.addEventListener('resize', onScrollOrResize);
+    window.addEventListener('resize', onResize);
     return () => {
       window.cancelAnimationFrame(raf);
-      settle.cancel();
       window.removeEventListener('scroll', onScrollOrResize);
-      window.removeEventListener('resize', onScrollOrResize);
+      window.removeEventListener('resize', onResize);
     };
   }, [containerRef]);
 }

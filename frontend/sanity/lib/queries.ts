@@ -281,7 +281,7 @@ slug,
     showInNav,
     navLabel
   },
-  "projects": *[_type == "project" ]{
+  "projects": projects[]->{
     title,
      slug,
   description,
@@ -493,6 +493,36 @@ export const METADATA_QUERY = defineQuery(`*[_type == "person"][0]{
       },
       noIndex,
       noFollow
+    },
+    name,
+    headline,
+    bio_short,
+    channels[],
+    avatar{
+      asset->{
+        url,
+        metadata{ dimensions }
+      },
+      alt
+    },
+    structuredData{
+      schemaType,
+      personJobTitle,
+      personDescription,
+      personSameAs,
+      personAlumniOf,
+      personWorksFor,
+      websiteName,
+      websiteUrl,
+      websiteDescription,
+      pageName,
+      pageUrl,
+      pageBreadcrumb[]{ name, url },
+      workName,
+      workDescription,
+      workUrl,
+      workDateCreated,
+      customJsonLd
     }
   }
 `)

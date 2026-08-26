@@ -2,7 +2,7 @@ import { localize } from '@/lib/locale'
 import type { ResumeModel } from '@/lib/resume/types'
 import type { SupportedLanguage } from '@/lib/resume/validation'
 import { SummarySection } from './SummarySection';
-import { ResumeConnectIcons, PORTFOLIO_URL } from './ResumeConnectIcons';
+import { ResumeConnectIcons, PORTFOLIO_URL, getEmailAddress } from './ResumeConnectIcons';
 import { sizedImageUrl } from '@/lib/resume/image';
 
 /** Matches .resume-name's sibling headshot size in print.styles.ts (75pt). */
@@ -41,6 +41,7 @@ export function ResumeHeader({ resume, lang }: ResumeHeaderProps) {
     ? localize(resume.resumeImage.alt, lang)
     : resume.resumeImage?.alt
   const resumeImageLqip = resume.resumeImage?.asset?.metadata?.lqip;
+  const email = getEmailAddress(resume.channels, lang);
   return (
     <header>
   {/* Layout lives in print.styles.ts's .resume-header-bar rather than
@@ -88,6 +89,16 @@ export function ResumeHeader({ resume, lang }: ResumeHeaderProps) {
           {headline}
         </p>
 
+      )}
+
+      {/* Icon-only contact links carry no text a PDF's text layer
+          exposes (aria-label isn't part of the rendered content stream),
+          so a plain-text ATS parser would otherwise find no email
+          address anywhere in the document. */}
+      {email && (
+        <p style={{ margin: '1.5pt 0 0', fontSize: '8pt', color: 'var(--color-muted-body)' }}>
+          {email}
+        </p>
       )}
       {/* <a
       href={PORTFOLIO_URL}

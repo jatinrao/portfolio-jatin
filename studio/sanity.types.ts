@@ -686,6 +686,11 @@ export type Person = {
       _key: string
     } & SkillReference
   >
+  projects?: Array<
+    {
+      _key: string
+    } & ProjectReference
+  >
   socialProfiles?: Array<
     {
       _key: string

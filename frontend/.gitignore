@@ -41,6 +41,7 @@ next-env.d.ts
 
 .cache/
 cf-static/
+.wrangler/
 # temp video refs dropped in during design review — not committed
 tmp-video-drop/
 *.mov
