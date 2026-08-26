@@ -5,8 +5,8 @@ import { locales, isValidLocale } from '@/i18n/config';
 import { LocaleHtmlSync } from '@/components/shared/LocaleHtmlSync';
 import { localize } from '@/lib/locale';
 import { sanityFetch } from '@/sanity/lib/live';
-import { METADATA_QUERY } from '@/sanity/lib/queries';
-import { buildJsonLd, type PersonDefaults } from '@/lib/seo/build-json-ld';
+import { METADATA_QUERY, SITE_AUTHOR_QUERY } from '@/sanity/lib/queries';
+import { buildSiteJsonLdGraph, type PersonDefaults } from '@/lib/seo/build-json-ld';
 
 // This is the actual SSG mechanism: Next prerenders /en, /fr, /de (etc.) at
 // build time as fully static HTML.
@@ -105,26 +105,30 @@ export default async function LangLayout({ children, params }: LangLayoutProps) 
     notFound();
   }
 
+  const authorSlug = process.env.SITE_AUTHOR_SLUG
   const res = await sanityFetch({
-    query: METADATA_QUERY,
+    query: SITE_AUTHOR_QUERY,
+    params: { authorSlug: authorSlug ?? '' },
     stega: false,
   })
-  const person = res.data
+  const author = res.data
   // Cast: the generated GROQ result's portable-text children are typed
   // slightly stricter (required array) than lib/locale's PortableTextBlock
   // alias (optional) — same runtime shape, just typegen variance.
-  const jsonLd = buildJsonLd(person?.structuredData, person as PersonDefaults | undefined, {
-    lang,
-    pageUrl: `${siteUrl}/${lang}`,
-  })
+  const siteGraph = buildSiteJsonLdGraph(
+    author?.structuredData,
+    author?.websiteSchema,
+    author as PersonDefaults | undefined,
+    { lang, siteUrl },
+  )
 
   return (
     <>
       <LocaleHtmlSync lang={lang} />
-      {jsonLd && (
+      {siteGraph && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteGraph) }}
         />
       )}
       {children}

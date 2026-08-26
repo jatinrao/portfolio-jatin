@@ -109,15 +109,6 @@ export const webSchema = defineType({
       description: 'schema:url — canonical base URL of the site.',
       hidden: ({ parent }) => (parent as { schemaType?: string })?.schemaType !== 'WebSite',
     }),
-    defineField({
-      name: 'websiteDescription',
-      title: 'Site description',
-      type: 'localeText',
-      group: 'website',
-      description: 'schema:description',
-      hidden: ({ parent }) => (parent as { schemaType?: string })?.schemaType !== 'WebSite',
-    }),
-
     // ── WebPage ──────────────────────────────────────────────────────────
     defineField({
       name: 'pageName',

@@ -1124,14 +1124,6 @@
           },
           "optional": true
         },
-        "websiteDescription": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "localeText"
-          },
-          "optional": true
-        },
         "pageName": {
           "type": "objectAttribute",
           "value": {
@@ -4591,6 +4583,21 @@
         "value": {
           "type": "inline",
           "name": "webSchema"
+        },
+        "optional": true
+      },
+      "websiteSchema": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "webSchema"
+        },
+        "optional": true
+      },
+      "isSiteAuthor": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "boolean"
         },
         "optional": true
       }

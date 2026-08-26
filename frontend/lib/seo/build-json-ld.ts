@@ -1,7 +1,7 @@
 import type { LangId, LocaleBlockContent } from '@/lib/locale'
 import { blocksToPlainText, localize, localizeBlocks } from '@/lib/locale'
 
-/** Shape returned by sanity/lib/queries.ts METADATA_QUERY's `structuredData` selection. */
+/** Shape returned by sanity/lib/queries.ts SITE_AUTHOR_QUERY's `structuredData`/`websiteSchema` selections. */
 export interface WebSchemaData {
   schemaType?: 'Person' | 'WebSite' | 'WebPage' | 'CreativeWork' | 'Organization' | null
   personJobTitle?: string | null
@@ -11,7 +11,6 @@ export interface WebSchemaData {
   personWorksFor?: string | null
   websiteName?: Record<string, string> | null
   websiteUrl?: string | null
-  websiteDescription?: Record<string, string> | null
   pageName?: Record<string, string> | null
   pageUrl?: string | null
   pageBreadcrumb?: ({name?: string | null; url?: string | null} | null)[] | null
@@ -77,7 +76,6 @@ export function buildJsonLd(
         '@type': 'WebSite',
         name: localize(webSchema.websiteName, lang) || localize(person?.name, lang) || undefined,
         url: webSchema.websiteUrl || pageUrl,
-        description: localize(webSchema.websiteDescription, lang) || undefined,
       }
       break
     }
@@ -140,4 +138,46 @@ export function buildJsonLd(
   }
 
   return generated
+}
+
+/**
+ * Builds the site-wide Person + WebSite JSON-LD graph, explicitly linked via
+ * `@id` (WebSite.author -> Person) instead of two unrelated `<script>` blocks.
+ * Both objects are always sourced from SITE_AUTHOR_QUERY's canonical author —
+ * never from "whichever person this page happens to be about" — so the graph
+ * stays fixed even once other `person` documents exist for other pages.
+ */
+function omitContext(obj: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(obj).filter(([key]) => key !== '@context'))
+}
+
+export function buildSiteJsonLdGraph(
+  personSchema: WebSchemaData | null | undefined,
+  websiteSchema: WebSchemaData | null | undefined,
+  author: PersonDefaults | null | undefined,
+  {lang, siteUrl}: {lang: LangId; siteUrl: string},
+): Record<string, unknown> | null {
+  const personId = `${siteUrl}/#person`
+  const websiteId = `${siteUrl}/#website`
+
+  const personLd = buildJsonLd(personSchema, author, {lang, pageUrl: siteUrl})
+  const websiteLd = buildJsonLd(websiteSchema, author, {lang, pageUrl: siteUrl})
+
+  if (!personLd && !websiteLd) return null
+
+  const graph: Record<string, unknown>[] = []
+
+  if (personLd) {
+    graph.push({'@id': personId, ...omitContext(personLd)})
+  }
+
+  if (websiteLd) {
+    graph.push({
+      '@id': websiteId,
+      ...omitContext(websiteLd),
+      ...(personLd ? {author: {'@id': personId}} : {}),
+    })
+  }
+
+  return {'@context': 'https://schema.org', '@graph': graph}
 }

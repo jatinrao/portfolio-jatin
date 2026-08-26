@@ -504,6 +504,27 @@ export const METADATA_QUERY = defineQuery(`*[_type == "person"][0]{
         metadata{ dimensions }
       },
       alt
+    }
+  }
+`)
+
+/**
+ * Resolves the site's canonical author by slug (the SITE_AUTHOR_SLUG env
+ * var), independent of whichever person a given page happens to be about.
+ * Powers the site-wide Person/WebSite JSON-LD graph in app/[lang]/layout.tsx
+ * — see lib/seo/build-json-ld.ts's buildSiteJsonLdGraph.
+ */
+export const SITE_AUTHOR_QUERY = defineQuery(`*[_type == "person" && slug.current == $authorSlug][0]{
+    name,
+    headline,
+    bio_short,
+    channels[],
+    avatar{
+      asset->{
+        url,
+        metadata{ dimensions }
+      },
+      alt
     },
     structuredData{
       schemaType,
@@ -514,7 +535,24 @@ export const METADATA_QUERY = defineQuery(`*[_type == "person"][0]{
       personWorksFor,
       websiteName,
       websiteUrl,
-      websiteDescription,
+      pageName,
+      pageUrl,
+      pageBreadcrumb[]{ name, url },
+      workName,
+      workDescription,
+      workUrl,
+      workDateCreated,
+      customJsonLd
+    },
+    websiteSchema{
+      schemaType,
+      personJobTitle,
+      personDescription,
+      personSameAs,
+      personAlumniOf,
+      personWorksFor,
+      websiteName,
+      websiteUrl,
       pageName,
       pageUrl,
       pageBreadcrumb[]{ name, url },

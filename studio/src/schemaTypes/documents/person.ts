@@ -1,5 +1,6 @@
 import { defineType, defineField } from 'sanity'
 import { UserIcon } from '@sanity/icons'
+import { SiteAuthorIndicator } from '../../components/SiteAuthorIndicator'
 
 export const person = defineType({
   name: 'person',
@@ -231,6 +232,17 @@ export const person = defineType({
     // ── SEO & Schema ───────────────────────────────────────────────────
     defineField({ name: 'seo', title: 'SEO metadata', type: 'seoMetadata', group: 'seo' }),
     defineField({ name: 'structuredData', title: 'Structured data', type: 'webSchema', group: 'seo' }),
+    defineField({ name: 'websiteSchema', title: 'WebSite structured data', type: 'webSchema', group: 'seo', description: 'Generates the schema.org/WebSite JSON-LD block.' }),
+    defineField({
+      name: 'isSiteAuthor',
+      title: 'Site author',
+      type: 'boolean',
+      group: 'seo',
+      readOnly: true,
+      description:
+        'Read-only indicator, not stored. True when this slug matches the SANITY_STUDIO_SITE_AUTHOR_SLUG env var — the site-wide WebSite JSON-LD always links to whichever person that is, regardless of which page is being viewed.',
+      components: { input: SiteAuthorIndicator },
+    }),
   ],
   preview: {
     select: { title: 'name.en', subtitle: 'headline.en', media: 'avatar' },

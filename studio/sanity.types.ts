@@ -188,7 +188,6 @@ export type WebSchema = {
   personWorksFor?: string
   websiteName?: LocaleString
   websiteUrl?: string
-  websiteDescription?: LocaleText
   pageName?: LocaleString
   pageUrl?: string
   pageBreadcrumb?: Array<{
@@ -703,6 +702,8 @@ export type Person = {
   >
   seo?: SeoMetadata
   structuredData?: WebSchema
+  websiteSchema?: WebSchema
+  isSiteAuthor?: boolean
 }
 
 export type CtaButton = {
