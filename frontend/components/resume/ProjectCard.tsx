@@ -1,5 +1,6 @@
 // components/resume/ProjectMiniCard.tsx
 import Image from 'next/image';
+import { Icon } from '@web-portfolio/icons';
 import { localize, type LangId } from '@/lib/locale';
 import { Project } from '@/sanity.types';
 
@@ -23,9 +24,13 @@ function formatProjectDateRange(startDate?: string, endDate?: string) {
  * instead of a large flip-able tile. No motion/hooks: this never needs
  * to be more than server-rendered markup.
  */
+const LINK_ICON_SIZE = 8;
+
 export function ProjectMiniCard({ project, locale }: ProjectMiniCardProps) {
   const title = localize(project.title, locale);
   const description = localize(project.description, locale);
+  const repositoryUrl = project.repositoryUrl;
+  const projectUrl = project.projectUrl;
 //   const description = localize(project.description, locale);
   // Sanity's asset reference type may not expose `url` in the type defs
   // so cast to any to safely read the runtime `url` if present.
@@ -40,13 +45,14 @@ export function ProjectMiniCard({ project, locale }: ProjectMiniCardProps) {
     flexDirection: 'column',
   }}
 >
-  {/* Row 1: title */}
-  <div style={{ display: 'flex', }}>
+  {/* Row 1: title + repo/live links */}
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '5pt' }}>
     <h3
       style={{
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
+        minWidth: 0,
         margin: 0,
         fontSize: '10pt',
         fontWeight: 600,
@@ -55,6 +61,31 @@ export function ProjectMiniCard({ project, locale }: ProjectMiniCardProps) {
     >
       {title}
     </h3>
+
+    {(repositoryUrl || projectUrl) && (
+      <div style={{ display: 'flex', flexShrink: 0, gap: '3pt' }}>
+        {repositoryUrl && (
+          <a
+            href={repositoryUrl}
+            aria-label={`View repository for ${title}`}
+            className="resume-icon-chip"
+            style={{ width: '15pt', height: '15pt' }}
+          >
+            <Icon name="git" size={LINK_ICON_SIZE} color="currentColor" />
+          </a>
+        )}
+        {projectUrl && (
+          <a
+            href={projectUrl}
+            aria-label={`View live project: ${title}`}
+            className="resume-icon-chip"
+            style={{ width: '15pt', height: '15pt' }}
+          >
+            <Icon name="open_in_new" size={LINK_ICON_SIZE} color="currentColor" />
+          </a>
+        )}
+      </div>
+    )}
   </div>
 
   {/* Row 2: image + description */}
