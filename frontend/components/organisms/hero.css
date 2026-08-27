@@ -133,6 +133,7 @@
 
 .hero-glow-image{
   position: absolute;
+  overflow: visible;
   bottom: -25%;
   z-index: -1;
   width: 157%;

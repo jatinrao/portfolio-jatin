@@ -26,6 +26,7 @@ describe('CoverCard', () => {
         springIndex={motionValue(0)}
         geometry={geometry}
         onClick={() => undefined}
+        isActive
       />,
     )
     expect(screen.getByRole('group', { name: 'Portfolio' })).toBeInTheDocument()

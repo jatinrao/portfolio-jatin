@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getCorsHeaders } from "@/lib/cors";
-import { locales, localeCookieName, type Locale } from "@/i18n/config";
+import { locales, localeCookieName, defaultLocale, type Locale } from "@/i18n/config";
 import { matchLocale, parseAcceptLanguage } from "@/i18n/matchLocale";
  
 /**
@@ -80,10 +80,23 @@ function handleLocaleRedirect(request: NextRequest): NextResponse {
     cookieLocale && (locales as readonly string[]).includes(cookieLocale)
       ? (cookieLocale as Locale)
       : matchLocale(parseAcceptLanguage(request.headers.get("accept-language")));
- 
+
+  // `/` now renders the same content as `/${defaultLocale}` directly (see
+  // app/page.tsx) instead of being a redirect-only shell, so a visitor whose
+  // detected locale is the default one already sees the right content here —
+  // no redirect needed. Only an actual locale mismatch still redirects.
+  if (locale === defaultLocale) {
+    const response = NextResponse.next();
+    response.cookies.set(localeCookieName, locale, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+    });
+    return response;
+  }
+
   const redirectUrl = new URL(`/${locale}${request.nextUrl.search}`, request.url);
   const response = NextResponse.redirect(redirectUrl);
- 
+
   response.cookies.set(localeCookieName, locale, {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,

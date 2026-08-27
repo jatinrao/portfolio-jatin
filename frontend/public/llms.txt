@@ -1,0 +1,40 @@
+# Jatin Kumar — Portfolio
+
+> Portfolio and professional website of Jatin Kumar, a Frontend/Full-stack Software Engineer with 8+ years of experience building performant, scalable, customer-centric web applications. Built with Next.js and Sanity CMS: fully CMS-driven with zero-deploy content updates, resume generation in 6 languages, and a 100 Lighthouse score.
+
+Beyond frontend engineering, Jatin has a genuine curiosity for backend development, AI, and IoT — exploring backend systems, APIs, databases, AI-powered workflows, and connected technologies. Current role: Senior Software Engineer on JioHotstar's AdTech team (via ProximityWorks). Previously: Builder.ai, Kenko Health, Crio.Do, Kirusa.
+
+## Pages
+
+- [Home (English)](https://jatin.getresume.dev/en): Hero intro, skills grid, career timeline, and project gallery.
+- [Home (Spanish)](https://jatin.getresume.dev/es)
+- [Home (French)](https://jatin.getresume.dev/fr)
+- [Home (Chinese)](https://jatin.getresume.dev/zh)
+- [Home (Hindi)](https://jatin.getresume.dev/hi)
+- [Home (Arabic)](https://jatin.getresume.dev/ar)
+- [Resume PDF](https://jatin.getresume.dev/api/resume/pdf?slug=jatin-kumar&lang=en&theme=light): Generated on demand per locale (`lang=en|es|fr|zh|hi|ar`) and theme (`theme=light|dark`).
+
+## Projects
+
+- [AgentDB9 — AI Agent Workspace](https://jatin.getresume.dev/en/projects/agentdb9-ai-coding-agent-environment): Containerized AI-powered coding environment with a browser-based VS Code IDE, multi-provider LLM integration, semantic code search, and a scalable microservices architecture.
+- [Task Tracker Dashboard](https://jatin.getresume.dev/en/projects/task-tracker): Production-grade React + TypeScript task tracker with interactive charts, OR/AND filter logic across charts, sortable paginated table, MSW mock backend, and 75%+ test coverage. Repo: https://github.com/jatinrao/task-tracker — Live: https://task-tracker-seven-ruby.vercel.app
+- [Multi-Tenant Dashboard](https://jatin.getresume.dev/en/projects/analytics-dashboard): Multi-tenant analytics dashboard prototype built with Next.js, React, TypeScript, and Tailwind CSS. Repo: https://github.com/jatinrao/analytics-dashboard — Live: https://analytics-dashboard-delta-virid.vercel.app
+- [CAN Bus Monitor](https://jatin.getresume.dev/en/projects/can-bus-monitoring-dashboard): Real-time web dashboard for monitoring, debugging, and visualizing CAN bus networks with live frame logging, topology discovery, connection tracking, and hybrid node communication.
+- [@web-portfolio/icons](https://jatin.getresume.dev/en/projects/web-portfolio-icons): React icon component backed by 629 bundled SVG icons (languages, frameworks, dev tools, social platforms, UI icons) through one `<Icon />` component. Live: https://icons.getresume.dev
+- [Jatin Kumar — Portfolio](https://jatin.getresume.dev/en/projects/portfolio): This site itself. Repo: https://github.com/jatinrao/portfolio — Live: https://portfolio-jatinrao1.vercel.app
+- [Charts Prototypes](https://jatin.getresume.dev/en/projects/concentric-analytics-prototype-hp1f): Multi-tenant analytics dashboard built as an assignment for Infinite Locus, with multi-tenant routing, intlayer-powered localization, and static data visualizations. Repo: https://github.com/jatinrao/concentric-analytics-prototype — Live: https://concentric-analytics-prototype-hp1f.vercel.app
+- [Foo Rum](https://jatin.getresume.dev/en/projects/foo-rum): Next.js forum application built as a frontend hiring assignment for Atlys, with an in-memory mock database, login/signup, and unit tests. Repo: https://github.com/jatinrao/foo-rum — Live: https://foo-rum-pi.vercel.app
+- [Quadcopter Flight Controller](https://jatin.getresume.dev/en/projects/quadcopter-flight-controller): Arduino-based quadcopter flight controller with Auto Level built from scratch — sensor fusion, ESC calibration, and flight control improvements for reliable autonomous stabilisation.
+
+## Experience
+
+- Senior Software Engineer, JioHotstar via ProximityWorks (Oct 2025 — Mar 2026): AdTech team for JioHotstar's web streaming platform and Smart TV apps; Companion Screen ads, Samsung TV remote/playback fixes, legacy Chromium compatibility polyfills.
+- Senior Software Engineer, Builder.ai (Nov 2023 — May 2025): Custom SSR solutions (~30% faster page loads), Deno runtime (~25% less cold-start overhead), Sanity CMS workflow optimization (70%+ faster publishing), Statsig-driven feature rollouts.
+- SDE-3, Kenko Health (May 2021 — Sep 2023): Led a cross-functional frontend team to a production MVP 25% ahead of schedule; backend architecture (Auth/Plans services), Next.js SSR/ISR/static generation (~40% faster loads), Google Analytics/Sentry/Razorpay integration.
+- Software Engineer, Crio.Do (Jan 2019 — Jan 2021): Frontend architecture for Crio.Do's learning platform; built the Mentor Dashboard for real-time learner monitoring (~30% more efficient mentors).
+- Associate Software Engineer, Kirusa (Jul 2017 — Jan 2019): Analytics Dashboard frontend, AngularJS→React migration, Yii2 portal scaling, Alexa skills/chatbot integrations.
+
+## Optional
+
+- [LinkedIn](https://www.linkedin.com/in/jatin-kumar-a0791b117/): Connect with Jatin.
+- [Book a call](https://calendly.com/jatin-kumar-primary/30min): 30-minute meeting via Calendly.

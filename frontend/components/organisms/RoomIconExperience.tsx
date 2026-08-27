@@ -3,10 +3,9 @@
 import { Suspense, useEffect, useMemo, useRef, type RefObject } from 'react'
 import * as THREE from 'three'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Environment, useGLTF } from '@react-three/drei'
+import { Environment, Lightformer, useGLTF } from '@react-three/drei'
 
 const MODEL_PATH = '/mac-draco.glb'
-const HDR_PATH = '/dawn_1k.hdr'
 const DRACO_DECODER_PATH = '/draco/'
 
 const LID_CLOSED = 1.575
@@ -118,7 +117,11 @@ export default function RoomIconExperience() {
         <group rotation={[0, Math.PI, 0]}>
           <Model openRef={openRef} />
         </group>
-        <Environment files={HDR_PATH} />
+        <Environment resolution={64}>
+          <Lightformer intensity={2} color="white" position={[0, 5, -5]} scale={[10, 10, 1]} />
+          <Lightformer intensity={1} color="white" position={[-5, 1, 1]} rotation={[0, Math.PI / 2, 0]} scale={[10, 5, 1]} />
+          <Lightformer intensity={1} color="white" position={[5, 1, 1]} rotation={[0, -Math.PI / 2, 0]} scale={[10, 5, 1]} />
+        </Environment>
       </Suspense>
     </Canvas>
   )

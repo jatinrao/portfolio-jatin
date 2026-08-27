@@ -73,7 +73,7 @@
   --color-on-secondary-container: #7a3d0a;
   --color-secondary-fixed: #ff8d28;
   --color-on-secondary-fixed: #ffffff;
---color-on-surface-variant: rgba(60,60,67,0.6); /* labels-secondary */
+--color-on-surface-variant: rgba(60,60,67,0.75); /* labels-secondary, darkened from Apple's 0.6 — that value is only ~3.4:1 on white, below WCAG AA's 4.5:1 for normal-size text */
 --color-on-secondary-fixed-variant: #7a3d0a;
   --color-outline: #c6c6c8;
   --color-outline-variant: rgba(0,0,0,0.12);

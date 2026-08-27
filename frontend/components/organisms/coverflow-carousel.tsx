@@ -171,6 +171,7 @@ export function ProjectCarousel({
               onClick={handleCardClick}
               learnMoreLabel={learnMoreLabel}
               isInitial={index === resolvedInitialIndex}
+              isActive={index === activeIndex}
             />
           ))}
         </motion.div>

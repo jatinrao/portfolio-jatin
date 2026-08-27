@@ -37,6 +37,13 @@ export interface PersonDefaults {
  * JSON) is shallow-merged on top and wins over everything generated here —
  * matches the "escape hatch" contract documented in
  * studio/src/schemaTypes/objects/webSchema.ts.
+ *
+ * Exception: if `customJsonLd` itself has a top-level `@graph` array, it's
+ * returned as-is instead of being merged. A `@graph` means the author is
+ * hand-authoring multiple related nodes (e.g. WebSite + WebPage) themselves —
+ * merging our single-node scaffold into that would corrupt it (the generated
+ * node's fields would survive as stray properties alongside the `@graph`,
+ * since nothing in a `{@context, @graph}` payload overrides them).
  */
 export function buildJsonLd(
   webSchema: WebSchemaData | null | undefined,
@@ -129,6 +136,7 @@ export function buildJsonLd(
   if (webSchema.customJsonLd) {
     try {
       const custom = JSON.parse(webSchema.customJsonLd)
+      if (Array.isArray(custom?.['@graph'])) return custom
       return {...generated, ...custom}
     } catch {
       // Studio-side validation already guards against invalid JSON; if it
@@ -141,16 +149,30 @@ export function buildJsonLd(
 }
 
 /**
+ * Flattens a buildJsonLd() result into one or more top-level graph nodes.
+ * A plain node becomes a single `{@id, ...}` entry (falling back to
+ * `fallbackId` when it has none of its own). A `{@context, @graph}` override
+ * (see buildJsonLd's customJsonLd exception above) is spread directly into
+ * the graph instead of being nested as a property of some other node.
+ */
+function toGraphNodes(
+  ld: Record<string, unknown> | null,
+  fallbackId: string,
+): Record<string, unknown>[] {
+  if (!ld) return []
+  if (Array.isArray(ld['@graph'])) return ld['@graph'] as Record<string, unknown>[]
+
+  const node = Object.fromEntries(Object.entries(ld).filter(([key]) => key !== '@context'))
+  return [{'@id': (node['@id'] as string | undefined) ?? fallbackId, ...node}]
+}
+
+/**
  * Builds the site-wide Person + WebSite JSON-LD graph, explicitly linked via
  * `@id` (WebSite.author -> Person) instead of two unrelated `<script>` blocks.
  * Both objects are always sourced from SITE_AUTHOR_QUERY's canonical author —
  * never from "whichever person this page happens to be about" — so the graph
  * stays fixed even once other `person` documents exist for other pages.
  */
-function omitContext(obj: Record<string, unknown>): Record<string, unknown> {
-  return Object.fromEntries(Object.entries(obj).filter(([key]) => key !== '@context'))
-}
-
 export function buildSiteJsonLdGraph(
   personSchema: WebSchemaData | null | undefined,
   websiteSchema: WebSchemaData | null | undefined,
@@ -165,19 +187,16 @@ export function buildSiteJsonLdGraph(
 
   if (!personLd && !websiteLd) return null
 
-  const graph: Record<string, unknown>[] = []
+  const personNodes = toGraphNodes(personLd, personId)
+  const websiteNodes = toGraphNodes(websiteLd, websiteId)
 
-  if (personLd) {
-    graph.push({'@id': personId, ...omitContext(personLd)})
+  // Only auto-link WebSite -> Person for a plain generated/merged node (one
+  // node, not itself a `@graph` override) — a hand-authored graph override
+  // is trusted to declare its own relationships (e.g. WebPage.about -> Person).
+  const websiteIsOverride = !!websiteLd && Array.isArray(websiteLd['@graph'])
+  if (!websiteIsOverride && websiteNodes.length && personNodes.length && !('author' in websiteNodes[0])) {
+    websiteNodes[0] = {...websiteNodes[0], author: {'@id': personId}}
   }
 
-  if (websiteLd) {
-    graph.push({
-      '@id': websiteId,
-      ...omitContext(websiteLd),
-      ...(personLd ? {author: {'@id': personId}} : {}),
-    })
-  }
-
-  return {'@context': 'https://schema.org', '@graph': graph}
+  return {'@context': 'https://schema.org', '@graph': [...personNodes, ...websiteNodes]}
 }

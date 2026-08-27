@@ -14,9 +14,10 @@ import {handleError} from '@/app/client-utils'
 /**
  * Static fallback only. The true root layout sits above app/[lang]/**, so it
  * never receives a `lang` param — the real, Sanity-driven, locale-aware SEO
- * metadata lives in app/[lang]/layout.tsx, which does receive it. This just
- * covers routes outside [lang] (the no-JS "/" redirect shell, /resume falls
- * back to its own generateMetadata) so they're never left titleless.
+ * metadata lives in app/[lang]/layout.tsx (and app/page.tsx, which calls the
+ * same builder with lang: 'en' for root), both of which override this via
+ * Next's metadata merging. This is just the pre-fetch fallback so nothing
+ * under this layout is ever left titleless before its own metadata resolves.
  */
 export const metadata: Metadata = {
   title: "Jatin Kumar | Software Engineer",

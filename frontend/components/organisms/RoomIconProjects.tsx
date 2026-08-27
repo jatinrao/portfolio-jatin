@@ -2,10 +2,9 @@
 
 import { Suspense, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Bounds, Environment, useAnimations, useGLTF } from '@react-three/drei'
+import { Bounds, Environment, Lightformer, useAnimations, useGLTF } from '@react-three/drei'
 
 const MODEL_PATH = '/wall-e.glb'
-const HDR_PATH = '/dawn_1k.hdr'
 const DRACO_DECODER_PATH = '/draco/'
 
 /**
@@ -52,7 +51,11 @@ export default function RoomIconProjects() {
         <Bounds fit clip observe margin={1.2}>
           <Model />
         </Bounds>
-        <Environment files={HDR_PATH} />
+        <Environment resolution={64}>
+          <Lightformer intensity={2} color="white" position={[0, 5, -5]} scale={[10, 10, 1]} />
+          <Lightformer intensity={1} color="white" position={[-5, 1, 1]} rotation={[0, Math.PI / 2, 0]} scale={[10, 5, 1]} />
+          <Lightformer intensity={1} color="white" position={[5, 1, 1]} rotation={[0, -Math.PI / 2, 0]} scale={[10, 5, 1]} />
+        </Environment>
       </Suspense>
     </Canvas>
   )

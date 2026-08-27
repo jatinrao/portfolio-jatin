@@ -1,5 +1,6 @@
 import type {MetadataRoute} from 'next'
 import {locales} from '@/i18n/config'
+import {siteUrl} from '@/lib/site-url'
 
 /**
  * This file creates a sitemap (sitemap.xml) for the application. Learn more
@@ -15,9 +16,6 @@ import {locales} from '@/i18n/config'
  * reintroduce a sanityFetch here and push one entry per locale per
  * document, same pattern as the home loop below.
  */
-// TO_DO : det domain from env variable
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://jatin.getresume.dev').replace(/\/$/, '')
-
 export default function sitemap(): MetadataRoute.Sitemap {
   return locales.map((locale) => ({
     url: `${siteUrl}/${locale}`,

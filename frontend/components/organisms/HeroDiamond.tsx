@@ -1,16 +1,17 @@
 'use client'
 
-import { Suspense, useEffect, useRef, useState, type RefObject } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import * as THREE from 'three'
-import { Canvas, useFrame, useLoader } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import {
   CubeCamera,
   Environment,
+  Lightformer,
   MeshRefractionMaterial,
   OrbitControls,
   useGLTF,
 } from '@react-three/drei'
-import { RGBELoader, type OrbitControls as OrbitControlsImpl } from 'three-stdlib'
+import { RoomEnvironment, type OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { Bloom, EffectComposer } from '@react-three/postprocessing'
 import type { MotionValue } from 'framer-motion'
 import { PHONE_REVEAL_END } from '@/hooks/use-hero-scale'
@@ -18,7 +19,6 @@ import { PHONE_REVEAL_END } from '@/hooks/use-hero-scale'
 /** A hair past `PHONE_REVEAL_END` — small enough that the roll starts on the very next bit of scroll once the slide-in finishes, not some separate later scroll milestone. See `AutoRotateGate`. */
 const ROLL_START_Z = PHONE_REVEAL_END + 0.01
 
-const HDR_PATH = '/aerodynamics_workshop_1k.hdr'
 const MODEL_PATH = '/diamond.glb'
 
 const REFRACTION_CONFIG = {
@@ -51,10 +51,27 @@ function useIsDarkMode() {
   return isDark
 }
 
+/**
+ * `MeshRefractionMaterial` needs a real `THREE.CubeTexture` to sample, which
+ * is why this still routes through `CubeCamera` below — that part of the
+ * original HDR-based setup is unrelated to the file itself. Only the source
+ * environment changed: instead of loading an external .hdr, `RoomEnvironment`
+ * (a small procedural room scene shipped with three.js, built purely for
+ * feeding `PMREMGenerator`) stands in as the thing CubeCamera photographs.
+ */
 function Diamond({ isDark }: { isDark: boolean }) {
   const { nodes } = useGLTF(MODEL_PATH) as unknown as { nodes: { Cylinder: THREE.Mesh } }
   const meshRef = useRef<THREE.Mesh>(null)
-  const texture = useLoader(RGBELoader, HDR_PATH)
+  const { gl } = useThree()
+  const texture = useMemo(() => {
+    const pmremGenerator = new THREE.PMREMGenerator(gl)
+    // three-stdlib's typings declare RoomEnvironment as a plain function even though it's a class at runtime.
+    const roomEnvironment = new (RoomEnvironment as unknown as new () => THREE.Scene & { dispose: () => void })()
+    const roomTexture = pmremGenerator.fromScene(roomEnvironment, 0.04).texture
+    pmremGenerator.dispose()
+    roomEnvironment.dispose()
+    return roomTexture
+  }, [gl])
 
   return (
     <CubeCamera resolution={256} frames={1} envMap={texture}>
@@ -153,7 +170,11 @@ export default function HeroDiamond({ phone, z }: HeroDiamondProps) {
         <spotLight position={[5, 5, -10]} angle={0.15} penumbra={1} />
 
         <Diamond isDark={isDark} />
-        <Environment files={HDR_PATH} />
+        <Environment resolution={64}>
+          <Lightformer intensity={2} color="white" position={[0, 5, -5]} scale={[10, 10, 1]} />
+          <Lightformer intensity={1} color="white" position={[-5, 1, 1]} rotation={[0, Math.PI / 2, 0]} scale={[10, 5, 1]} />
+          <Lightformer intensity={1} color="white" position={[5, 1, 1]} rotation={[0, -Math.PI / 2, 0]} scale={[10, 5, 1]} />
+        </Environment>
 
         <OrbitControls
           ref={controlsRef}

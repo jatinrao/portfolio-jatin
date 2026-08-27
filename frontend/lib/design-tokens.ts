@@ -70,7 +70,7 @@ export const TOKEN_GROUPS: TokenGroup[] = [
     tokens: [
       { var: '--color-heading-ink', label: 'Heading Ink', type: 'color', light: '#000000', dark: '#ffffff' },
       { var: '--color-muted-body', label: 'Muted Body', type: 'color', light: 'rgba(60,60,67,0.6)', dark: 'rgba(235,235,245,0.7)' },
-      { var: '--color-on-surface-variant', label: 'On Surface Variant', type: 'color', light: 'rgba(60,60,67,0.6)', dark: 'rgba(235,235,245,0.7)' },
+      { var: '--color-on-surface-variant', label: 'On Surface Variant', type: 'color', light: 'rgba(60,60,67,0.75)', dark: 'rgba(235,235,245,0.7)' },
     ],
   },
   {

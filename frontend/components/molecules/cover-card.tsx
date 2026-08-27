@@ -28,6 +28,16 @@ export interface CoverCardProps {
    * with the actual hero LCP image for bandwidth on first load.
    */
   isInitial?: boolean;
+  /**
+   * Only the active (centered, full-opacity) slide is meant to be reachable
+   * by assistive tech — the rest are dimmed 3D "peek" previews a sighted
+   * user can click to bring to front, and their text is dimmed by `opacity`
+   * below WCAG contrast at any distance > 0. `aria-hidden` pulls them out of
+   * the accessibility tree (the carousel's `aria-live` region already
+   * announces the active card), and `inert` goes with it so their nested
+   * links can't still be tabbed to while hidden from screen readers.
+   */
+  isActive: boolean;
 }
 
 const RESIZE_TRANSITION = { duration: 0.3, ease: "easeOut" } as const;
@@ -41,6 +51,7 @@ export function CoverCard({
   onClick,
   learnMoreLabel,
   isInitial = false,
+  isActive,
 }: CoverCardProps) {
   const { cardWidth, cardHeight, xOffsets, zDepths } = geometry;
 
@@ -83,6 +94,8 @@ export function CoverCard({
       role="group"
       aria-roledescription="slide"
       aria-label={title}
+      aria-hidden={!isActive}
+      inert={!isActive}
       onClick={() => onClick(index)}
       style={{
         transform: positionTransform,
