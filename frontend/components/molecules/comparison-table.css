@@ -1,5 +1,26 @@
+/* Breaks out of the article's reading column (.blog-detail-column caps at
+   692px) so the table gets more room on wider viewports — up to 1040px
+   (wider than project-detail.css's 980px hero-frame breakout: at 6 columns
+   × COL_WIDTH(140) + ROW_LABEL_WIDTH(120) = 960px of table content, 980px
+   left too small a gap after the 44px of inner padding, forcing a
+   near-imperceptible scroll even at full breakout width — 1040px comfortably
+   clears 960px + padding + borders, so desktop can skip the scroll entirely.
+   flex-shrink: 0 is required — this renders as a direct child of
+   .blog-detail-body, which is `display: flex; flex-direction: column`, so
+   without it the default flex-shrink: 1 crushes the 100vw width straight
+   down to 0 instead of letting it break out. */
 .comparison-table {
-  margin-top: 8px;
+  width: 100vw;
+  flex-shrink: 0;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+.comparison-table-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 22px;
+  box-sizing: border-box;
 }
 
 .comparison-table-caption {
@@ -7,6 +28,42 @@
   font-family: var(--font-apple);
   font-size: 13px;
   color: var(--color-on-surface-variant, #6e6e73);
+}
+
+.comparison-table-toolbar {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.comparison-table-toolbar .comparison-table-caption {
+  margin: 0;
+}
+
+.comparison-table-expand {
+  /* Pushes the button to the right whether or not a caption sibling is
+     present — `justify-content: space-between` alone only works with two
+     children, and collapses to flex-start (left) when the caption is
+     absent (e.g. this post's comparisonTable has none). */
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-outline-variant, #d2d2d7);
+  border-radius: 8px;
+  background: var(--color-surface, #fff);
+  color: var(--color-on-surface-variant, #6e6e73);
+  font-family: var(--font-apple);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.comparison-table-expand:hover {
+  color: var(--color-primary, #0071e3);
+  border-color: currentColor;
 }
 
 .comparison-table-category + .comparison-table-category {
@@ -23,18 +80,34 @@
 .comparison-table-scroll table {
   border-collapse: collapse;
   width: 100%;
-  min-width: 640px;
+  table-layout: auto;
   font-family: var(--font-apple);
-  font-size: 14px;
+  font-size: 13px;
+}
+
+/* Column widths grow with the table (up to the 980px breakout above)
+   instead of staying cramped at a fixed total min-width — the table only
+   scrolls once columns can't all fit at these comfortable minimums, so
+   how much it overflows depends on the viewport. Kept narrow (with tighter
+   padding and a smaller note font below) so a 6-column table comes close
+   to fitting in full at the breakout width instead of needing much scroll,
+   and so the 2 frozen columns don't dominate the viewport on narrower
+   screens — must stay in sync with ComparisonTable.tsx's COL_WIDTH. */
+.comparison-table-col {
+  min-width: 140px;
 }
 
 .comparison-table-scroll th,
 .comparison-table-scroll td {
   text-align: left;
-  padding: 12px 14px;
+  padding: 10px 10px;
   border-bottom: 1px solid var(--color-outline-variant, #d2d2d7);
   vertical-align: top;
   font-weight: 400;
+}
+
+.comparison-table-scroll td {
+  text-align: center;
 }
 
 .comparison-table-scroll thead th {
@@ -49,7 +122,7 @@
 
 .comparison-table-col-descriptor {
   margin-top: 2px;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--color-on-surface-variant, #6e6e73);
 }
 
@@ -58,6 +131,24 @@
    the highlighted one marked only by a thin colored top rule. */
 .comparison-table-col--highlight {
   box-shadow: inset 0 2px 0 var(--color-primary, #0071e3);
+}
+
+/* The highlighted ("ours") column(s) freeze in place — same idea as the
+   row-label column below — while the rest of the columns scroll underneath.
+   `left` is set inline per column (ComparisonTable.tsx's
+   computeStickyLefts), stacked right after the row-label column. Needs an
+   opaque background (unlike the plain box-shadow above) since it now sits
+   on top of scrolled-under cells, plus a right border to mark where the
+   frozen strip ends and the scrollable area begins. */
+.comparison-table-col--sticky {
+  position: sticky;
+  z-index: 1;
+  background: var(--color-surface, #fff);
+  border-right: 1px solid var(--color-outline-variant, #d2d2d7);
+}
+
+.dark .comparison-table-col--sticky {
+  background: var(--color-surface, #1d1d1f);
 }
 
 /* Category headings ("Writing it", "Running it", …) — each category is
@@ -77,11 +168,12 @@
 /* Pins the row-label column while scrolling horizontally through product
    columns — apple.com/mac/compare keeps the spec name in view the same
    way. Needs an opaque background so scrolled-under cells don't show
-   through. */
+   through. Must stay in sync with ComparisonTable.tsx's ROW_LABEL_WIDTH. */
 .comparison-table-row-label {
   position: sticky;
   left: 0;
   z-index: 1;
+  min-width: 120px;
   background: var(--color-surface, #fff);
 }
 
@@ -93,7 +185,7 @@
 .comparison-table-cell {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 6px;
 }
 
@@ -102,8 +194,9 @@
 }
 
 .comparison-table-note {
+  font-size: 11px;
   color: var(--color-on-surface-variant, #6e6e73);
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
 .comparison-table-scroll tbody tr:last-child td,
@@ -119,5 +212,65 @@
 }
 
 .dark .comparison-table-row-label {
+  background: var(--color-surface, #1d1d1f);
+}
+
+/* Expanded modal — portalled to <body>, so it sits above everything
+   (including the site's own sticky header at z-50) regardless of where
+   in the article this component is nested. Panel is 85% of the viewport
+   on both axes, per the request. */
+.comparison-table-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+}
+
+.comparison-table-modal-panel {
+  position: relative;
+  width: 85vw;
+  height: 85vh;
+  background: var(--color-surface, #fff);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.comparison-table-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-outline-variant, #d2d2d7);
+  background: var(--color-surface, #fff);
+  color: var(--color-on-surface-variant, #6e6e73);
+}
+
+.comparison-table-modal-close:hover {
+  color: var(--color-primary, #0071e3);
+  border-color: currentColor;
+}
+
+.comparison-table-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 32px 32px;
+}
+
+.dark .comparison-table-modal-panel,
+.dark .comparison-table-modal-close {
   background: var(--color-surface, #1d1d1f);
 }

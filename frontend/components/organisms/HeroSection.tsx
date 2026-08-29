@@ -260,6 +260,7 @@ export function HeroSection({ data, locale = 'en', reachOutLabel, connectLabel }
       kicker: item.kicker,
       label: localize(item.label, locale) || '',
     }))
+  const personId = data._id
   const featureIntro = localize(data.featureIntro, locale)
   const featureLinkLabel = localize(data.featureLinkLabel, locale)
 
@@ -332,6 +333,7 @@ export function HeroSection({ data, locale = 'en', reachOutLabel, connectLabel }
 
       <div className="hero-intro">
         <HeroFeatureGroup
+          personId={personId}
           features={featureHighlights}
           intro={featureIntro}
           linkUrl={data.featureLinkUrl}

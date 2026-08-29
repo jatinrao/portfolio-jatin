@@ -98,7 +98,6 @@ const body = [
   {
     _type: 'comparisonTable',
     _key: 'table1',
-    caption: 'Evaluated against packages/core · packages/react · packages/sanity-plugin',
     columns: [
       { _type: 'tableColumn', _key: 'col-font', name: 'Icon font', descriptor: 'Font Awesome — a class name picks a glyph', highlight: false },
       { _type: 'tableColumn', _key: 'col-sprite', name: 'SVG sprite sheet', descriptor: 'One <symbol> sheet, referenced by id', highlight: false },
@@ -146,23 +145,25 @@ const body = [
       {
         _type: 'tableDataRow', _key: 'row-bundle', label: 'Bundle impact',
         cells: [
-          { _type: 'tableCell', _key: 'c19', icon: 'close', note: 'Whole font file loads regardless of usage' },
-          { _type: 'tableCell', _key: 'c20', icon: 'remove', note: 'One sheet loads once, but ships everything in it' },
-          { _type: 'tableCell', _key: 'c21', icon: 'check', note: 'Only the icons actually imported ship' },
-          { _type: 'tableCell', _key: 'c22', icon: 'check', note: 'Tree-shaken per icon import' },
-          { _type: 'tableCell', _key: 'c23', icon: 'close', note: 'One generated registry — a single <Icon> pulls in all 633 (~555KB gzip)' },
-          { _type: 'tableCell', _key: 'c24', icon: 'close', note: "Same registry cost — combining doesn't shrink it" },
+          { _type: 'tableCell', _key: 'c19', icon: 'close', note: 'Whole font file loads either way' },
+          { _type: 'tableCell', _key: 'c20', icon: 'remove', note: 'Ships every icon in one sheet' },
+          { _type: 'tableCell', _key: 'c21', icon: 'check', note: 'Only imported icons ship' },
+          { _type: 'tableCell', _key: 'c22', icon: 'check', note: 'Tree-shaken per icon' },
+          { _type: 'tableCell', _key: 'c23', icon: 'close', note: 'One registry — pulls in all 633 icons' },
+          // "close" (cross) overstated this — the cost only applies client-side;
+          // a server component never ships the registry to the browser at all.
+          { _type: 'tableCell', _key: 'c24', icon: 'remove', note: 'Same cost as icons alone' },
         ],
       },
       {
-        _type: 'tableDataRow', _key: 'row-wiring', label: 'Wiring the full set for runtime selection',
+        _type: 'tableDataRow', _key: 'row-wiring', label: 'Runtime selection',
         cells: [
-          { _type: 'tableCell', _key: 'c25', icon: 'check', note: 'Every glyph is already string-keyed by design' },
-          { _type: 'tableCell', _key: 'c26', icon: 'check', note: 'Every symbol is already id-keyed by design' },
-          { _type: 'tableCell', _key: 'c27', icon: 'close', note: 'Needs a hand-maintained name → component map' },
-          { _type: 'tableCell', _key: 'c28', icon: 'close', note: 'Same — a runtime lookup means building that map yourself' },
-          { _type: 'tableCell', _key: 'c29', icon: 'check', note: 'registry[name] covers all 633, no wiring' },
-          { _type: 'tableCell', _key: 'c30', icon: 'check', note: 'Same registry — the picker enumerates it directly' },
+          { _type: 'tableCell', _key: 'c25', icon: 'check', note: 'Already string-keyed' },
+          { _type: 'tableCell', _key: 'c26', icon: 'check', note: 'Already id-keyed' },
+          { _type: 'tableCell', _key: 'c27', icon: 'close', note: 'Needs a manual name map' },
+          { _type: 'tableCell', _key: 'c28', icon: 'close', note: 'Same — build the map yourself' },
+          { _type: 'tableCell', _key: 'c29', icon: 'check', note: 'No wiring needed' },
+          { _type: 'tableCell', _key: 'c30', icon: 'check', note: 'Same, via the picker' },
         ],
       },
       { _type: 'tableGroupRow', _key: 'grp-living', label: 'Living with it' },
@@ -222,8 +223,6 @@ const body = [
         ],
       },
     ],
-    footnote:
-      'If performance is the priority: render <Icon> as a pure server component (never "use client") and none of the registry — 1.27 MB raw, ~555 KB gzipped, measured on this repo — reaches the browser. Scoped to this row only; a hydrated SSG page (Next.js Pages Router, Gatsby) still pays the full cost.',
   },
 
   heading('h4', 'The trade-off, no sugar-coating it'),
@@ -235,16 +234,6 @@ const body = [
     'p8',
     'Type safety splits the same way: typed by hand, name is a string a typo won\'t catch. Through icons-sanity, IconPickerInput only writes back a real key — a Studio guarantee, not a schema one, which is why it\'s a trade-off, not a win.',
   ),
-  {
-    _type: 'calloutBox',
-    _key: 'callout1',
-    label: "What we're actually claiming",
-    text: {
-      _type: 'localeText',
-      en:
-        'Not "faster," not "smaller" — a tree-shaken import wins on bundle size outright. The claim is narrower: the same registry that makes <Icon name /> one line of code is what the CMS plugin reads too — the icon-picker your editors get is the same lookup table, with a search box on it.',
-    },
-  },
 
   heading('h5', 'When you should actually reach for this'),
   block(
@@ -306,7 +295,7 @@ async function main() {
   }
 
   console.log(`\nWould create blog "${SLUG}":`)
-  console.log(`  ${body.length} body blocks (paragraphs, a callout, a code snippet, a ${doc.body.en.filter((b: any) => b._type === 'comparisonTable').length ? '6x10 comparison table' : ''})`)
+  console.log(`  ${body.length} body blocks (paragraphs, a code snippet, a ${doc.body.en.filter((b: any) => b._type === 'comparisonTable').length ? '6x10 comparison table' : ''})`)
   console.log(`  ${doc.footerLinks.length} footer links`)
   console.log('  coverImage: NOT SET — add one in Studio before publishing')
 

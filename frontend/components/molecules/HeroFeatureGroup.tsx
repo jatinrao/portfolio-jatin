@@ -1,4 +1,6 @@
 import { Icon } from '@web-portfolio/icons'
+import { stegaClean } from '@sanity/client/stega'
+import { dataAttr } from '@/sanity/lib/utils'
 
 export interface HeroFeatureHighlight {
   key:    string
@@ -8,6 +10,7 @@ export interface HeroFeatureHighlight {
 }
 
 interface HeroFeatureGroupProps {
+  personId?: string
   features:   HeroFeatureHighlight[]
   intro?:     string
   linkUrl?:   string
@@ -24,7 +27,7 @@ interface HeroFeatureGroupProps {
  * image-mask technique. Renders nothing if Studio has no feature highlights
  * set yet, rather than silently falling back to stale hardcoded content.
  */
-export function HeroFeatureGroup({ features, intro, linkUrl, linkLabel }: HeroFeatureGroupProps) {
+export function HeroFeatureGroup({ personId, features, intro, linkUrl, linkLabel }: HeroFeatureGroupProps) {
   if (features.length === 0) return null
 
   return (
@@ -32,8 +35,19 @@ export function HeroFeatureGroup({ features, intro, linkUrl, linkLabel }: HeroFe
       <ul className="hero-icon-group">
         {features.map((item) => (
           <li key={item.key} className="hero-icon-item">
-            <span className="hero-icon-glyph">
-              <Icon name={item.iconName} size={40} color="var(--color-secondary)" />
+            <span
+              className="hero-icon-glyph"
+              data-sanity={
+                personId
+                  ? dataAttr({
+                      id: personId,
+                      type: 'person',
+                      path: `featureHighlights[_key=="${item.key}"].iconName`,
+                    }).toString()
+                  : undefined
+              }
+            >
+              <Icon name={stegaClean(item.iconName)} size={40} color="var(--color-secondary)" />
             </span>
             <p className="hero-icon-metric">{item.kicker}</p>
             <p className="hero-icon-label">{item.label}</p>

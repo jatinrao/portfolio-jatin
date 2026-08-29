@@ -25,6 +25,7 @@ export interface SanityImage {
 // so the client-side language switch is instant — no extra fetches.
 
 export interface HeroRawData {
+  _id?:            string
   name:            LocaleString
   greeting:        LocaleString
   headline:        LocaleString
@@ -123,6 +124,7 @@ export async function fetchPortfolioData(slug: string): Promise<any> {
   },
   
     "hero_section": {
+    _id,
     name,
     greeting,
     headline,

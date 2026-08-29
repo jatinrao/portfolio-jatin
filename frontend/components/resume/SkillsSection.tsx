@@ -1,5 +1,6 @@
 
 import { Icon } from '@web-portfolio/icons';
+import { stegaClean } from '@sanity/client/stega';
 import type { ResumeSkillEntry } from '@/lib/resume/types';
 import { SectionHeading } from './SectionHeading';
 import { LangId, localize } from '@/lib/locale';
@@ -96,13 +97,14 @@ const GRADIENT_ICON_STYLE: React.CSSProperties = {
 };
 
 function SkillGlyph({ skill }: { skill: ResumeSkillEntry }) {
-  const gradientSvg = skill.iconName ? GRADIENT_ICONS[skill.iconName] : undefined;
+  const iconName = skill.iconName ? stegaClean(skill.iconName) : undefined;
+  const gradientSvg = iconName ? GRADIENT_ICONS[iconName] : undefined;
   if (gradientSvg) {
     return <span aria-hidden="true" style={GRADIENT_ICON_STYLE} dangerouslySetInnerHTML={{ __html: sizedGradientMarkup(gradientSvg, SKILL_GLYPH_SIZE) }} />;
   }
-  if (skill.iconName) {
-    const brandColor = BRAND_SOLID_COLORS[skill.iconName];
-    return <Icon name={skill.iconName} size={SKILL_GLYPH_SIZE} style={brandColor ? { color: brandColor } : undefined} />;
+  if (iconName) {
+    const brandColor = BRAND_SOLID_COLORS[iconName];
+    return <Icon name={iconName} size={SKILL_GLYPH_SIZE} style={brandColor ? { color: brandColor } : undefined} />;
   }
   return <SvgIcon src={skill.svg_icon as any} width={SKILL_GLYPH_SIZE} />;
 }

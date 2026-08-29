@@ -1,10 +1,12 @@
 'use client';
 
 import { Icon } from '@web-portfolio/icons';
+import { stegaClean } from '@sanity/client/stega';
 import type { Skill } from '@/sanity.types';
 import { localize, LangId } from '@/lib/locale';
 import SvgIcon from '@/components/atoms/SvgIcon';
 import { getSkillPosterGradient } from '@/lib/skill-poster-gradient';
+import { dataAttr } from '@/sanity/lib/utils';
 
 type SkillWithMetrics = Skill & {
   proficiency?: number;
@@ -39,9 +41,20 @@ export function SkillCard({ skill, locale = 'en', isExiting = false, ariaHidden 
       }}
     >
       <div className="skill-poster-inner">
-        <div className="skill-poster-icon">
+        <div
+          className="skill-poster-icon"
+          data-sanity={
+            skill._id
+              ? dataAttr({
+                  id: skill._id,
+                  type: 'skill',
+                  path: skill.iconName ? 'iconName' : 'svg_icon',
+                }).toString()
+              : undefined
+          }
+        >
           {skill.iconName ? (
-            <Icon name={skill.iconName} size={48} color={palette.from} />
+            <Icon name={stegaClean(skill.iconName)} size={48} color={palette.from} />
           ) : (
             <SvgIcon src={skill?.svg_icon} width={48} accentColor={palette.from} />
           )}

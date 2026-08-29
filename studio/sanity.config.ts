@@ -36,7 +36,7 @@ const PERSON_SLUG = 'jatin-kumar'
 // Main Sanity configuration
 export default defineConfig({
   name: 'default',
-  title: 'Sanity + Next.js Starter Template',
+  title: 'getResume.dev',
 
   projectId,
   dataset,
