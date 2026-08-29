@@ -1,0 +1,29 @@
+.blog-list {
+  background: var(--color-surface, #fff);
+  padding-bottom: 96px;
+}
+
+.blog-list-column {
+  width: min(100%, 1080px);
+  margin: 0 auto;
+  padding: 48px 22px 0;
+}
+
+.blog-list-headline {
+  margin: 0 0 32px;
+  font-family: var(--font-apple-display);
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--color-on-surface, #1d1d1f);
+}
+
+.blog-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.blog-list-empty {
+  font-family: var(--font-apple);
+  color: var(--color-on-surface-variant, #6e6e73);
+}

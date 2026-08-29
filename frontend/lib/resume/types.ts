@@ -95,7 +95,7 @@ export interface ResumeEducationEntry {
   _id: string;
   institution:LocaleString;
   degree: LocaleString;
-  fieldOfStudy?: LocaleString;
+  fieldOfStudy?: string;
   startDate: string;
   endDate?: string;
 }

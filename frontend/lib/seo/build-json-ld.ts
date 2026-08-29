@@ -3,7 +3,7 @@ import { blocksToPlainText, localize, localizeBlocks } from '@/lib/locale'
 
 /** Shape returned by sanity/lib/queries.ts SITE_AUTHOR_QUERY's `structuredData`/`websiteSchema` selections. */
 export interface WebSchemaData {
-  schemaType?: 'Person' | 'WebSite' | 'WebPage' | 'CreativeWork' | 'Organization' | null
+  schemaType?: 'Person' | 'WebSite' | 'WebPage' | 'CreativeWork' | 'Article' | 'Organization' | null
   personJobTitle?: string | null
   personDescription?: Record<string, string> | null
   personSameAs?: string[] | null
@@ -27,6 +27,8 @@ export interface PersonDefaults {
   headline?: Record<string, string> | null
   bio_short?: LocaleBlockContent | null
   avatar?: {asset?: {url?: string | null} | null} | null
+  /** Header logo (person.logoImage) — used as the Person image fallback when no avatar photo is set. */
+  logoImage?: {asset?: {url?: string | null} | null} | null
   channels?: ({url?: string | null} | null)[] | null
 }
 
@@ -66,7 +68,7 @@ export function buildJsonLd(
           localize(webSchema.personDescription, lang) ||
           blocksToPlainText(localizeBlocks(person?.bio_short, lang)) ||
           undefined,
-        image: person?.avatar?.asset?.url || undefined,
+        image: person?.avatar?.asset?.url || person?.logoImage?.asset?.url || undefined,
         url: pageUrl,
         sameAs:
           webSchema.personSameAs?.length
@@ -114,6 +116,17 @@ export function buildJsonLd(
         description: localize(webSchema.workDescription, lang) || undefined,
         url: webSchema.workUrl || pageUrl,
         dateCreated: webSchema.workDateCreated || undefined,
+      }
+      break
+    }
+    case 'Article': {
+      generated = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: localize(webSchema.workName, lang) || undefined,
+        description: localize(webSchema.workDescription, lang) || undefined,
+        url: webSchema.workUrl || pageUrl,
+        datePublished: webSchema.workDateCreated || undefined,
       }
       break
     }

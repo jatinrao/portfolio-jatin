@@ -125,9 +125,7 @@ function mapEducation(item: RawEducation): ResumeEducationEntry {
     _id: (item as any)._id ?? (item as any)._key ?? "",
     institution: orEmptyObject(item.institution?.name) ?? "",
     degree: orEmptyObject(item.degree),
-    fieldOfStudy: orUndefined(item.fieldOfStudy)
-      ? orEmptyObject(item.fieldOfStudy as any)
-      : undefined,
+    fieldOfStudy: orUndefined(item.fieldOfStudy),
     startDate: item.startDate ?? "",
     endDate: orUndefined(item.endDate),
   };

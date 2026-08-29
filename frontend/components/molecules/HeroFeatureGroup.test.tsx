@@ -7,7 +7,7 @@ const FEATURES = [
 ]
 
 describe('HeroFeatureGroup', () => {
-  it('lists feature highlights and a link', () => {
+  it('lists feature highlights and intro copy', () => {
     render(
       <HeroFeatureGroup
         features={FEATURES}
@@ -17,10 +17,22 @@ describe('HeroFeatureGroup', () => {
       />,
     )
     expect(screen.getByText('Lighthouse score')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /learn more/i })).toHaveAttribute(
-      'href',
-      'https://github.com/jatinrao/portfolio-jatin',
+    expect(screen.getByText('Repo intro')).toBeInTheDocument()
+  })
+
+  // The "Learn more" link markup was deliberately commented out in the
+  // component (see f369024, "Improved button visibility and content
+  // changes") — asserting its absence here so a future re-enable is a
+  // conscious test update, not a silent regression either way.
+  it('does not render a link even when linkUrl/linkLabel are set', () => {
+    render(
+      <HeroFeatureGroup
+        features={FEATURES}
+        linkUrl="https://github.com/jatinrao/portfolio-jatin"
+        linkLabel="Learn more"
+      />,
     )
+    expect(screen.queryByRole('link')).not.toBeInTheDocument()
   })
 
   it('renders nothing when there are no feature highlights', () => {

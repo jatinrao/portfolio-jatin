@@ -180,7 +180,7 @@ export type Portfolio = {
 
 export type WebSchema = {
   _type: 'webSchema'
-  schemaType?: 'Person' | 'WebSite' | 'WebPage' | 'CreativeWork' | 'Organization'
+  schemaType?: 'Person' | 'WebSite' | 'WebPage' | 'CreativeWork' | 'Article' | 'Organization'
   personJobTitle?: string
   personDescription?: LocaleText
   personSameAs?: Array<string>
@@ -267,6 +267,236 @@ export type Slug = {
   source?: string
 }
 
+export type Blog = {
+  _id: string
+  _type: 'blog'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: LocaleString
+  slug: Slug
+  category: 'Update' | 'News' | 'Shipping Notes' | 'Press Release'
+  dek: LocaleText
+  publishedDate: string
+  author?: PersonReference
+  isFeatured?: boolean
+  coverImage: CustomImage
+  stats?: Array<{
+    value: string
+    label?: string
+    _type: 'stat'
+    _key: string
+  }>
+  body?: BlogBlockContent
+  footerLinks?: Array<{
+    label: string
+    url: string
+    _type: 'footerLink'
+    _key: string
+  }>
+  seo?: SeoMetadata
+  structuredData?: WebSchema
+}
+
+export type BlogBlockContent = {
+  _type: 'blogBlockContent'
+  en?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+  es?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+  zh?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+  hi?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+  fr?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+  ar?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+}
+
+export type CustomImage = {
+  _type: 'customImage'
+  asset?: SanityImageAssetReference
+  media?: unknown
+  hotspot?: SanityImageHotspot
+  crop?: SanityImageCrop
+  alt?: LocaleString
+  caption?: LocaleString
+  credit?: string
+}
+
+export type LocaleText = {
+  _type: 'localeText'
+  en?: string
+  es?: string
+  zh?: string
+  hi?: string
+  fr?: string
+  ar?: string
+}
+
 export type OrganizationReference = {
   _ref: string
   _type: 'reference'
@@ -316,17 +546,6 @@ export type Project = {
   >
   seo?: SeoMetadata
   structuredData?: WebSchema
-}
-
-export type CustomImage = {
-  _type: 'customImage'
-  asset?: SanityImageAssetReference
-  media?: unknown
-  hotspot?: SanityImageHotspot
-  crop?: SanityImageCrop
-  alt?: LocaleString
-  caption?: LocaleString
-  credit?: string
 }
 
 export type LocaleBlockContent = {
@@ -439,16 +658,6 @@ export type LocaleBlockContent = {
     _type: 'block'
     _key: string
   }>
-}
-
-export type LocaleText = {
-  _type: 'localeText'
-  en?: string
-  es?: string
-  zh?: string
-  hi?: string
-  fr?: string
-  ar?: string
 }
 
 export type Testimonial = {
@@ -717,6 +926,66 @@ export type CtaButton = {
   ariaLabel?: LocaleString
   ariaDescribedBy?: string
   title?: LocaleString
+}
+
+export type ComparisonTable = {
+  _type: 'comparisonTable'
+  caption?: string
+  columns?: Array<
+    {
+      _key: string
+    } & TableColumn
+  >
+  rows?: Array<
+    | ({
+        _key: string
+      } & TableGroupRow)
+    | ({
+        _key: string
+      } & TableDataRow)
+  >
+  footnote?: string
+}
+
+export type TableColumn = {
+  _type: 'tableColumn'
+  name: string
+  descriptor?: string
+  highlight?: boolean
+}
+
+export type TableDataRow = {
+  _type: 'tableDataRow'
+  label: string
+  cells?: Array<
+    {
+      _key: string
+    } & TableCell
+  >
+}
+
+export type TableGroupRow = {
+  _type: 'tableGroupRow'
+  label: string
+}
+
+export type TableCell = {
+  _type: 'tableCell'
+  icon?: IconRef
+  note?: string
+}
+
+export type CodeSnippet = {
+  _type: 'codeSnippet'
+  label?: string
+  language?: string
+  code: string
+}
+
+export type CalloutBox = {
+  _type: 'calloutBox'
+  label?: string
+  text: LocaleText
 }
 
 export type Section = {
@@ -1032,12 +1301,14 @@ export type AllSanitySchemaTypes =
   | SanityImageHotspot
   | Icon
   | Slug
+  | Blog
+  | BlogBlockContent
+  | CustomImage
+  | LocaleText
   | OrganizationReference
   | SkillReference
   | Project
-  | CustomImage
   | LocaleBlockContent
-  | LocaleText
   | Testimonial
   | Publication
   | Award
@@ -1051,6 +1322,13 @@ export type AllSanitySchemaTypes =
   | SectionReference
   | Person
   | CtaButton
+  | ComparisonTable
+  | TableColumn
+  | TableDataRow
+  | TableGroupRow
+  | TableCell
+  | CodeSnippet
+  | CalloutBox
   | Section
   | SocialProfile
   | InlineSvg
@@ -1092,24 +1370,131 @@ export type GetPageQueryResult = null
 export type SitemapDataResult = Array<never>
 
 // Source: sanity/lib/queries.ts
-// Variable: allPostsQuery
-// Query: *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  }
-export type AllPostsQueryResult = Array<never>
+// Variable: blogSlugs
+// Query: *[_type == "blog" && defined(slug.current)]  {"slug": slug.current}
+export type BlogSlugsResult = Array<{
+  slug: string
+}>
 
 // Source: sanity/lib/queries.ts
-// Variable: morePostsQuery
-// Query: *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  }
-export type MorePostsQueryResult = Array<never>
+// Variable: ALL_BLOGS_QUERY
+// Query: *[_type == "blog" && defined(slug.current)] | order(publishedDate desc) {      _id,  title,  slug,  category,  dek,  publishedDate,  isFeatured,  author->{ name, avatar{ asset->{ _id, url, metadata { lqip, dimensions } }, alt } },  coverImage{    asset->{ _id, url, metadata { lqip, dimensions } },    alt,    caption,    credit  },  stats,  }
+export type ALL_BLOGS_QUERY_RESULT = Array<{
+  _id: string
+  title: LocaleString
+  slug: Slug
+  category: 'News' | 'Press Release' | 'Shipping Notes' | 'Update'
+  dek: LocaleText
+  publishedDate: string
+  isFeatured: boolean | null
+  author: {
+    name: LocaleString
+    avatar: {
+      asset: {
+        _id: string
+        url: string
+        metadata: {
+          lqip: string | null
+          dimensions: SanityImageDimensions | null
+        } | null
+      } | null
+      alt: LocaleString | null
+    } | null
+  } | null
+  coverImage: {
+    asset: {
+      _id: string
+      url: string
+      metadata: {
+        lqip: string | null
+        dimensions: SanityImageDimensions | null
+      } | null
+    } | null
+    alt: LocaleString | null
+    caption: LocaleString | null
+    credit: string | null
+  }
+  stats: Array<{
+    value: string
+    label?: string
+    _type: 'stat'
+    _key: string
+  }> | null
+}>
 
 // Source: sanity/lib/queries.ts
-// Variable: postQuery
-// Query: *[_type == "post" && slug.current == $slug] [0] {    content[]{    ...,    markDefs[]{      ...,        _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }    }  },      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  }
-export type PostQueryResult = null
-
-// Source: sanity/lib/queries.ts
-// Variable: postPagesSlugs
-// Query: *[_type == "post" && defined(slug.current)]  {"slug": slug.current}
-export type PostPagesSlugsResult = Array<never>
+// Variable: BLOG_BY_SLUG_QUERY
+// Query: *[_type == "blog" && slug.current == $slug][0]{      _id,  title,  slug,  category,  dek,  publishedDate,  isFeatured,  author->{ name, avatar{ asset->{ _id, url, metadata { lqip, dimensions } }, alt } },  coverImage{    asset->{ _id, url, metadata { lqip, dimensions } },    alt,    caption,    credit  },  stats,    body,    footerLinks,    seo{      metaTitle,      metaDescription,      canonicalUrl,      ogTitle,      ogDescription,      ogImage{        asset->{ url, metadata { dimensions } },        alt      },      twitterCard,      twitterTitle,      twitterDescription,      noIndex,      noFollow    },  }
+export type BLOG_BY_SLUG_QUERY_RESULT = {
+  _id: string
+  title: LocaleString
+  slug: Slug
+  category: 'News' | 'Press Release' | 'Shipping Notes' | 'Update'
+  dek: LocaleText
+  publishedDate: string
+  isFeatured: boolean | null
+  author: {
+    name: LocaleString
+    avatar: {
+      asset: {
+        _id: string
+        url: string
+        metadata: {
+          lqip: string | null
+          dimensions: SanityImageDimensions | null
+        } | null
+      } | null
+      alt: LocaleString | null
+    } | null
+  } | null
+  coverImage: {
+    asset: {
+      _id: string
+      url: string
+      metadata: {
+        lqip: string | null
+        dimensions: SanityImageDimensions | null
+      } | null
+    } | null
+    alt: LocaleString | null
+    caption: LocaleString | null
+    credit: string | null
+  }
+  stats: Array<{
+    value: string
+    label?: string
+    _type: 'stat'
+    _key: string
+  }> | null
+  body: BlogBlockContent | null
+  footerLinks: Array<{
+    label: string
+    url: string
+    _type: 'footerLink'
+    _key: string
+  }> | null
+  seo: {
+    metaTitle: LocaleString | null
+    metaDescription: LocaleText | null
+    canonicalUrl: string | null
+    ogTitle: LocaleString | null
+    ogDescription: LocaleText | null
+    ogImage: {
+      asset: {
+        url: string
+        metadata: {
+          dimensions: SanityImageDimensions | null
+        } | null
+      } | null
+      alt: LocaleString | null
+    } | null
+    twitterCard: 'summary_large_image' | 'summary' | null
+    twitterTitle: LocaleString | null
+    twitterDescription: LocaleText | null
+    noIndex: boolean | null
+    noFollow: boolean | null
+  } | null
+} | null
 
 // Source: sanity/lib/queries.ts
 // Variable: pagesSlugs
@@ -1632,7 +2017,7 @@ export type PORTFOLIO_BY_SLUG_QUERY_RESULT = {
 
 // Source: sanity/lib/queries.ts
 // Variable: METADATA_QUERY
-// Query: *[_type == "person"][0]{    seo{      metaTitle,      metaDescription,      keywords,      canonicalUrl,      ogTitle,      ogDescription,      ogImage{        asset->{          url,          metadata{ dimensions }        },        alt      },      ogType,      ogSiteName,      twitterCard,      twitterTitle,      twitterDescription,      twitterImage{        asset->{          url,          metadata{ dimensions }        },        alt      },      noIndex,      noFollow    },    name,    headline,    bio_short,    channels[],    avatar{      asset->{        url,        metadata{ dimensions }      },      alt    }  }
+// Query: *[_type == "person"][0]{    seo{      metaTitle,      metaDescription,      keywords,      canonicalUrl,      ogTitle,      ogDescription,      ogImage{        asset->{          url,          metadata{ dimensions }        },        alt      },      ogType,      ogSiteName,      twitterCard,      twitterTitle,      twitterDescription,      twitterImage{        asset->{          url,          metadata{ dimensions }        },        alt      },      noIndex,      noFollow    },    name,    headline,    bio_short,    channels[],    avatar{      asset->{        url,        metadata{ dimensions }      },      alt    },    logoImage{      asset->{        url,        metadata{ dimensions }      },      alt    }  }
 export type METADATA_QUERY_RESULT = {
   seo: {
     metaTitle: LocaleString | null
@@ -1686,11 +2071,20 @@ export type METADATA_QUERY_RESULT = {
     } | null
     alt: LocaleString | null
   } | null
+  logoImage: {
+    asset: {
+      url: string
+      metadata: {
+        dimensions: SanityImageDimensions | null
+      } | null
+    } | null
+    alt: LocaleString | null
+  } | null
 } | null
 
 // Source: sanity/lib/queries.ts
 // Variable: SITE_AUTHOR_QUERY
-// Query: *[_type == "person" && slug.current == $authorSlug][0]{    name,    headline,    bio_short,    channels[],    avatar{      asset->{        url,        metadata{ dimensions }      },      alt    },    structuredData{      schemaType,      personJobTitle,      personDescription,      personSameAs,      personAlumniOf,      personWorksFor,      websiteName,      websiteUrl,      pageName,      pageUrl,      pageBreadcrumb[]{ name, url },      workName,      workDescription,      workUrl,      workDateCreated,      customJsonLd    },    websiteSchema{      schemaType,      personJobTitle,      personDescription,      personSameAs,      personAlumniOf,      personWorksFor,      websiteName,      websiteUrl,      pageName,      pageUrl,      pageBreadcrumb[]{ name, url },      workName,      workDescription,      workUrl,      workDateCreated,      customJsonLd    }  }
+// Query: *[_type == "person" && slug.current == $authorSlug][0]{    name,    headline,    bio_short,    channels[],    avatar{      asset->{        url,        metadata{ dimensions }      },      alt    },    logoImage{      asset->{        url,        metadata{ dimensions }      },      alt    },    structuredData{      schemaType,      personJobTitle,      personDescription,      personSameAs,      personAlumniOf,      personWorksFor,      websiteName,      websiteUrl,      pageName,      pageUrl,      pageBreadcrumb[]{ name, url },      workName,      workDescription,      workUrl,      workDateCreated,      customJsonLd    },    websiteSchema{      schemaType,      personJobTitle,      personDescription,      personSameAs,      personAlumniOf,      personWorksFor,      websiteName,      websiteUrl,      pageName,      pageUrl,      pageBreadcrumb[]{ name, url },      workName,      workDescription,      workUrl,      workDateCreated,      customJsonLd    }  }
 export type SITE_AUTHOR_QUERY_RESULT = {
   name: LocaleString
   headline: LocaleString | null
@@ -1711,8 +2105,24 @@ export type SITE_AUTHOR_QUERY_RESULT = {
     } | null
     alt: LocaleString | null
   } | null
+  logoImage: {
+    asset: {
+      url: string
+      metadata: {
+        dimensions: SanityImageDimensions | null
+      } | null
+    } | null
+    alt: LocaleString | null
+  } | null
   structuredData: {
-    schemaType: 'CreativeWork' | 'Organization' | 'Person' | 'WebPage' | 'WebSite' | null
+    schemaType:
+      | 'Article'
+      | 'CreativeWork'
+      | 'Organization'
+      | 'Person'
+      | 'WebPage'
+      | 'WebSite'
+      | null
     personJobTitle: string | null
     personDescription: LocaleText | null
     personSameAs: Array<string> | null
@@ -1733,7 +2143,14 @@ export type SITE_AUTHOR_QUERY_RESULT = {
     customJsonLd: string | null
   } | null
   websiteSchema: {
-    schemaType: 'CreativeWork' | 'Organization' | 'Person' | 'WebPage' | 'WebSite' | null
+    schemaType:
+      | 'Article'
+      | 'CreativeWork'
+      | 'Organization'
+      | 'Person'
+      | 'WebPage'
+      | 'WebSite'
+      | null
     personJobTitle: string | null
     personDescription: LocaleText | null
     personSameAs: Array<string> | null
@@ -1767,17 +2184,16 @@ declare module '@sanity/client' {
     '*[_type == "settings"][0]': SettingsQueryResult
     '\n  *[_type == \'page\' && slug.current == $slug][0]{\n    _id,\n    _type,\n    name,\n    slug,\n    heading,\n    subheading,\n    "pageBuilder": pageBuilder[]{\n      ...,\n      _type == "callToAction" => {\n        ...,\n        button {\n          ...,\n          \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n      }\n\n        }\n      },\n      _type == "infoSection" => {\n        content[]{\n          ...,\n          markDefs[]{\n            ...,\n            \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n          }\n        }\n      },\n    },\n  }\n': GetPageQueryResult
     '\n  *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {\n    "slug": slug.current,\n    _type,\n    _updatedAt,\n  }\n': SitemapDataResult
-    '\n  *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': AllPostsQueryResult
-    '\n  *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': MorePostsQueryResult
-    '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
-    '\n  *[_type == "post" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
+    '\n  *[_type == "blog" && defined(slug.current)]\n  {"slug": slug.current}\n': BlogSlugsResult
+    '\n  *[_type == "blog" && defined(slug.current)] | order(publishedDate desc) {\n    \n  _id,\n  title,\n  slug,\n  category,\n  dek,\n  publishedDate,\n  isFeatured,\n  author->{ name, avatar{ asset->{ _id, url, metadata { lqip, dimensions } }, alt } },\n  coverImage{\n    asset->{ _id, url, metadata { lqip, dimensions } },\n    alt,\n    caption,\n    credit\n  },\n  stats,\n\n  }\n': ALL_BLOGS_QUERY_RESULT
+    '\n  *[_type == "blog" && slug.current == $slug][0]{\n    \n  _id,\n  title,\n  slug,\n  category,\n  dek,\n  publishedDate,\n  isFeatured,\n  author->{ name, avatar{ asset->{ _id, url, metadata { lqip, dimensions } }, alt } },\n  coverImage{\n    asset->{ _id, url, metadata { lqip, dimensions } },\n    alt,\n    caption,\n    credit\n  },\n  stats,\n\n    body,\n    footerLinks,\n    seo{\n      metaTitle,\n      metaDescription,\n      canonicalUrl,\n      ogTitle,\n      ogDescription,\n      ogImage{\n        asset->{ url, metadata { dimensions } },\n        alt\n      },\n      twitterCard,\n      twitterTitle,\n      twitterDescription,\n      noIndex,\n      noFollow\n    },\n  }\n': BLOG_BY_SLUG_QUERY_RESULT
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
     '\n  *[_type == "project" && defined(slug.current)]\n  {"slug": slug.current}\n': ProjectSlugsResult
     '\n*[_type == "project" && slug.current == $slug][0]{\n  title,\n  slug,\n  description,\n  body,\n  projectUrl,\n  repositoryUrl,\n  startDate,\n  endDate,\n  isFeatured,\n  coverImage{\n    asset->{\n      _id,\n      url,\n      metadata { lqip, dimensions }\n    },\n    alt,\n    caption,\n    credit\n  },\n  gallery[]{\n    asset->{\n      _id,\n      url,\n      metadata { lqip, dimensions }\n    },\n    alt,\n    caption,\n    credit\n  },\n}\n': PROJECT_BY_SLUG_QUERY_RESULT
     '\n*[_type == "person" && slug.current == $slug][0]{\n_id,\n_updatedAt,\nslug,  \n"header":{\n  header_title,\n  location,\n  logoImage {\n      asset->{ _id, url, metadata { lqip, dimensions } },\n      alt,\n  }, \n  headerCta{\n    text,\n    ariaLabel,\n    href\n  },\n  \n  },\n  \n  "hero_section": {\n    name,\n    greeting,\n    headline,\n    bio_short,\n    channels[],\n    "stats": stats[]{ value, label },\n    openToWork,\n    openToWorkLabel,\n    "primaryCta":   { "href": primaryCta.href,   "text": primaryCta.text   },\n    "secondaryCta": { "href": secondaryCta.href, "text": secondaryCta.text },\n    avatar {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    },\n    resumeImage{\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    }},\n"category_labels": *[_type == "skillCategoryLabels"][0],\n  skills[]->{\n    _id,\n    name,\n    slug,\n    category,\n    filter_category,\n    icon {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      }\n    },\n    svg_icon,\n    iconName,\n    proficiency,\n    experience\n  },\n\n  "experience": *[\n    _type == "experience" &&\n    person._ref == ^._id\n  ] | order(startDate desc) {\n    _id,\n    role,\n    employmentType,\n    location,\n    startDate,\n    endDate,\n    isCurrent,\n    description,\n\n    organization->{\n      _id,\n      name,\n      slug,\n      logo {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        },\n        alt\n      },\n      website\n    },\n\n    skills[]->{\n      _id,\n      name,\n      slug,\n      category,\n      filter_category,\n      icon {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        }\n      },\n      svg_icon,\n      iconName\n    }\n  },\n  "sections": sections[]->{\n    _id,\n    sectionType,\n    sectionId,\n    internalTitle,\n    heading,\n    subheading,\n    content,\n    showInNav,\n    navLabel\n  },\n  "projects": projects[]->{\n    title,\n     slug,\n  description,\n  projectUrl,\n  repositoryUrl,\n  startDate,\n  endDate,\n  isFeatured,\n  coverImage{\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n        }\n      },\n  \n\n  },\n  "education": *[\n  _type == "education" &&\n  person._ref == ^._id\n] | order(startDate asc) {\n  _id,\n institution->{\n name\n },\n  degree,\n  fieldOfStudy,\n  description,\n  startDate,\n  endDate,\n  isCurrent\n}\n  \n    \n  }': RESUME_BY_SLUG_QUERY_RESULT
     '\n*[_type == "person" && slug.current == $slug][0]{\n  "header":{\n  header_title,\n  location,\n  logoImage {\n      asset->{ _id, url, metadata { lqip, dimensions } },\n      alt,\n  }, \n  headerCta{\n    text,\n    ariaLabel,\n    href\n  },\n  "navItems": (\n  sections[]->{\n    sectionId,\n    sectionType,\n    showInNav,\n    navLabel\n  }\n)[showInNav != false]{\n  "anchorId": sectionId.current,\n  "label": navLabel\n  }\n  \n  },\n  \n    "hero_section": {\n    name,\n    greeting,\n    headline,\n    bio_short,\n    channels[],\n    "stats": stats[]{ value, label },\n    openToWork,\n    openToWorkLabel,\n    "primaryCta":   { "href": primaryCta.href,   "text": primaryCta.text   },\n    "secondaryCta": { "href": secondaryCta.href, "text": secondaryCta.text },\n    avatar {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    }\n  },\n\n  skills[]->{\n    _id,\n    name,\n    slug,\n    category,\n    filter_category,\n    icon {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      }\n    },\n    svg_icon,\n    iconName,\n    proficiency,\n    experience\n  },\n\n  "experience": *[\n    _type == "experience" &&\n    person._ref == ^._id\n  ] | order(startDate desc) {\n    _id,\n    role,\n    employmentType,\n    location,\n    startDate,\n    endDate,\n    isCurrent,\n    description,\n\n    organization->{\n      _id,\n      name,\n      slug,\n      logo {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        },\n        alt\n      },\n      website\n    },\n\n    skills[]->{\n      _id,\n      name,\n      slug,\n      category,\n      filter_category,\n      icon {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        }\n      },\n      svg_icon,\n      iconName\n    }\n  },\n  "sections": sections[]->{\n    _id,\n    sectionType,\n    sectionId,\n    internalTitle,\n    heading,\n    subheading,\n    content,\n    showInNav,\n    navLabel\n  },\n  \n    \n  }': PORTFOLIO_BY_SLUG_QUERY_RESULT
-    '*[_type == "person"][0]{\n    seo{\n      metaTitle,\n      metaDescription,\n      keywords,\n      canonicalUrl,\n      ogTitle,\n      ogDescription,\n      ogImage{\n        asset->{\n          url,\n          metadata{ dimensions }\n        },\n        alt\n      },\n      ogType,\n      ogSiteName,\n      twitterCard,\n      twitterTitle,\n      twitterDescription,\n      twitterImage{\n        asset->{\n          url,\n          metadata{ dimensions }\n        },\n        alt\n      },\n      noIndex,\n      noFollow\n    },\n    name,\n    headline,\n    bio_short,\n    channels[],\n    avatar{\n      asset->{\n        url,\n        metadata{ dimensions }\n      },\n      alt\n    }\n  }\n': METADATA_QUERY_RESULT
-    '*[_type == "person" && slug.current == $authorSlug][0]{\n    name,\n    headline,\n    bio_short,\n    channels[],\n    avatar{\n      asset->{\n        url,\n        metadata{ dimensions }\n      },\n      alt\n    },\n    structuredData{\n      schemaType,\n      personJobTitle,\n      personDescription,\n      personSameAs,\n      personAlumniOf,\n      personWorksFor,\n      websiteName,\n      websiteUrl,\n      pageName,\n      pageUrl,\n      pageBreadcrumb[]{ name, url },\n      workName,\n      workDescription,\n      workUrl,\n      workDateCreated,\n      customJsonLd\n    },\n    websiteSchema{\n      schemaType,\n      personJobTitle,\n      personDescription,\n      personSameAs,\n      personAlumniOf,\n      personWorksFor,\n      websiteName,\n      websiteUrl,\n      pageName,\n      pageUrl,\n      pageBreadcrumb[]{ name, url },\n      workName,\n      workDescription,\n      workUrl,\n      workDateCreated,\n      customJsonLd\n    }\n  }\n': SITE_AUTHOR_QUERY_RESULT
+    '*[_type == "person"][0]{\n    seo{\n      metaTitle,\n      metaDescription,\n      keywords,\n      canonicalUrl,\n      ogTitle,\n      ogDescription,\n      ogImage{\n        asset->{\n          url,\n          metadata{ dimensions }\n        },\n        alt\n      },\n      ogType,\n      ogSiteName,\n      twitterCard,\n      twitterTitle,\n      twitterDescription,\n      twitterImage{\n        asset->{\n          url,\n          metadata{ dimensions }\n        },\n        alt\n      },\n      noIndex,\n      noFollow\n    },\n    name,\n    headline,\n    bio_short,\n    channels[],\n    avatar{\n      asset->{\n        url,\n        metadata{ dimensions }\n      },\n      alt\n    },\n    logoImage{\n      asset->{\n        url,\n        metadata{ dimensions }\n      },\n      alt\n    }\n  }\n': METADATA_QUERY_RESULT
+    '*[_type == "person" && slug.current == $authorSlug][0]{\n    name,\n    headline,\n    bio_short,\n    channels[],\n    avatar{\n      asset->{\n        url,\n        metadata{ dimensions }\n      },\n      alt\n    },\n    logoImage{\n      asset->{\n        url,\n        metadata{ dimensions }\n      },\n      alt\n    },\n    structuredData{\n      schemaType,\n      personJobTitle,\n      personDescription,\n      personSameAs,\n      personAlumniOf,\n      personWorksFor,\n      websiteName,\n      websiteUrl,\n      pageName,\n      pageUrl,\n      pageBreadcrumb[]{ name, url },\n      workName,\n      workDescription,\n      workUrl,\n      workDateCreated,\n      customJsonLd\n    },\n    websiteSchema{\n      schemaType,\n      personJobTitle,\n      personDescription,\n      personSameAs,\n      personAlumniOf,\n      personWorksFor,\n      websiteName,\n      websiteUrl,\n      pageName,\n      pageUrl,\n      pageBreadcrumb[]{ name, url },\n      workName,\n      workDescription,\n      workUrl,\n      workDateCreated,\n      customJsonLd\n    }\n  }\n': SITE_AUTHOR_QUERY_RESULT
     '*[_type == "feedbackSection"][0]{\n  badgeLabel,\n  eyebrow,\n  title,\n  description,\n  submitLabel,\n  submitIcon,\n  contactPerson->{\n    _id,\n    name,\n    avatar {\n      asset->{ _id, url, metadata { lqip, dimensions } },\n      alt\n    }\n  },\n  fields[]{\n    name,\n    step,\n    label,\n    placeholder,\n    fieldType,\n    required,\n    colSpan\n  }\n}': FEEDBACK_SECTION_QUERY_RESULT
   }
 }

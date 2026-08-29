@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { Icon } from '@web-portfolio/icons'
 
 export interface HeroFeatureHighlight {
@@ -42,16 +41,6 @@ export function HeroFeatureGroup({ features, intro, linkUrl, linkLabel }: HeroFe
         ))}
       </ul>
       {intro && <p className="hero-repo-intro">{intro}</p>}
-      {/* {linkUrl && (
-        <Link
-          href={linkUrl}
-          className="hero-more"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span className="hero-link-copy">{linkLabel || 'Learn more'}</span>
-        </Link>
-      )} */}
     </div>
   )
 }

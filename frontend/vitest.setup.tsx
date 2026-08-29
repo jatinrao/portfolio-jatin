@@ -1,5 +1,12 @@
 import '@testing-library/jest-dom/vitest'
-import { vi } from 'vitest'
+import { afterEach, vi } from 'vitest'
+import { cleanup } from '@testing-library/react'
+
+// @testing-library/react's own auto-cleanup only registers when `afterEach`
+// is a *global* (vitest.config.ts doesn't set `test.globals: true`, so it
+// isn't) — without this, DOM from one `it` in a multi-test file leaks into
+// the next, causing false "multiple elements found" failures.
+afterEach(cleanup)
 
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => (

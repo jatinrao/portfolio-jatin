@@ -25,7 +25,7 @@ export const webSchema = defineType({
     { name: 'person', title: 'Person' },
     { name: 'website', title: 'WebSite' },
     { name: 'webpage', title: 'WebPage' },
-    { name: 'work', title: 'CreativeWork / Project' },
+    { name: 'work', title: 'CreativeWork / Project / Article' },
     { name: 'custom', title: 'Custom override' },
   ],
   fields: [
@@ -41,6 +41,7 @@ export const webSchema = defineType({
           { title: 'WebSite', value: 'WebSite' },
           { title: 'WebPage', value: 'WebPage' },
           { title: 'CreativeWork (Project)', value: 'CreativeWork' },
+          { title: 'Article (Blog post)', value: 'Article' },
           { title: 'Organization', value: 'Organization' },
         ],
       },
@@ -151,7 +152,7 @@ export const webSchema = defineType({
       type: 'localeString',
       group: 'work',
       hidden: ({ parent }) =>
-        (parent as { schemaType?: string })?.schemaType !== 'CreativeWork',
+        !['CreativeWork', 'Article'].includes((parent as { schemaType?: string })?.schemaType ?? ''),
     }),
     defineField({
       name: 'workDescription',
@@ -159,7 +160,7 @@ export const webSchema = defineType({
       type: 'localeText',
       group: 'work',
       hidden: ({ parent }) =>
-        (parent as { schemaType?: string })?.schemaType !== 'CreativeWork',
+        !['CreativeWork', 'Article'].includes((parent as { schemaType?: string })?.schemaType ?? ''),
     }),
     defineField({
       name: 'workUrl',
@@ -168,7 +169,7 @@ export const webSchema = defineType({
       group: 'work',
       description: 'schema:url — live URL of the project or publication.',
       hidden: ({ parent }) =>
-        (parent as { schemaType?: string })?.schemaType !== 'CreativeWork',
+        !['CreativeWork', 'Article'].includes((parent as { schemaType?: string })?.schemaType ?? ''),
     }),
     defineField({
       name: 'workDateCreated',
@@ -176,7 +177,7 @@ export const webSchema = defineType({
       type: 'date',
       group: 'work',
       hidden: ({ parent }) =>
-        (parent as { schemaType?: string })?.schemaType !== 'CreativeWork',
+        !['CreativeWork', 'Article'].includes((parent as { schemaType?: string })?.schemaType ?? ''),
     }),
 
     // ── Custom JSON-LD override ──────────────────────────────────────────

@@ -2,8 +2,13 @@ import type { HeaderData } from '@/components/organisms/Header'
 import type { HeroRawData } from '@/lib/queries'
 import type { ExperienceEntry } from '@/types/portfolio'
 import type { Project, Section, Skill } from '@/sanity.types'
+import type {
+  ALL_BLOGS_QUERY_RESULT,
+  BLOG_BY_SLUG_QUERY_RESULT,
+} from '@/sanity.types'
 
 const loc = (en: string) => ({ _type: 'localeString' as const, en })
+const locText = (en: string) => ({ _type: 'localeText' as const, en })
 
 export const mockHeader: HeaderData = {
   header_title: loc('Jatin Kumar'),
@@ -191,3 +196,141 @@ export const mockProjectsSection = {
   sectionId: { _type: 'slug', current: 'projects' },
   heading: loc('Projects'),
 } as Section
+
+// ─── Blog ───────────────────────────────────────────────────────────────
+
+const mockCoverImage = {
+  asset: {
+    _id: 'blog-cover',
+    url: '/hero/gift.png',
+    metadata: {
+      lqip: '',
+      dimensions: { _type: 'sanity.imageDimensions' as const, width: 1200, height: 630, aspectRatio: 1200 / 630 },
+    },
+  },
+  alt: loc('Cover art'),
+  caption: null,
+  credit: null,
+}
+
+/** Exercises every blog body block variant: paragraph, pull-quote
+ * (blockquote), calloutBox, codeSnippet, and a comparisonTable with a
+ * group row + two data rows. */
+export const mockBlogPost: NonNullable<BLOG_BY_SLUG_QUERY_RESULT> = {
+  _id: 'blog-1',
+  title: loc('Mount the Frame, Not the Picture'),
+  slug: { _type: 'slug', current: 'mount-the-frame-not-the-picture' },
+  category: 'Shipping Notes',
+  dek: locText('An icon needs a frame to hang in and a picture to hang there.'),
+  publishedDate: '2026-08-01',
+  isFeatured: true,
+  author: {
+    name: loc('Jatin Kumar'),
+    avatar: null,
+  },
+  coverImage: mockCoverImage,
+  stats: [
+    { _type: 'stat', _key: 's1', value: '633', label: 'bundled icons' },
+    { _type: 'stat', _key: 's2', value: '1', label: 'shared registry' },
+  ],
+  body: {
+    _type: 'blogBlockContent',
+    en: [
+      {
+        _type: 'block',
+        _key: 'p1',
+        style: 'normal',
+        markDefs: [],
+        children: [{ _type: 'span', _key: 'p1-s', text: 'Every icon makes two decisions at once.', marks: [] }],
+      },
+      {
+        _type: 'block',
+        _key: 'q1',
+        style: 'blockquote',
+        markDefs: [],
+        children: [{ _type: 'span', _key: 'q1-s', text: 'Mount the frame, hand the picture over.', marks: [] }],
+      },
+      {
+        _type: 'calloutBox',
+        _key: 'c1',
+        label: "What we're actually claiming",
+        text: locText('A narrower claim than "faster" or "smaller".'),
+      },
+      {
+        _type: 'codeSnippet',
+        _key: 'cs1',
+        label: 'packages/react — usage',
+        language: 'tsx',
+        code: `<Icon name="docker" size={32} />`,
+      },
+      {
+        _type: 'comparisonTable',
+        _key: 'ct1',
+        caption: 'Evaluated against packages/core',
+        columns: [
+          { _type: 'tableColumn', _key: 'col1', name: 'Icon font', descriptor: 'Font Awesome', highlight: false },
+          { _type: 'tableColumn', _key: 'col2', name: '@web-portfolio/icons', descriptor: 'This repo', highlight: true },
+        ],
+        rows: [
+          { _type: 'tableGroupRow', _key: 'g1', label: 'Writing it' },
+          {
+            _type: 'tableDataRow',
+            _key: 'r1',
+            label: 'Adding an icon',
+            cells: [
+              { _type: 'tableCell', _key: 'r1c1', icon: 'close', note: 'nothing checks the glyph exists' },
+              { _type: 'tableCell', _key: 'r1c2', icon: 'check', note: 'one prop' },
+            ],
+          },
+        ],
+        footnote: 'Scoped to this row only.',
+      },
+    ],
+  },
+  footerLinks: [
+    { _type: 'footerLink', _key: 'l1', label: 'icons.getresume.dev', url: 'https://icons.getresume.dev' },
+  ],
+  seo: null,
+}
+
+/** Minimal variant — stats/footerLinks/comparisonTable all omitted, author
+ * null, to exercise the "optional and absent" render paths. */
+export const mockBlogPostMinimal: NonNullable<BLOG_BY_SLUG_QUERY_RESULT> = {
+  _id: 'blog-2',
+  title: loc('A Minimal Post'),
+  slug: { _type: 'slug', current: 'a-minimal-post' },
+  category: 'Update',
+  dek: locText('A post with no optional sections filled in.'),
+  publishedDate: '2026-07-01',
+  isFeatured: false,
+  author: null,
+  coverImage: mockCoverImage,
+  stats: null,
+  body: {
+    _type: 'blogBlockContent',
+    en: [
+      {
+        _type: 'block',
+        _key: 'mp1',
+        style: 'normal',
+        markDefs: [],
+        children: [{ _type: 'span', _key: 'mp1-s', text: 'Just a paragraph.', marks: [] }],
+      },
+    ],
+  },
+  footerLinks: null,
+  seo: null,
+}
+
+export const mockBlogListItem: ALL_BLOGS_QUERY_RESULT[number] = {
+  _id: mockBlogPost._id,
+  title: mockBlogPost.title,
+  slug: mockBlogPost.slug,
+  category: mockBlogPost.category,
+  dek: mockBlogPost.dek,
+  publishedDate: mockBlogPost.publishedDate,
+  isFeatured: mockBlogPost.isFeatured,
+  author: mockBlogPost.author,
+  coverImage: mockBlogPost.coverImage,
+  stats: mockBlogPost.stats,
+}

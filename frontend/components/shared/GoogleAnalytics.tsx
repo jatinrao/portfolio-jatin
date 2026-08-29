@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Script from "next/script";
 
 // Set NEXT_PUBLIC_GA_ID in your environment (Vercel project settings AND
@@ -8,8 +9,23 @@ import Script from "next/script";
 // read them dynamically).
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
 
+const LOCAL_HOSTNAMES = new Set(["localhost", "127.0.0.1", "::1"]);
+
 export default function GoogleAnalytics() {
-  if (!GA_MEASUREMENT_ID) {
+  // Starts disabled and only flips on after mount, once we can read
+  // location.hostname — matches the SSR output (which has no `window`) so
+  // there's no hydration mismatch, and keeps dev traffic out of real
+  // analytics regardless of whether NEXT_PUBLIC_GA_ID happens to be set
+  // locally (e.g. copied from a shared .env for convenience).
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    if (!LOCAL_HOSTNAMES.has(window.location.hostname)) {
+      setEnabled(true);
+    }
+  }, []);
+
+  if (!GA_MEASUREMENT_ID || !enabled) {
     return null;
   }
 

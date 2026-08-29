@@ -12,7 +12,7 @@ interface EducationEntryProps {
 }
 function EducationEntry({ entry, lang }: EducationEntryProps) {
   const degree       = localize(entry.degree, lang) || ''
-  const fieldOfStudy = localize(entry.fieldOfStudy, lang)
+  const fieldOfStudy = entry.fieldOfStudy
   const institutionName = localize(entry.institution,lang);
 
   return (

@@ -2,17 +2,6 @@ import {defineQuery} from 'next-sanity'
 
 export const settingsQuery = defineQuery(`*[_type == "settings"][0]`)
 
-const postFields = /* groq */ `
-  _id,
-  "status": select(_originalId in path("drafts.**") => "draft", "published"),
-  "title": coalesce(title, "Untitled"),
-  "slug": slug.current,
-  excerpt,
-  coverImage,
-  "date": coalesce(date, _updatedAt),
-  "author": author->{firstName, lastName, picture},
-`
-
 const linkReference = /* groq */ `
   _type == "link" => {
     "page": page->slug.current,
@@ -65,34 +54,61 @@ export const sitemapData = defineQuery(`
   }
 `)
 
-export const allPostsQuery = defineQuery(`
-  *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) {
-    ${postFields}
-  }
-`)
-
-export const morePostsQuery = defineQuery(`
-  *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {
-    ${postFields}
-  }
-`)
-
-export const postQuery = defineQuery(`
-  *[_type == "post" && slug.current == $slug] [0] {
-    content[]{
-    ...,
-    markDefs[]{
-      ...,
-      ${linkReference}
-    }
+// Nothing inside `body` needs dereferencing — comparisonTable's per-cell
+// `icon` is a plain iconRef string (a registry key, not an asset
+// reference), same as skill.iconName elsewhere — so the whole per-language
+// block array can be passed through as-is, same as project.body.
+const blogFields = /* groq */ `
+  _id,
+  title,
+  slug,
+  category,
+  dek,
+  publishedDate,
+  isFeatured,
+  author->{ name, avatar{ asset->{ _id, url, metadata { lqip, dimensions } }, alt } },
+  coverImage{
+    asset->{ _id, url, metadata { lqip, dimensions } },
+    alt,
+    caption,
+    credit
   },
-    ${postFields}
+  stats,
+`
+
+export const blogSlugs = defineQuery(`
+  *[_type == "blog" && defined(slug.current)]
+  {"slug": slug.current}
+`)
+
+export const ALL_BLOGS_QUERY = defineQuery(`
+  *[_type == "blog" && defined(slug.current)] | order(publishedDate desc) {
+    ${blogFields}
   }
 `)
 
-export const postPagesSlugs = defineQuery(`
-  *[_type == "post" && defined(slug.current)]
-  {"slug": slug.current}
+export const BLOG_BY_SLUG_QUERY = defineQuery(`
+  *[_type == "blog" && slug.current == $slug][0]{
+    ${blogFields}
+    body,
+    footerLinks,
+    seo{
+      metaTitle,
+      metaDescription,
+      canonicalUrl,
+      ogTitle,
+      ogDescription,
+      ogImage{
+        asset->{ url, metadata { dimensions } },
+        alt
+      },
+      twitterCard,
+      twitterTitle,
+      twitterDescription,
+      noIndex,
+      noFollow
+    },
+  }
 `)
 
 export const pagesSlugs = defineQuery(`
@@ -504,6 +520,13 @@ export const METADATA_QUERY = defineQuery(`*[_type == "person"][0]{
         metadata{ dimensions }
       },
       alt
+    },
+    logoImage{
+      asset->{
+        url,
+        metadata{ dimensions }
+      },
+      alt
     }
   }
 `)
@@ -520,6 +543,13 @@ export const SITE_AUTHOR_QUERY = defineQuery(`*[_type == "person" && slug.curren
     bio_short,
     channels[],
     avatar{
+      asset->{
+        url,
+        metadata{ dimensions }
+      },
+      alt
+    },
+    logoImage{
       asset->{
         url,
         metadata{ dimensions }

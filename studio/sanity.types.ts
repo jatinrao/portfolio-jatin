@@ -180,7 +180,7 @@ export type Portfolio = {
 
 export type WebSchema = {
   _type: 'webSchema'
-  schemaType?: 'Person' | 'WebSite' | 'WebPage' | 'CreativeWork' | 'Organization'
+  schemaType?: 'Person' | 'WebSite' | 'WebPage' | 'CreativeWork' | 'Article' | 'Organization'
   personJobTitle?: string
   personDescription?: LocaleText
   personSameAs?: Array<string>
@@ -267,6 +267,236 @@ export type Slug = {
   source?: string
 }
 
+export type Blog = {
+  _id: string
+  _type: 'blog'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: LocaleString
+  slug: Slug
+  category: 'Update' | 'News' | 'Shipping Notes' | 'Press Release'
+  dek: LocaleText
+  publishedDate: string
+  author?: PersonReference
+  isFeatured?: boolean
+  coverImage: CustomImage
+  stats?: Array<{
+    value: string
+    label?: string
+    _type: 'stat'
+    _key: string
+  }>
+  body?: BlogBlockContent
+  footerLinks?: Array<{
+    label: string
+    url: string
+    _type: 'footerLink'
+    _key: string
+  }>
+  seo?: SeoMetadata
+  structuredData?: WebSchema
+}
+
+export type BlogBlockContent = {
+  _type: 'blogBlockContent'
+  en?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+  es?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+  zh?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+  hi?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+  fr?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+  ar?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+  >
+}
+
+export type CustomImage = {
+  _type: 'customImage'
+  asset?: SanityImageAssetReference
+  media?: unknown
+  hotspot?: SanityImageHotspot
+  crop?: SanityImageCrop
+  alt?: LocaleString
+  caption?: LocaleString
+  credit?: string
+}
+
+export type LocaleText = {
+  _type: 'localeText'
+  en?: string
+  es?: string
+  zh?: string
+  hi?: string
+  fr?: string
+  ar?: string
+}
+
 export type OrganizationReference = {
   _ref: string
   _type: 'reference'
@@ -316,17 +546,6 @@ export type Project = {
   >
   seo?: SeoMetadata
   structuredData?: WebSchema
-}
-
-export type CustomImage = {
-  _type: 'customImage'
-  asset?: SanityImageAssetReference
-  media?: unknown
-  hotspot?: SanityImageHotspot
-  crop?: SanityImageCrop
-  alt?: LocaleString
-  caption?: LocaleString
-  credit?: string
 }
 
 export type LocaleBlockContent = {
@@ -439,16 +658,6 @@ export type LocaleBlockContent = {
     _type: 'block'
     _key: string
   }>
-}
-
-export type LocaleText = {
-  _type: 'localeText'
-  en?: string
-  es?: string
-  zh?: string
-  hi?: string
-  fr?: string
-  ar?: string
 }
 
 export type Testimonial = {
@@ -717,6 +926,66 @@ export type CtaButton = {
   ariaLabel?: LocaleString
   ariaDescribedBy?: string
   title?: LocaleString
+}
+
+export type ComparisonTable = {
+  _type: 'comparisonTable'
+  caption?: string
+  columns?: Array<
+    {
+      _key: string
+    } & TableColumn
+  >
+  rows?: Array<
+    | ({
+        _key: string
+      } & TableGroupRow)
+    | ({
+        _key: string
+      } & TableDataRow)
+  >
+  footnote?: string
+}
+
+export type TableColumn = {
+  _type: 'tableColumn'
+  name: string
+  descriptor?: string
+  highlight?: boolean
+}
+
+export type TableDataRow = {
+  _type: 'tableDataRow'
+  label: string
+  cells?: Array<
+    {
+      _key: string
+    } & TableCell
+  >
+}
+
+export type TableGroupRow = {
+  _type: 'tableGroupRow'
+  label: string
+}
+
+export type TableCell = {
+  _type: 'tableCell'
+  icon?: IconRef
+  note?: string
+}
+
+export type CodeSnippet = {
+  _type: 'codeSnippet'
+  label?: string
+  language?: string
+  code: string
+}
+
+export type CalloutBox = {
+  _type: 'calloutBox'
+  label?: string
+  text: LocaleText
 }
 
 export type Section = {
@@ -1032,12 +1301,14 @@ export type AllSanitySchemaTypes =
   | SanityImageHotspot
   | Icon
   | Slug
+  | Blog
+  | BlogBlockContent
+  | CustomImage
+  | LocaleText
   | OrganizationReference
   | SkillReference
   | Project
-  | CustomImage
   | LocaleBlockContent
-  | LocaleText
   | Testimonial
   | Publication
   | Award
@@ -1051,6 +1322,13 @@ export type AllSanitySchemaTypes =
   | SectionReference
   | Person
   | CtaButton
+  | ComparisonTable
+  | TableColumn
+  | TableDataRow
+  | TableGroupRow
+  | TableCell
+  | CodeSnippet
+  | CalloutBox
   | Section
   | SocialProfile
   | InlineSvg

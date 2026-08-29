@@ -2,7 +2,9 @@ import { defineType, defineField, defineArrayMember } from 'sanity'
 import { languages } from '../../config/languages'
 import { AutoTranslateBlockInput } from '../../components/AutoTranslateBlockInput'
 
-const richTextBlock = defineArrayMember({
+/** Exported so other locale-array content types (e.g. blogBlockContent) can
+ * reuse the same paragraph/heading/quote block shape without duplicating it. */
+export const richTextBlock = defineArrayMember({
   type: 'block',
   styles: [
     { title: 'Normal', value: 'normal' },

@@ -1,0 +1,123 @@
+.comparison-table {
+  margin-top: 8px;
+}
+
+.comparison-table-caption {
+  margin: 0 0 10px;
+  font-family: var(--font-apple);
+  font-size: 13px;
+  color: var(--color-on-surface-variant, #6e6e73);
+}
+
+.comparison-table-category + .comparison-table-category {
+  margin-top: 28px;
+}
+
+.comparison-table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-outline-variant, #d2d2d7);
+  border-radius: 12px;
+  background: var(--color-surface, #fff);
+}
+
+.comparison-table-scroll table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 640px;
+  font-family: var(--font-apple);
+  font-size: 14px;
+}
+
+.comparison-table-scroll th,
+.comparison-table-scroll td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-outline-variant, #d2d2d7);
+  vertical-align: top;
+  font-weight: 400;
+}
+
+.comparison-table-scroll thead th {
+  border-bottom: 1px solid var(--color-outline, #c6c6c8);
+  vertical-align: bottom;
+}
+
+.comparison-table-col-name {
+  font-weight: 600;
+  color: var(--color-on-surface, #1d1d1f);
+}
+
+.comparison-table-col-descriptor {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--color-on-surface-variant, #6e6e73);
+}
+
+/* Apple's compare tables (apple.com/mac/compare) don't fill a "featured"
+   column with a tinted background — every column gets equal visual weight,
+   the highlighted one marked only by a thin colored top rule. */
+.comparison-table-col--highlight {
+  box-shadow: inset 0 2px 0 var(--color-primary, #0071e3);
+}
+
+/* Category headings ("Writing it", "Running it", …) — each category is
+   its own table below one of these, same as apple.com/mac/compare splits
+   "Compute", "Display", "Battery" etc. into separate sections rather than
+   divider rows inside one continuous table. Large, bold, normal-case SF
+   Pro Display — not a small uppercase/letter-spaced caption. */
+.comparison-table-category-label {
+  margin: 0 0 10px;
+  font-family: var(--font-apple-display);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.003em;
+  color: var(--color-on-surface, #1d1d1f);
+}
+
+/* Pins the row-label column while scrolling horizontally through product
+   columns — apple.com/mac/compare keeps the spec name in view the same
+   way. Needs an opaque background so scrolled-under cells don't show
+   through. */
+.comparison-table-row-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--color-surface, #fff);
+}
+
+.comparison-table-scroll tbody th[scope="row"] {
+  font-weight: 600;
+  color: var(--color-on-surface, #1d1d1f);
+}
+
+.comparison-table-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.comparison-table-cell svg {
+  flex-shrink: 0;
+}
+
+.comparison-table-note {
+  color: var(--color-on-surface-variant, #6e6e73);
+  line-height: 1.45;
+}
+
+.comparison-table-scroll tbody tr:last-child td,
+.comparison-table-scroll tbody tr:last-child th {
+  border-bottom: none;
+}
+
+.comparison-table-footnote {
+  margin: 10px 2px 0;
+  font-family: var(--font-apple);
+  font-size: 13px;
+  color: var(--color-on-surface-variant, #6e6e73);
+}
+
+.dark .comparison-table-row-label {
+  background: var(--color-surface, #1d1d1f);
+}

@@ -15,6 +15,10 @@ import { section } from './documents/section'
 import { seoMetadata } from './objects/seoMetadata'
 import { webSchema } from './objects/webSchema'
 import svg  from './objects/customSvg'
+import { blogBlockContent } from './objects/blogBlockContent'
+import { calloutBox } from './objects/calloutBox'
+import { codeSnippet } from './objects/codeSnippet'
+import { comparisonTableTypes } from './objects/comparisonTable'
 // Documents
 import { person } from './documents/person'
 import { skill } from './documents/skill'
@@ -26,6 +30,7 @@ import { award } from './documents/award'
 import { publication } from './documents/publication'
 import { testimonial } from './documents/testimonial'
 import { project } from './documents/project'
+import { blog } from './documents/blog'
 import { portfolio } from './documents/portfolio'
 import inlineSvg from './objects/inlineSvg'
 import { navigation } from './documents/navigation'
@@ -43,7 +48,10 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // Media
   customImage,
   icon,
- 
+  // iconRef is registered globally by the sanityIconPicker() plugin in
+  // sanity.config.ts — registering it again here throws a duplicate-type
+  // error, so it's used directly as `type: 'iconRef'` without an import.
+
   // Objects
   svg,
   inlineSvg,
@@ -52,6 +60,10 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   section,
   seoMetadata,
   webSchema,
+  calloutBox,
+  codeSnippet,
+  ...comparisonTableTypes,
+  blogBlockContent,
 
   // Documents
   person,
@@ -64,6 +76,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   publication,
   testimonial,
   project,
+  blog,
   portfolio,
   navigation,
   skillCategoryLabels,

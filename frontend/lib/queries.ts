@@ -11,30 +11,7 @@ export interface SanityImageAsset {
     dimensions: { width: number; height: number }
   }
 }
-import type { PortableTextBlock } from "@portabletext/types";
 import { sanityFetch } from '@/sanity/lib/live'
-
-export interface Post {
-  _id: string;
-  _type: "post";
-  _createdAt: string;
-  _updatedAt: string;
-  title: string;
-  slug: {
-    _type: "slug";
-    current: string;
-  };
-  publishedAt?: string;
-  mainImage?: {
-    _type: "image";
-    asset: {
-      _ref: string;
-      _type: "reference";
-    };
-    alt?: string;
-  };
-  body?: PortableTextBlock[];
-}
 
 export interface SanityImage {
   asset:    SanityImageAsset
@@ -115,7 +92,7 @@ export async function fetchHeroData(slug: string): Promise<any> {
       credit
     }
     }`)
-  return await sanityFetch({query: heroQuery, stega: false});
+  return await sanityFetch({query: heroQuery});
 }
 export async function fetchPortfolioData(slug: string): Promise<any> {
   const heroQuery = defineQuery(`*[_type == "person" && slug.current == "${slug}"][0]{
@@ -349,7 +326,7 @@ export async function fetchPortfolioData(slug: string): Promise<any> {
 }
 
   }`)
-  return await sanityFetch({query: heroQuery, stega: false});
+  return await sanityFetch({query: heroQuery});
 }
 
 export const SKILLS_QUERY = defineQuery(`*[_type == "skill"] | order(category asc, name.en asc){
