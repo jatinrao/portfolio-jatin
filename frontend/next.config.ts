@@ -1,8 +1,29 @@
 import type {NextConfig} from 'next'
 
+// CSP's frame-ancestors only matches scheme+host+port — a source with a
+// path (e.g. someone pasting the browser address bar's full Presentation
+// URL, like https://www.sanity.io/@org/studio/<id>/default/presentation,
+// into NEXT_PUBLIC_SANITY_STUDIO_URL) is invalid per the CSP grammar and
+// gets silently dropped by the browser, leaving only 'self' — every
+// Presentation iframe then gets blocked. Normalizing to origin-only here
+// makes that mistake harmless instead of a silent production outage.
+function toOrigin(url: string): string {
+  try {
+    return new URL(url).origin
+  } catch {
+    return url
+  }
+}
+
 // The origin Sanity Studio's Presentation tool runs at — needs to be
 // allowed to iframe this site for Visual Editing to work.
-const studioUrl = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'http://localhost:3333'
+const studioUrl = toOrigin(process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'http://localhost:3333')
+
+// Sanity also serves every project's Studio through its own hosted app
+// shell at sanity.io/@<org>/studio/<project>/... — a fixed platform origin
+// shared by all Sanity projects, not something specific to this deployment,
+// so it's allowed unconditionally rather than pulled from env.
+const SANITY_IO_ORIGIN = 'https://www.sanity.io'
 
 // Cloudflare Pages has no server, so next/image's default `/_next/image`
 // optimizer route (which the live Vercel deploy uses fine) 404s there.
@@ -25,7 +46,7 @@ const cspHeader = `
   font-src 'self';
   connect-src 'self' blob: https://*.api.sanity.io https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com;
   worker-src 'self' blob:;
-  frame-ancestors 'self' ${studioUrl};
+  frame-ancestors 'self' ${studioUrl} ${SANITY_IO_ORIGIN};
 `;
 
 
