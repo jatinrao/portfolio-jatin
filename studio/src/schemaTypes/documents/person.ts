@@ -1,6 +1,10 @@
+import { createElement } from 'react'
 import { defineType, defineField } from 'sanity'
-import { UserIcon } from '@sanity/icons'
+import { UserIcon, TagIcon } from '@sanity/icons'
 import { SiteAuthorIndicator } from '../../components/SiteAuthorIndicator'
+// Shared with Skill's "Icon (picker)" preview (studio/src/schemaTypes/documents/skill.tsx)
+// — same @web-portfolio/icons registry, generic on iconName/svgIcon props.
+import { SkillIconPreview } from '../../components/SkillIconPreview'
 
 export const person = defineType({
   name: 'person',
@@ -133,6 +137,10 @@ export const person = defineType({
         {
           type: 'object',
           name: 'featureHighlight',
+          // Presentation Tool's hover overlay badge uses this schema-type
+          // icon directly (falls back to a generic file icon when unset) —
+          // separate from the preview.media below.
+          icon: TagIcon,
           fields: [
             defineField({
               name: 'iconName',
@@ -156,7 +164,16 @@ export const person = defineType({
               validation: (R) => R.required(),
             }),
           ],
-          preview: { select: { title: 'kicker', subtitle: 'label.en' } },
+          preview: {
+            select: { title: 'kicker', subtitle: 'label.en', iconName: 'iconName' },
+            prepare({ title, subtitle, iconName }: { title?: string; subtitle?: string; iconName?: string }) {
+              return {
+                title,
+                subtitle,
+                media: createElement(SkillIconPreview, { iconName }),
+              }
+            },
+          },
         },
       ],
     }),
