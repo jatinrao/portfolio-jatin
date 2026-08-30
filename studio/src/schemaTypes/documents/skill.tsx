@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { SkillIconPreview } from '../../components/SkillIconPreview'
 
 export const skill = defineType({
   name: 'skill',
@@ -86,6 +87,13 @@ export const skill = defineType({
     }),
   ],
   preview: {
-    select: { title: 'name.en', subtitle: 'category' },
+    select: { title: 'name.en', subtitle: 'category', iconName: 'iconName', svgIcon: 'svg_icon.svg' },
+    prepare({ title, subtitle, iconName, svgIcon }: { title?: string; subtitle?: string; iconName?: string; svgIcon?: string }) {
+      return {
+        title,
+        subtitle,
+        media: <SkillIconPreview iconName={iconName} svgIcon={svgIcon} />,
+      }
+    },
   },
 })
