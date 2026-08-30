@@ -1,3 +1,4 @@
+import "server-only";
 import type { TranslateRequestBody } from "@/types/translation";
 
 /**

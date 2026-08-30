@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parseTranslateRequest } from "@/lib/validation";
 import { checkRateLimit, getClientKey } from "@/lib/rate-limit";
-import { verifyAuth } from "@/lib/auth";
 import { getOrCreateRequestId } from "@/lib/request-id";
 import { logger } from "@/lib/logger";
 import { translate } from "@/lib/translation-service";
 import { toAppError, buildErrorBody, RateLimitedError, ValidationError } from "@/lib/errors";
+
+// This endpoint is called directly from the Sanity Studio's browser bundle
+// (a static SPA — it has no server, so nothing it sends can stay secret).
+// A shared-secret bearer token used to gate this route, but that value had
+// to live in the Studio's public JS bundle to be sent at all, which defeats
+// the point of a secret. CORS origin allowlisting (lib/cors.ts, enforced in
+// middleware.ts) plus the rate limiting below are the real, honest defenses
+// for a static-client caller like this.
 
 // Ollama runs locally over plain HTTP — this must run on the Node.js
 // runtime (not Edge) to reach it.
@@ -28,17 +35,14 @@ export async function POST(request: NextRequest) {
       url: request.nextUrl.pathname,
     });
 
-    // 1. Authentication (bearer secret token; no-op if unset)
-    verifyAuth(request.headers);
-
-    // 2. Rate limiting
+    // 1. Rate limiting
     const clientKey = getClientKey(request.headers);
     const rateLimitResult = checkRateLimit(clientKey);
     if (!rateLimitResult.allowed) {
       throw new RateLimitedError(rateLimitResult.retryAfterSeconds);
     }
 
-    // 3. Input validation
+    // 2. Input validation
     const json = await request.json().catch(() => {
       throw new ValidationError("Request body must be valid JSON");
     });
@@ -50,7 +54,7 @@ export async function POST(request: NextRequest) {
       textLength: body.text.length,
     });
 
-    // 4. Call the translation service (prompt build -> Ollama -> parse)
+    // 3. Call the translation service (prompt build -> Ollama -> parse)
     const result = await translate(body, {
       requestId,
       timeoutMs: REQUEST_TIMEOUT_MS,

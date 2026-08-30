@@ -6,7 +6,6 @@
 
 export type ErrorCode =
   | "VALIDATION_ERROR"
-  | "UNAUTHORIZED"
   | "RATE_LIMITED"
   | "TIMEOUT"
   | "UPSTREAM_UNAVAILABLE"
@@ -31,12 +30,6 @@ export class AppError extends Error {
 export class ValidationError extends AppError {
   constructor(message: string, details?: unknown) {
     super("VALIDATION_ERROR", message, 400, details);
-  }
-}
-
-export class UnauthorizedError extends AppError {
-  constructor(message = "Invalid or missing credentials") {
-    super("UNAUTHORIZED", message, 401);
   }
 }
 

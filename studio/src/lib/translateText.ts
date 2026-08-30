@@ -11,9 +11,11 @@
  *     Full URL to the translate endpoint, e.g.
  *     "http://localhost:3000/api/translate" or your deployed URL.
  *
- *   SANITY_STUDIO_TRANSLATE_API_SECRET   (optional)
- *     Bearer token sent as `Authorization: Bearer <token>`. Only required
- *     if the API's TRANSLATE_API_SECRET is set server-side.
+ * No bearer/shared-secret here on purpose: the Studio is a static SPA with
+ * no server of its own, so any value this code sends is necessarily visible
+ * in its public JS bundle — a "secret" here would just leak, not protect
+ * anything. The API endpoint relies on CORS origin allowlisting + rate
+ * limiting instead (see frontend/lib/cors.ts and frontend/lib/rate-limit.ts).
  *
  * If SANITY_STUDIO_TRANSLATE_API_URL is not set the function throws, so
  * the button will show an error state rather than silently doing nothing.
@@ -54,16 +56,9 @@ async function translateViaApi(params: TranslateParams): Promise<string> {
     )
   }
 
-  const secret = process.env.SANITY_STUDIO_TRANSLATE_API_SECRET
-
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-  if (secret) {
-    headers.Authorization = `Bearer ${secret}`
-  }
-
   const response = await fetch(endpoint, {
     method: 'POST',
-    headers,
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       text: params.text,
       sourceLang: params.from,

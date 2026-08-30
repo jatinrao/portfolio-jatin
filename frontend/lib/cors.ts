@@ -1,3 +1,5 @@
+import "server-only";
+
 /**
  * CORS handling for browser clients on a different origin (e.g. the
  * Sanity Studio dev server on :3333 calling this API on :3000).

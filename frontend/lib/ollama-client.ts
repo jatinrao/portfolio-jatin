@@ -1,3 +1,4 @@
+import "server-only";
 import { TimeoutError, UpstreamError, UpstreamUnavailableError } from "@/lib/errors";
 import type { OllamaGenerateRequest, OllamaGenerateResponse } from "@/types/translation";
 
