@@ -27,6 +27,26 @@
   --rooms-link: var(--color-primary);
 }
 
+/*
+ * Mobile renders RoomCopy inside .rooms-mobile-flow (RoomsSection.tsx's
+ * RoomsMobileFlow), never nested inside .rooms-gallery — so without this,
+ * --rooms-copy/-strong/-link are undefined there and every color: var(...)
+ * below silently falls back to the inherited default text color instead of
+ * the intended tones. Mirrors .rooms-gallery/.dark .rooms-gallery above.
+ */
+.rooms-mobile-flow {
+  --rooms-copy: #959495;
+  --rooms-copy-strong: #1d1d1f;
+  --rooms-link: var(--color-primary);
+  color: var(--rooms-copy);
+  font-family: var(--font-apple);
+}
+
+.dark .rooms-mobile-flow {
+  --rooms-copy-strong: var(--color-heading-ink);
+  --rooms-link: var(--color-primary);
+}
+
 .rooms-device {
   position: sticky;
   top: 0;
@@ -241,7 +261,7 @@
 }
 
 .rooms-copy-subheading {
-  margin: 0;
+  margin: 0 0 0 0.4em;
   display: inline;
   font-family: var(--font-apple-display);
   font-size: 21px;
