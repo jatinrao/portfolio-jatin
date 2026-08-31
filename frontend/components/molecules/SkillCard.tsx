@@ -56,7 +56,7 @@ export function SkillCard({ skill, locale = 'en', isExiting = false, ariaHidden 
           {skill.iconName ? (
             <Icon name={stegaClean(skill.iconName)} size={48} color={palette.from} />
           ) : (
-            <SvgIcon src={skill?.svg_icon} width={48} accentColor={palette.from} />
+            <Icon name={"mcp"} size={48} color={palette.from} />
           )}
         </div>
 
