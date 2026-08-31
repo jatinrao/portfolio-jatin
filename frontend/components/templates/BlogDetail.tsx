@@ -1,14 +1,27 @@
 import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "next-sanity";
 import { Icon } from "@web-portfolio/icons";
-import type { BLOG_BY_SLUG_QUERY_RESULT } from "@/sanity.types";
+import type { BLOG_BY_SLUG_QUERY_RESULT, LocaleString } from "@/sanity.types";
 import { LangId, localize } from "@/lib/locale";
-import { urlForImage } from "@/sanity/lib/utils";
+import { urlForImage, dataAttr, resolveRichTextLink, type RichTextLinkMark } from "@/sanity/lib/utils";
 import { formatBlogDate } from "@/lib/format-date-range";
 import { ComparisonTable } from "@/components/molecules/ComparisonTable";
+import { ImageFrame3D } from "@/components/molecules/ImageFrame3D";
 import "./blog-detail.css";
 
 type BlogPost = NonNullable<BLOG_BY_SLUG_QUERY_RESULT>;
+
+/** An embedded `customImage` block inside blog body, as shaped by
+ * BLOG_BY_SLUG_QUERY's per-language projection (asset dereferenced). */
+interface BlogBodyImage {
+  asset?: {
+    url: string;
+    metadata?: { dimensions?: { width: number; height: number } | null } | null;
+  } | null;
+  alt?: LocaleString;
+  caption?: LocaleString;
+  credit?: string;
+}
 
 function buildPortableTextComponents(locale: LangId): PortableTextComponents {
   return {
@@ -23,6 +36,22 @@ function buildPortableTextComponents(locale: LangId): PortableTextComponents {
     list: {
       bullet: ({ children }) => <ul className="blog-detail-list">{children}</ul>,
       number: ({ children }) => <ol className="blog-detail-list">{children}</ol>,
+    },
+    marks: {
+      link: ({ children, value }) => {
+        const resolved = resolveRichTextLink(value as RichTextLinkMark, locale);
+        if (!resolved) return <>{children}</>;
+        return (
+          <a
+            href={resolved.href}
+            className="blog-detail-link-inline"
+            target={resolved.target}
+            rel={resolved.target === "_blank" ? "noopener noreferrer" : undefined}
+          >
+            {children}
+          </a>
+        );
+      },
     },
     types: {
       calloutBox: ({ value }) => (
@@ -43,6 +72,30 @@ function buildPortableTextComponents(locale: LangId): PortableTextComponents {
         </div>
       ),
       comparisonTable: ({ value }) => <ComparisonTable table={value} />,
+      customImage: ({ value }: { value: BlogBodyImage }) => {
+        const src = value.asset?.url;
+        if (!src) return null;
+        const dimensions = value.asset?.metadata?.dimensions;
+        const caption = localize(value.caption, locale);
+        return (
+          <figure className="blog-detail-image">
+            <Image
+              src={src}
+              alt={localize(value.alt, locale) || ""}
+              width={dimensions?.width ?? 1200}
+              height={dimensions?.height ?? 800}
+              sizes="(max-width: 734px) 100vw, 692px"
+              className="blog-detail-image-img"
+            />
+            {(caption || value.credit) && (
+              <figcaption className="blog-detail-image-caption">
+                {caption}
+                {value.credit && <span className="blog-detail-image-credit"> — {value.credit}</span>}
+              </figcaption>
+            )}
+          </figure>
+        );
+      },
     },
   };
 }
@@ -87,13 +140,12 @@ export default function BlogDetail({ post, locale }: BlogDetailProps) {
 
       {coverUrl && (
         <div className="blog-detail-hero">
-          <Image
+          <ImageFrame3D
             src={coverUrl}
             alt={localize(post.coverImage.alt, locale) || title}
-            fill
             priority
             sizes="(max-width: 1068px) 100vw, 900px"
-            className="object-cover"
+            dataSanity={dataAttr({ id: post._id, type: "blog", path: "coverImage" }).toString()}
           />
         </div>
       )}

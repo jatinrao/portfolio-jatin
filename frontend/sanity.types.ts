@@ -267,397 +267,11 @@ export type Slug = {
   source?: string
 }
 
-export type Blog = {
-  _id: string
-  _type: 'blog'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title: LocaleString
-  slug: Slug
-  category: 'Update' | 'News' | 'Shipping Notes' | 'Press Release'
-  dek: LocaleText
-  publishedDate: string
-  author?: PersonReference
-  isFeatured?: boolean
-  coverImage: CustomImage
-  stats?: Array<{
-    value: string
-    label?: string
-    _type: 'stat'
-    _key: string
-  }>
-  body?: BlogBlockContent
-  footerLinks?: Array<{
-    label: string
-    url: string
-    _type: 'footerLink'
-    _key: string
-  }>
-  seo?: SeoMetadata
-  structuredData?: WebSchema
-}
-
-export type BlogBlockContent = {
-  _type: 'blogBlockContent'
-  en?: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>
-          text?: string
-          _type: 'span'
-          _key: string
-        }>
-        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-        listItem?: 'bullet' | 'number'
-        markDefs?: Array<{
-          href?: string
-          _type: 'link'
-          _key: string
-        }>
-        level?: number
-        _type: 'block'
-        _key: string
-      }
-    | ({
-        _key: string
-      } & CalloutBox)
-    | ({
-        _key: string
-      } & CodeSnippet)
-    | ({
-        _key: string
-      } & ComparisonTable)
-  >
-  es?: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>
-          text?: string
-          _type: 'span'
-          _key: string
-        }>
-        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-        listItem?: 'bullet' | 'number'
-        markDefs?: Array<{
-          href?: string
-          _type: 'link'
-          _key: string
-        }>
-        level?: number
-        _type: 'block'
-        _key: string
-      }
-    | ({
-        _key: string
-      } & CalloutBox)
-    | ({
-        _key: string
-      } & CodeSnippet)
-    | ({
-        _key: string
-      } & ComparisonTable)
-  >
-  zh?: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>
-          text?: string
-          _type: 'span'
-          _key: string
-        }>
-        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-        listItem?: 'bullet' | 'number'
-        markDefs?: Array<{
-          href?: string
-          _type: 'link'
-          _key: string
-        }>
-        level?: number
-        _type: 'block'
-        _key: string
-      }
-    | ({
-        _key: string
-      } & CalloutBox)
-    | ({
-        _key: string
-      } & CodeSnippet)
-    | ({
-        _key: string
-      } & ComparisonTable)
-  >
-  hi?: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>
-          text?: string
-          _type: 'span'
-          _key: string
-        }>
-        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-        listItem?: 'bullet' | 'number'
-        markDefs?: Array<{
-          href?: string
-          _type: 'link'
-          _key: string
-        }>
-        level?: number
-        _type: 'block'
-        _key: string
-      }
-    | ({
-        _key: string
-      } & CalloutBox)
-    | ({
-        _key: string
-      } & CodeSnippet)
-    | ({
-        _key: string
-      } & ComparisonTable)
-  >
-  fr?: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>
-          text?: string
-          _type: 'span'
-          _key: string
-        }>
-        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-        listItem?: 'bullet' | 'number'
-        markDefs?: Array<{
-          href?: string
-          _type: 'link'
-          _key: string
-        }>
-        level?: number
-        _type: 'block'
-        _key: string
-      }
-    | ({
-        _key: string
-      } & CalloutBox)
-    | ({
-        _key: string
-      } & CodeSnippet)
-    | ({
-        _key: string
-      } & ComparisonTable)
-  >
-  ar?: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>
-          text?: string
-          _type: 'span'
-          _key: string
-        }>
-        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-        listItem?: 'bullet' | 'number'
-        markDefs?: Array<{
-          href?: string
-          _type: 'link'
-          _key: string
-        }>
-        level?: number
-        _type: 'block'
-        _key: string
-      }
-    | ({
-        _key: string
-      } & CalloutBox)
-    | ({
-        _key: string
-      } & CodeSnippet)
-    | ({
-        _key: string
-      } & ComparisonTable)
-  >
-}
-
-export type CustomImage = {
-  _type: 'customImage'
-  asset?: SanityImageAssetReference
-  media?: unknown
-  hotspot?: SanityImageHotspot
-  crop?: SanityImageCrop
-  alt?: LocaleString
-  caption?: LocaleString
-  credit?: string
-}
-
-export type LocaleText = {
-  _type: 'localeText'
-  en?: string
-  es?: string
-  zh?: string
-  hi?: string
-  fr?: string
-  ar?: string
-}
-
 export type OrganizationReference = {
   _ref: string
   _type: 'reference'
   _weak?: boolean
   [internalGroqTypeReferenceTo]?: 'organization'
-}
-
-export type SkillReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'skill'
-}
-
-export type Project = {
-  _id: string
-  _type: 'project'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title: LocaleString
-  slug: Slug
-  description?: LocaleText
-  body?: LocaleBlockContent
-  projectUrl?: string
-  repositoryUrl?: string
-  startDate?: string
-  endDate?: string
-  isFeatured?: boolean
-  coverImage?: CustomImage
-  gallery?: Array<
-    {
-      _key: string
-    } & CustomImage
-  >
-  thumbnail?: Icon
-  contributors?: Array<
-    {
-      _key: string
-    } & PersonReference
-  >
-  organization?: OrganizationReference
-  skills?: Array<
-    {
-      _key: string
-    } & SkillReference
-  >
-  seo?: SeoMetadata
-  structuredData?: WebSchema
-}
-
-export type LocaleBlockContent = {
-  _type: 'localeBlockContent'
-  en?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-    listItem?: 'bullet' | 'number'
-    markDefs?: Array<{
-      href?: string
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
-    _key: string
-  }>
-  es?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-    listItem?: 'bullet' | 'number'
-    markDefs?: Array<{
-      href?: string
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
-    _key: string
-  }>
-  zh?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-    listItem?: 'bullet' | 'number'
-    markDefs?: Array<{
-      href?: string
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
-    _key: string
-  }>
-  hi?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-    listItem?: 'bullet' | 'number'
-    markDefs?: Array<{
-      href?: string
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
-    _key: string
-  }>
-  fr?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-    listItem?: 'bullet' | 'number'
-    markDefs?: Array<{
-      href?: string
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
-    _key: string
-  }>
-  ar?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
-    listItem?: 'bullet' | 'number'
-    markDefs?: Array<{
-      href?: string
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
-    _key: string
-  }>
 }
 
 export type Testimonial = {
@@ -672,6 +286,16 @@ export type Testimonial = {
   quote: LocaleText
   rating?: number
   date?: string
+}
+
+export type LocaleText = {
+  _type: 'localeText'
+  en?: string
+  es?: string
+  zh?: string
+  hi?: string
+  fr?: string
+  ar?: string
 }
 
 export type Publication = {
@@ -739,6 +363,13 @@ export type Education = {
   grade?: string
 }
 
+export type SkillReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'skill'
+}
+
 export type Experience = {
   _id: string
   _type: 'experience'
@@ -759,25 +390,6 @@ export type Experience = {
       _key: string
     } & SkillReference
   >
-}
-
-export type Organization = {
-  _id: string
-  _type: 'organization'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  name: LocaleString
-  slug: Slug
-  description?: LocaleText
-  website?: string
-  industry?: string
-  location?: string
-  logo?: CustomImage
-  logoMark?: Icon
-  coverImage?: CustomImage
-  seo?: SeoMetadata
-  structuredData?: WebSchema
 }
 
 export type Skill = {
@@ -803,129 +415,230 @@ export type Skill = {
     | 'soft-skill'
     | 'other'
   filter_category?: 'all' | 'frontend' | 'backend' | 'ai' | 'others'
-  icon?: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    _type: 'image'
-  }
-  svg_icon?: Svg
   iconName?: IconRef
 }
 
 export type IconRef = string
 
-export type Svg = {
-  _type: 'svg'
-  sourceSvg: InlineSvg
-  strokeColor?: string
-  fillColor?: string
-  size?: string
-  strokeWidth?: string
-  strokeLinecap?: string
-  strokeLinejoin?: string
-  svg?: string
-}
-
-export type SectionReference = {
+export type BlogReference = {
   _ref: string
   _type: 'reference'
   _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'section'
+  [internalGroqTypeReferenceTo]?: 'blog'
 }
 
-export type Person = {
-  _id: string
-  _type: 'person'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  name: LocaleString
-  slug: Slug
-  headline?: LocaleString
-  bio_short?: LocaleBlockContent
-  bio?: LocaleBlockContent
-  greeting?: LocaleString
-  header_title?: LocaleString
-  logoImage?: CustomImage
-  headerCta?: CtaButton
-  channels?: Array<{
-    label: LocaleString
-    icon: Svg
-    url: string
-    openInNewTab?: boolean
-    _key: string
-  }>
-  openToWork?: boolean
-  openToWorkLabel?: LocaleString
-  stats?: Array<{
-    value: string
-    label?: LocaleString
-    _type: 'stat'
-    _key: string
-  }>
-  featureHighlights?: Array<{
-    iconName: IconRef
-    kicker: string
-    label: LocaleString
-    _type: 'featureHighlight'
-    _key: string
-  }>
-  featureIntro?: LocaleText
-  featureLinkUrl?: string
-  featureLinkLabel?: LocaleString
-  primaryCta?: {
-    text?: LocaleString
-    href?: string
-  }
-  secondaryCta?: {
-    text?: LocaleString
-    href?: string
-  }
-  avatar?: CustomImage
-  coverImage?: CustomImage
-  resumeImage?: CustomImage
-  email?: string
-  phone?: string
-  location?: LocaleString
-  skills?: Array<
-    {
-      _key: string
-    } & SkillReference
+export type BlogBlockContent = {
+  _type: 'blogBlockContent'
+  en?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          linkType: 'external' | 'internal'
+          href?: string
+          internalRef?: BlogReference | ProjectReference
+          openInNewTab?: boolean
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+    | ({
+        _key: string
+      } & CustomImage)
   >
-  projects?: Array<
-    {
-      _key: string
-    } & ProjectReference
+  es?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          linkType: 'external' | 'internal'
+          href?: string
+          internalRef?: BlogReference | ProjectReference
+          openInNewTab?: boolean
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+    | ({
+        _key: string
+      } & CustomImage)
   >
-  socialProfiles?: Array<
-    {
-      _key: string
-    } & SocialProfile
+  zh?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          linkType: 'external' | 'internal'
+          href?: string
+          internalRef?: BlogReference | ProjectReference
+          openInNewTab?: boolean
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+    | ({
+        _key: string
+      } & CustomImage)
   >
-  sections?: Array<
-    {
-      _key: string
-    } & SectionReference
+  hi?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          linkType: 'external' | 'internal'
+          href?: string
+          internalRef?: BlogReference | ProjectReference
+          openInNewTab?: boolean
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+    | ({
+        _key: string
+      } & CustomImage)
   >
-  seo?: SeoMetadata
-  structuredData?: WebSchema
-  websiteSchema?: WebSchema
-  isSiteAuthor?: boolean
-}
-
-export type CtaButton = {
-  _type: 'ctaButton'
-  text: LocaleString
-  href: string
-  openInNewTab?: boolean
-  isDownload?: boolean
-  downloadFilename?: string
-  rel?: Array<string>
-  ariaLabel?: LocaleString
-  ariaDescribedBy?: string
-  title?: LocaleString
+  fr?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          linkType: 'external' | 'internal'
+          href?: string
+          internalRef?: BlogReference | ProjectReference
+          openInNewTab?: boolean
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+    | ({
+        _key: string
+      } & CustomImage)
+  >
+  ar?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          linkType: 'external' | 'internal'
+          href?: string
+          internalRef?: BlogReference | ProjectReference
+          openInNewTab?: boolean
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & CalloutBox)
+    | ({
+        _key: string
+      } & CodeSnippet)
+    | ({
+        _key: string
+      } & ComparisonTable)
+    | ({
+        _key: string
+      } & CustomImage)
+  >
 }
 
 export type ComparisonTable = {
@@ -1049,7 +762,347 @@ export type SocialProfile = {
   username?: string
 }
 
+export type CtaButton = {
+  _type: 'ctaButton'
+  text: LocaleString
+  href: string
+  openInNewTab?: boolean
+  isDownload?: boolean
+  downloadFilename?: string
+  rel?: Array<string>
+  ariaLabel?: LocaleString
+  ariaDescribedBy?: string
+  title?: LocaleString
+}
+
 export type InlineSvg = string
+
+export type Svg = {
+  _type: 'svg'
+  sourceSvg: InlineSvg
+  strokeColor?: string
+  fillColor?: string
+  size?: string
+  strokeWidth?: string
+  strokeLinecap?: string
+  strokeLinejoin?: string
+  svg?: string
+}
+
+export type CustomImage = {
+  _type: 'customImage'
+  asset?: SanityImageAssetReference
+  media?: unknown
+  hotspot?: SanityImageHotspot
+  crop?: SanityImageCrop
+  alt?: LocaleString
+  caption?: LocaleString
+  credit?: string
+}
+
+export type LocaleBlockContent = {
+  _type: 'localeBlockContent'
+  en?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      linkType: 'external' | 'internal'
+      href?: string
+      internalRef?: BlogReference | ProjectReference
+      openInNewTab?: boolean
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  es?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      linkType: 'external' | 'internal'
+      href?: string
+      internalRef?: BlogReference | ProjectReference
+      openInNewTab?: boolean
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  zh?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      linkType: 'external' | 'internal'
+      href?: string
+      internalRef?: BlogReference | ProjectReference
+      openInNewTab?: boolean
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  hi?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      linkType: 'external' | 'internal'
+      href?: string
+      internalRef?: BlogReference | ProjectReference
+      openInNewTab?: boolean
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  fr?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      linkType: 'external' | 'internal'
+      href?: string
+      internalRef?: BlogReference | ProjectReference
+      openInNewTab?: boolean
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  ar?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h3' | 'h4' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      linkType: 'external' | 'internal'
+      href?: string
+      internalRef?: BlogReference | ProjectReference
+      openInNewTab?: boolean
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+}
+
+export type Blog = {
+  _id: string
+  _type: 'blog'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: LocaleString
+  slug: Slug
+  category: 'Update' | 'News' | 'Shipping Notes' | 'Press Release'
+  dek: LocaleText
+  publishedDate: string
+  author?: PersonReference
+  isFeatured?: boolean
+  coverImage: CustomImage
+  stats?: Array<{
+    value: string
+    label?: string
+    _type: 'stat'
+    _key: string
+  }>
+  body?: BlogBlockContent
+  footerLinks?: Array<{
+    label: string
+    url: string
+    _type: 'footerLink'
+    _key: string
+  }>
+  seo?: SeoMetadata
+  structuredData?: WebSchema
+}
+
+export type SectionReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'section'
+}
+
+export type Person = {
+  _id: string
+  _type: 'person'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: LocaleString
+  slug: Slug
+  headline?: LocaleString
+  bio_short?: LocaleBlockContent
+  bio?: LocaleBlockContent
+  greeting?: LocaleString
+  header_title?: LocaleString
+  logoImage?: CustomImage
+  headerCta?: CtaButton
+  channels?: Array<{
+    label: LocaleString
+    icon: Svg
+    url: string
+    openInNewTab?: boolean
+    _key: string
+  }>
+  openToWork?: boolean
+  openToWorkLabel?: LocaleString
+  stats?: Array<{
+    value: string
+    label?: LocaleString
+    _type: 'stat'
+    _key: string
+  }>
+  featureHighlights?: Array<{
+    iconName: IconRef
+    kicker: string
+    label: LocaleString
+    _type: 'featureHighlight'
+    _key: string
+  }>
+  featureIntro?: LocaleText
+  featureLinkUrl?: string
+  featureLinkLabel?: LocaleString
+  primaryCta?: {
+    text?: LocaleString
+    href?: string
+  }
+  secondaryCta?: {
+    text?: LocaleString
+    href?: string
+  }
+  avatar?: CustomImage
+  coverImage?: CustomImage
+  resumeImage?: CustomImage
+  email?: string
+  phone?: string
+  location?: LocaleString
+  skills?: Array<
+    {
+      _key: string
+    } & SkillReference
+  >
+  projects?: Array<
+    {
+      _key: string
+    } & ProjectReference
+  >
+  socialProfiles?: Array<
+    {
+      _key: string
+    } & SocialProfile
+  >
+  sections?: Array<
+    {
+      _key: string
+    } & SectionReference
+  >
+  seo?: SeoMetadata
+  structuredData?: WebSchema
+  websiteSchema?: WebSchema
+  isSiteAuthor?: boolean
+}
+
+export type Project = {
+  _id: string
+  _type: 'project'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: LocaleString
+  slug: Slug
+  description?: LocaleText
+  body?: LocaleBlockContent
+  projectUrl?: string
+  repositoryUrl?: string
+  startDate?: string
+  endDate?: string
+  isFeatured?: boolean
+  coverImage?: CustomImage
+  gallery?: Array<
+    {
+      _key: string
+    } & CustomImage
+  >
+  thumbnail?: Icon
+  contributors?: Array<
+    {
+      _key: string
+    } & PersonReference
+  >
+  organization?: OrganizationReference
+  skills?: Array<
+    {
+      _key: string
+    } & SkillReference
+  >
+  seo?: SeoMetadata
+  structuredData?: WebSchema
+}
+
+export type Organization = {
+  _id: string
+  _type: 'organization'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: LocaleString
+  slug: Slug
+  description?: LocaleText
+  website?: string
+  industry?: string
+  location?: string
+  logo?: CustomImage
+  logoMark?: Icon
+  coverImage?: CustomImage
+  seo?: SeoMetadata
+  structuredData?: WebSchema
+}
 
 export type SanityAssistInstructionTask = {
   _type: 'sanity.assist.instructionTask'
@@ -1301,27 +1354,19 @@ export type AllSanitySchemaTypes =
   | SanityImageHotspot
   | Icon
   | Slug
-  | Blog
-  | BlogBlockContent
-  | CustomImage
-  | LocaleText
   | OrganizationReference
-  | SkillReference
-  | Project
-  | LocaleBlockContent
   | Testimonial
+  | LocaleText
   | Publication
   | Award
   | Certification
   | Education
+  | SkillReference
   | Experience
-  | Organization
   | Skill
   | IconRef
-  | Svg
-  | SectionReference
-  | Person
-  | CtaButton
+  | BlogReference
+  | BlogBlockContent
   | ComparisonTable
   | TableColumn
   | TableDataRow
@@ -1331,7 +1376,16 @@ export type AllSanitySchemaTypes =
   | CalloutBox
   | Section
   | SocialProfile
+  | CtaButton
   | InlineSvg
+  | Svg
+  | CustomImage
+  | LocaleBlockContent
+  | Blog
+  | SectionReference
+  | Person
+  | Project
+  | Organization
   | SanityAssistInstructionTask
   | SanityAssistTaskStatus
   | SanityAssistSchemaTypeAnnotations
@@ -1424,7 +1478,7 @@ export type ALL_BLOGS_QUERY_RESULT = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: BLOG_BY_SLUG_QUERY
-// Query: *[_type == "blog" && slug.current == $slug][0]{      _id,  title,  slug,  category,  dek,  publishedDate,  isFeatured,  author->{ name, avatar{ asset->{ _id, url, metadata { lqip, dimensions } }, alt } },  coverImage{    asset->{ _id, url, metadata { lqip, dimensions } },    alt,    caption,    credit  },  stats,    body,    footerLinks,    seo{      metaTitle,      metaDescription,      canonicalUrl,      ogTitle,      ogDescription,      ogImage{        asset->{ url, metadata { dimensions } },        alt      },      twitterCard,      twitterTitle,      twitterDescription,      noIndex,      noFollow    },  }
+// Query: *[_type == "blog" && slug.current == $slug][0]{      _id,  title,  slug,  category,  dek,  publishedDate,  isFeatured,  author->{ name, avatar{ asset->{ _id, url, metadata { lqip, dimensions } }, alt } },  coverImage{    asset->{ _id, url, metadata { lqip, dimensions } },    alt,    caption,    credit  },  stats,    body{  _type,  en[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  },   _type == "customImage" => {    asset->{ _id, url, metadata { lqip, dimensions } }  } },  es[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  },   _type == "customImage" => {    asset->{ _id, url, metadata { lqip, dimensions } }  } },  fr[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  },   _type == "customImage" => {    asset->{ _id, url, metadata { lqip, dimensions } }  } },  zh[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  },   _type == "customImage" => {    asset->{ _id, url, metadata { lqip, dimensions } }  } },  hi[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  },   _type == "customImage" => {    asset->{ _id, url, metadata { lqip, dimensions } }  } },  ar[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  },   _type == "customImage" => {    asset->{ _id, url, metadata { lqip, dimensions } }  } },},    footerLinks,    seo{      metaTitle,      metaDescription,      canonicalUrl,      ogTitle,      ogDescription,      ogImage{        asset->{ url, metadata { dimensions } },        alt      },      twitterCard,      twitterTitle,      twitterDescription,      noIndex,      noFollow    },  }
 export type BLOG_BY_SLUG_QUERY_RESULT = {
   _id: string
   title: LocaleString
@@ -1466,7 +1520,501 @@ export type BLOG_BY_SLUG_QUERY_RESULT = {
     _type: 'stat'
     _key: string
   }> | null
-  body: BlogBlockContent | null
+  body: {
+    _type: 'blogBlockContent'
+    en: Array<
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs: Array<{
+            linkType: 'external' | 'internal'
+            href?: string
+            internalRef:
+              | {
+                  _type: 'blog'
+                  slug: string
+                }
+              | {
+                  _type: 'project'
+                  slug: string
+                }
+              | null
+            openInNewTab?: boolean
+            _type: 'link'
+            _key: string
+          }> | null
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+      | {
+          _key: string
+          _type: 'calloutBox'
+          label?: string
+          text: LocaleText
+        }
+      | {
+          _key: string
+          _type: 'codeSnippet'
+          label?: string
+          language?: string
+          code: string
+        }
+      | {
+          _key: string
+          _type: 'comparisonTable'
+          caption?: string
+          columns?: Array<
+            {
+              _key: string
+            } & TableColumn
+          >
+          rows?: Array<
+            | ({
+                _key: string
+              } & TableDataRow)
+            | ({
+                _key: string
+              } & TableGroupRow)
+          >
+          footnote?: string
+        }
+      | {
+          _key: string
+          _type: 'customImage'
+          asset: {
+            _id: string
+            url: string
+            metadata: {
+              lqip: string | null
+              dimensions: SanityImageDimensions | null
+            } | null
+          } | null
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          alt?: LocaleString
+          caption?: LocaleString
+          credit?: string
+        }
+    > | null
+    es: Array<
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs: Array<{
+            linkType: 'external' | 'internal'
+            href?: string
+            internalRef:
+              | {
+                  _type: 'blog'
+                  slug: string
+                }
+              | {
+                  _type: 'project'
+                  slug: string
+                }
+              | null
+            openInNewTab?: boolean
+            _type: 'link'
+            _key: string
+          }> | null
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+      | {
+          _key: string
+          _type: 'calloutBox'
+          label?: string
+          text: LocaleText
+        }
+      | {
+          _key: string
+          _type: 'codeSnippet'
+          label?: string
+          language?: string
+          code: string
+        }
+      | {
+          _key: string
+          _type: 'comparisonTable'
+          caption?: string
+          columns?: Array<
+            {
+              _key: string
+            } & TableColumn
+          >
+          rows?: Array<
+            | ({
+                _key: string
+              } & TableDataRow)
+            | ({
+                _key: string
+              } & TableGroupRow)
+          >
+          footnote?: string
+        }
+      | {
+          _key: string
+          _type: 'customImage'
+          asset: {
+            _id: string
+            url: string
+            metadata: {
+              lqip: string | null
+              dimensions: SanityImageDimensions | null
+            } | null
+          } | null
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          alt?: LocaleString
+          caption?: LocaleString
+          credit?: string
+        }
+    > | null
+    fr: Array<
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs: Array<{
+            linkType: 'external' | 'internal'
+            href?: string
+            internalRef:
+              | {
+                  _type: 'blog'
+                  slug: string
+                }
+              | {
+                  _type: 'project'
+                  slug: string
+                }
+              | null
+            openInNewTab?: boolean
+            _type: 'link'
+            _key: string
+          }> | null
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+      | {
+          _key: string
+          _type: 'calloutBox'
+          label?: string
+          text: LocaleText
+        }
+      | {
+          _key: string
+          _type: 'codeSnippet'
+          label?: string
+          language?: string
+          code: string
+        }
+      | {
+          _key: string
+          _type: 'comparisonTable'
+          caption?: string
+          columns?: Array<
+            {
+              _key: string
+            } & TableColumn
+          >
+          rows?: Array<
+            | ({
+                _key: string
+              } & TableDataRow)
+            | ({
+                _key: string
+              } & TableGroupRow)
+          >
+          footnote?: string
+        }
+      | {
+          _key: string
+          _type: 'customImage'
+          asset: {
+            _id: string
+            url: string
+            metadata: {
+              lqip: string | null
+              dimensions: SanityImageDimensions | null
+            } | null
+          } | null
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          alt?: LocaleString
+          caption?: LocaleString
+          credit?: string
+        }
+    > | null
+    zh: Array<
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs: Array<{
+            linkType: 'external' | 'internal'
+            href?: string
+            internalRef:
+              | {
+                  _type: 'blog'
+                  slug: string
+                }
+              | {
+                  _type: 'project'
+                  slug: string
+                }
+              | null
+            openInNewTab?: boolean
+            _type: 'link'
+            _key: string
+          }> | null
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+      | {
+          _key: string
+          _type: 'calloutBox'
+          label?: string
+          text: LocaleText
+        }
+      | {
+          _key: string
+          _type: 'codeSnippet'
+          label?: string
+          language?: string
+          code: string
+        }
+      | {
+          _key: string
+          _type: 'comparisonTable'
+          caption?: string
+          columns?: Array<
+            {
+              _key: string
+            } & TableColumn
+          >
+          rows?: Array<
+            | ({
+                _key: string
+              } & TableDataRow)
+            | ({
+                _key: string
+              } & TableGroupRow)
+          >
+          footnote?: string
+        }
+      | {
+          _key: string
+          _type: 'customImage'
+          asset: {
+            _id: string
+            url: string
+            metadata: {
+              lqip: string | null
+              dimensions: SanityImageDimensions | null
+            } | null
+          } | null
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          alt?: LocaleString
+          caption?: LocaleString
+          credit?: string
+        }
+    > | null
+    hi: Array<
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs: Array<{
+            linkType: 'external' | 'internal'
+            href?: string
+            internalRef:
+              | {
+                  _type: 'blog'
+                  slug: string
+                }
+              | {
+                  _type: 'project'
+                  slug: string
+                }
+              | null
+            openInNewTab?: boolean
+            _type: 'link'
+            _key: string
+          }> | null
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+      | {
+          _key: string
+          _type: 'calloutBox'
+          label?: string
+          text: LocaleText
+        }
+      | {
+          _key: string
+          _type: 'codeSnippet'
+          label?: string
+          language?: string
+          code: string
+        }
+      | {
+          _key: string
+          _type: 'comparisonTable'
+          caption?: string
+          columns?: Array<
+            {
+              _key: string
+            } & TableColumn
+          >
+          rows?: Array<
+            | ({
+                _key: string
+              } & TableDataRow)
+            | ({
+                _key: string
+              } & TableGroupRow)
+          >
+          footnote?: string
+        }
+      | {
+          _key: string
+          _type: 'customImage'
+          asset: {
+            _id: string
+            url: string
+            metadata: {
+              lqip: string | null
+              dimensions: SanityImageDimensions | null
+            } | null
+          } | null
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          alt?: LocaleString
+          caption?: LocaleString
+          credit?: string
+        }
+    > | null
+    ar: Array<
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs: Array<{
+            linkType: 'external' | 'internal'
+            href?: string
+            internalRef:
+              | {
+                  _type: 'blog'
+                  slug: string
+                }
+              | {
+                  _type: 'project'
+                  slug: string
+                }
+              | null
+            openInNewTab?: boolean
+            _type: 'link'
+            _key: string
+          }> | null
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+      | {
+          _key: string
+          _type: 'calloutBox'
+          label?: string
+          text: LocaleText
+        }
+      | {
+          _key: string
+          _type: 'codeSnippet'
+          label?: string
+          language?: string
+          code: string
+        }
+      | {
+          _key: string
+          _type: 'comparisonTable'
+          caption?: string
+          columns?: Array<
+            {
+              _key: string
+            } & TableColumn
+          >
+          rows?: Array<
+            | ({
+                _key: string
+              } & TableDataRow)
+            | ({
+                _key: string
+              } & TableGroupRow)
+          >
+          footnote?: string
+        }
+      | {
+          _key: string
+          _type: 'customImage'
+          asset: {
+            _id: string
+            url: string
+            metadata: {
+              lqip: string | null
+              dimensions: SanityImageDimensions | null
+            } | null
+          } | null
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          alt?: LocaleString
+          caption?: LocaleString
+          credit?: string
+        }
+    > | null
+  } | null
   footerLinks: Array<{
     label: string
     url: string
@@ -1510,12 +2058,194 @@ export type ProjectSlugsResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: PROJECT_BY_SLUG_QUERY
-// Query: *[_type == "project" && slug.current == $slug][0]{  title,  slug,  description,  body,  projectUrl,  repositoryUrl,  startDate,  endDate,  isFeatured,  coverImage{    asset->{      _id,      url,      metadata { lqip, dimensions }    },    alt,    caption,    credit  },  gallery[]{    asset->{      _id,      url,      metadata { lqip, dimensions }    },    alt,    caption,    credit  },}
+// Query: *[_type == "project" && slug.current == $slug][0]{  title,  slug,  description,  body{  _type,  en[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  } },  es[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  } },  fr[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  } },  zh[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  } },  hi[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  } },  ar[]{ ...,   _type == "block" => {    markDefs[]{      ...,      _type == "link" => {        ...,        internalRef->{ _type, "slug": slug.current }      }    }  } },},  projectUrl,  repositoryUrl,  startDate,  endDate,  isFeatured,  coverImage{    asset->{      _id,      url,      metadata { lqip, dimensions }    },    alt,    caption,    credit  },  gallery[]{    asset->{      _id,      url,      metadata { lqip, dimensions }    },    alt,    caption,    credit  },}
 export type PROJECT_BY_SLUG_QUERY_RESULT = {
   title: LocaleString
   slug: Slug
   description: LocaleText | null
-  body: LocaleBlockContent | null
+  body: {
+    _type: 'localeBlockContent'
+    en: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs: Array<{
+        linkType: 'external' | 'internal'
+        href?: string
+        internalRef:
+          | {
+              _type: 'blog'
+              slug: string
+            }
+          | {
+              _type: 'project'
+              slug: string
+            }
+          | null
+        openInNewTab?: boolean
+        _type: 'link'
+        _key: string
+      }> | null
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    es: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs: Array<{
+        linkType: 'external' | 'internal'
+        href?: string
+        internalRef:
+          | {
+              _type: 'blog'
+              slug: string
+            }
+          | {
+              _type: 'project'
+              slug: string
+            }
+          | null
+        openInNewTab?: boolean
+        _type: 'link'
+        _key: string
+      }> | null
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    fr: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs: Array<{
+        linkType: 'external' | 'internal'
+        href?: string
+        internalRef:
+          | {
+              _type: 'blog'
+              slug: string
+            }
+          | {
+              _type: 'project'
+              slug: string
+            }
+          | null
+        openInNewTab?: boolean
+        _type: 'link'
+        _key: string
+      }> | null
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    zh: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs: Array<{
+        linkType: 'external' | 'internal'
+        href?: string
+        internalRef:
+          | {
+              _type: 'blog'
+              slug: string
+            }
+          | {
+              _type: 'project'
+              slug: string
+            }
+          | null
+        openInNewTab?: boolean
+        _type: 'link'
+        _key: string
+      }> | null
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    hi: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs: Array<{
+        linkType: 'external' | 'internal'
+        href?: string
+        internalRef:
+          | {
+              _type: 'blog'
+              slug: string
+            }
+          | {
+              _type: 'project'
+              slug: string
+            }
+          | null
+        openInNewTab?: boolean
+        _type: 'link'
+        _key: string
+      }> | null
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    ar: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h3' | 'h4' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs: Array<{
+        linkType: 'external' | 'internal'
+        href?: string
+        internalRef:
+          | {
+              _type: 'blog'
+              slug: string
+            }
+          | {
+              _type: 'project'
+              slug: string
+            }
+          | null
+        openInNewTab?: boolean
+        _type: 'link'
+        _key: string
+      }> | null
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+  } | null
   projectUrl: string | null
   repositoryUrl: string | null
   startDate: string | null
@@ -1669,17 +2399,8 @@ export type RESUME_BY_SLUG_QUERY_RESULT = {
       | 'tool'
       | null
     filter_category: 'ai' | 'all' | 'backend' | 'frontend' | 'others' | null
-    icon: {
-      asset: {
-        _id: string
-        url: string
-        metadata: {
-          lqip: string | null
-          dimensions: SanityImageDimensions | null
-        } | null
-      } | null
-    } | null
-    svg_icon: Svg | null
+    icon: null
+    svg_icon: null
     iconName: IconRef | null
     proficiency: number
     experience: number
@@ -1728,17 +2449,8 @@ export type RESUME_BY_SLUG_QUERY_RESULT = {
         | 'tool'
         | null
       filter_category: 'ai' | 'all' | 'backend' | 'frontend' | 'others' | null
-      icon: {
-        asset: {
-          _id: string
-          url: string
-          metadata: {
-            lqip: string | null
-            dimensions: SanityImageDimensions | null
-          } | null
-        } | null
-      } | null
-      svg_icon: Svg | null
+      icon: null
+      svg_icon: null
       iconName: IconRef | null
     }> | null
   }>
@@ -1901,17 +2613,8 @@ export type PORTFOLIO_BY_SLUG_QUERY_RESULT = {
       | 'tool'
       | null
     filter_category: 'ai' | 'all' | 'backend' | 'frontend' | 'others' | null
-    icon: {
-      asset: {
-        _id: string
-        url: string
-        metadata: {
-          lqip: string | null
-          dimensions: SanityImageDimensions | null
-        } | null
-      } | null
-    } | null
-    svg_icon: Svg | null
+    icon: null
+    svg_icon: null
     iconName: IconRef | null
     proficiency: number
     experience: number
@@ -1960,17 +2663,8 @@ export type PORTFOLIO_BY_SLUG_QUERY_RESULT = {
         | 'tool'
         | null
       filter_category: 'ai' | 'all' | 'backend' | 'frontend' | 'others' | null
-      icon: {
-        asset: {
-          _id: string
-          url: string
-          metadata: {
-            lqip: string | null
-            dimensions: SanityImageDimensions | null
-          } | null
-        } | null
-      } | null
-      svg_icon: Svg | null
+      icon: null
+      svg_icon: null
       iconName: IconRef | null
     }> | null
   }>
@@ -2186,10 +2880,10 @@ declare module '@sanity/client' {
     '\n  *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {\n    "slug": slug.current,\n    _type,\n    _updatedAt,\n  }\n': SitemapDataResult
     '\n  *[_type == "blog" && defined(slug.current)]\n  {"slug": slug.current}\n': BlogSlugsResult
     '\n  *[_type == "blog" && defined(slug.current)] | order(publishedDate desc) {\n    \n  _id,\n  title,\n  slug,\n  category,\n  dek,\n  publishedDate,\n  isFeatured,\n  author->{ name, avatar{ asset->{ _id, url, metadata { lqip, dimensions } }, alt } },\n  coverImage{\n    asset->{ _id, url, metadata { lqip, dimensions } },\n    alt,\n    caption,\n    credit\n  },\n  stats,\n\n  }\n': ALL_BLOGS_QUERY_RESULT
-    '\n  *[_type == "blog" && slug.current == $slug][0]{\n    \n  _id,\n  title,\n  slug,\n  category,\n  dek,\n  publishedDate,\n  isFeatured,\n  author->{ name, avatar{ asset->{ _id, url, metadata { lqip, dimensions } }, alt } },\n  coverImage{\n    asset->{ _id, url, metadata { lqip, dimensions } },\n    alt,\n    caption,\n    credit\n  },\n  stats,\n\n    body,\n    footerLinks,\n    seo{\n      metaTitle,\n      metaDescription,\n      canonicalUrl,\n      ogTitle,\n      ogDescription,\n      ogImage{\n        asset->{ url, metadata { dimensions } },\n        alt\n      },\n      twitterCard,\n      twitterTitle,\n      twitterDescription,\n      noIndex,\n      noFollow\n    },\n  }\n': BLOG_BY_SLUG_QUERY_RESULT
+    '\n  *[_type == "blog" && slug.current == $slug][0]{\n    \n  _id,\n  title,\n  slug,\n  category,\n  dek,\n  publishedDate,\n  isFeatured,\n  author->{ name, avatar{ asset->{ _id, url, metadata { lqip, dimensions } }, alt } },\n  coverImage{\n    asset->{ _id, url, metadata { lqip, dimensions } },\n    alt,\n    caption,\n    credit\n  },\n  stats,\n\n    body{\n  _type,\n  en[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n, \n  _type == "customImage" => {\n    asset->{ _id, url, metadata { lqip, dimensions } }\n  }\n },\n  es[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n, \n  _type == "customImage" => {\n    asset->{ _id, url, metadata { lqip, dimensions } }\n  }\n },\n  fr[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n, \n  _type == "customImage" => {\n    asset->{ _id, url, metadata { lqip, dimensions } }\n  }\n },\n  zh[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n, \n  _type == "customImage" => {\n    asset->{ _id, url, metadata { lqip, dimensions } }\n  }\n },\n  hi[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n, \n  _type == "customImage" => {\n    asset->{ _id, url, metadata { lqip, dimensions } }\n  }\n },\n  ar[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n, \n  _type == "customImage" => {\n    asset->{ _id, url, metadata { lqip, dimensions } }\n  }\n },\n},\n    footerLinks,\n    seo{\n      metaTitle,\n      metaDescription,\n      canonicalUrl,\n      ogTitle,\n      ogDescription,\n      ogImage{\n        asset->{ url, metadata { dimensions } },\n        alt\n      },\n      twitterCard,\n      twitterTitle,\n      twitterDescription,\n      noIndex,\n      noFollow\n    },\n  }\n': BLOG_BY_SLUG_QUERY_RESULT
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
     '\n  *[_type == "project" && defined(slug.current)]\n  {"slug": slug.current}\n': ProjectSlugsResult
-    '\n*[_type == "project" && slug.current == $slug][0]{\n  title,\n  slug,\n  description,\n  body,\n  projectUrl,\n  repositoryUrl,\n  startDate,\n  endDate,\n  isFeatured,\n  coverImage{\n    asset->{\n      _id,\n      url,\n      metadata { lqip, dimensions }\n    },\n    alt,\n    caption,\n    credit\n  },\n  gallery[]{\n    asset->{\n      _id,\n      url,\n      metadata { lqip, dimensions }\n    },\n    alt,\n    caption,\n    credit\n  },\n}\n': PROJECT_BY_SLUG_QUERY_RESULT
+    '\n*[_type == "project" && slug.current == $slug][0]{\n  title,\n  slug,\n  description,\n  body{\n  _type,\n  en[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n },\n  es[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n },\n  fr[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n },\n  zh[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n },\n  hi[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n },\n  ar[]{ ..., \n  _type == "block" => {\n    markDefs[]{\n      ...,\n      _type == "link" => {\n        ...,\n        internalRef->{ _type, "slug": slug.current }\n      }\n    }\n  }\n },\n},\n  projectUrl,\n  repositoryUrl,\n  startDate,\n  endDate,\n  isFeatured,\n  coverImage{\n    asset->{\n      _id,\n      url,\n      metadata { lqip, dimensions }\n    },\n    alt,\n    caption,\n    credit\n  },\n  gallery[]{\n    asset->{\n      _id,\n      url,\n      metadata { lqip, dimensions }\n    },\n    alt,\n    caption,\n    credit\n  },\n}\n': PROJECT_BY_SLUG_QUERY_RESULT
     '\n*[_type == "person" && slug.current == $slug][0]{\n_id,\n_updatedAt,\nslug,  \n"header":{\n  header_title,\n  location,\n  logoImage {\n      asset->{ _id, url, metadata { lqip, dimensions } },\n      alt,\n  }, \n  headerCta{\n    text,\n    ariaLabel,\n    href\n  },\n  \n  },\n  \n  "hero_section": {\n    name,\n    greeting,\n    headline,\n    bio_short,\n    channels[],\n    "stats": stats[]{ value, label },\n    openToWork,\n    openToWorkLabel,\n    "primaryCta":   { "href": primaryCta.href,   "text": primaryCta.text   },\n    "secondaryCta": { "href": secondaryCta.href, "text": secondaryCta.text },\n    avatar {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    },\n    resumeImage{\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    }},\n"category_labels": *[_type == "skillCategoryLabels"][0],\n  skills[]->{\n    _id,\n    name,\n    slug,\n    category,\n    filter_category,\n    icon {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      }\n    },\n    svg_icon,\n    iconName,\n    proficiency,\n    experience\n  },\n\n  "experience": *[\n    _type == "experience" &&\n    person._ref == ^._id\n  ] | order(startDate desc) {\n    _id,\n    role,\n    employmentType,\n    location,\n    startDate,\n    endDate,\n    isCurrent,\n    description,\n\n    organization->{\n      _id,\n      name,\n      slug,\n      logo {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        },\n        alt\n      },\n      website\n    },\n\n    skills[]->{\n      _id,\n      name,\n      slug,\n      category,\n      filter_category,\n      icon {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        }\n      },\n      svg_icon,\n      iconName\n    }\n  },\n  "sections": sections[]->{\n    _id,\n    sectionType,\n    sectionId,\n    internalTitle,\n    heading,\n    subheading,\n    content,\n    showInNav,\n    navLabel\n  },\n  "projects": projects[]->{\n    title,\n     slug,\n  description,\n  projectUrl,\n  repositoryUrl,\n  startDate,\n  endDate,\n  isFeatured,\n  coverImage{\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n        }\n      },\n  \n\n  },\n  "education": *[\n  _type == "education" &&\n  person._ref == ^._id\n] | order(startDate asc) {\n  _id,\n institution->{\n name\n },\n  degree,\n  fieldOfStudy,\n  description,\n  startDate,\n  endDate,\n  isCurrent\n}\n  \n    \n  }': RESUME_BY_SLUG_QUERY_RESULT
     '\n*[_type == "person" && slug.current == $slug][0]{\n  "header":{\n  header_title,\n  location,\n  logoImage {\n      asset->{ _id, url, metadata { lqip, dimensions } },\n      alt,\n  }, \n  headerCta{\n    text,\n    ariaLabel,\n    href\n  },\n  "navItems": (\n  sections[]->{\n    sectionId,\n    sectionType,\n    showInNav,\n    navLabel\n  }\n)[showInNav != false]{\n  "anchorId": sectionId.current,\n  "label": navLabel\n  }\n  \n  },\n  \n    "hero_section": {\n    name,\n    greeting,\n    headline,\n    bio_short,\n    channels[],\n    "stats": stats[]{ value, label },\n    openToWork,\n    openToWorkLabel,\n    "primaryCta":   { "href": primaryCta.href,   "text": primaryCta.text   },\n    "secondaryCta": { "href": secondaryCta.href, "text": secondaryCta.text },\n    avatar {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      },\n      alt,\n      caption,\n      credit\n    }\n  },\n\n  skills[]->{\n    _id,\n    name,\n    slug,\n    category,\n    filter_category,\n    icon {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions\n        }\n      }\n    },\n    svg_icon,\n    iconName,\n    proficiency,\n    experience\n  },\n\n  "experience": *[\n    _type == "experience" &&\n    person._ref == ^._id\n  ] | order(startDate desc) {\n    _id,\n    role,\n    employmentType,\n    location,\n    startDate,\n    endDate,\n    isCurrent,\n    description,\n\n    organization->{\n      _id,\n      name,\n      slug,\n      logo {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        },\n        alt\n      },\n      website\n    },\n\n    skills[]->{\n      _id,\n      name,\n      slug,\n      category,\n      filter_category,\n      icon {\n        asset->{\n          _id,\n          url,\n          metadata {\n            lqip,\n            dimensions\n          }\n        }\n      },\n      svg_icon,\n      iconName\n    }\n  },\n  "sections": sections[]->{\n    _id,\n    sectionType,\n    sectionId,\n    internalTitle,\n    heading,\n    subheading,\n    content,\n    showInNav,\n    navLabel\n  },\n  \n    \n  }': PORTFOLIO_BY_SLUG_QUERY_RESULT
     '*[_type == "person"][0]{\n    seo{\n      metaTitle,\n      metaDescription,\n      keywords,\n      canonicalUrl,\n      ogTitle,\n      ogDescription,\n      ogImage{\n        asset->{\n          url,\n          metadata{ dimensions }\n        },\n        alt\n      },\n      ogType,\n      ogSiteName,\n      twitterCard,\n      twitterTitle,\n      twitterDescription,\n      twitterImage{\n        asset->{\n          url,\n          metadata{ dimensions }\n        },\n        alt\n      },\n      noIndex,\n      noFollow\n    },\n    name,\n    headline,\n    bio_short,\n    channels[],\n    avatar{\n      asset->{\n        url,\n        metadata{ dimensions }\n      },\n      alt\n    },\n    logoImage{\n      asset->{\n        url,\n        metadata{ dimensions }\n      },\n      alt\n    }\n  }\n': METADATA_QUERY_RESULT

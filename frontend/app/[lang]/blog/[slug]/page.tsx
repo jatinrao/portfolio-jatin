@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { sanityFetch } from "@/sanity/lib/live";
 import { client } from "@/sanity/lib/client";
 import { BLOG_BY_SLUG_QUERY, blogSlugs } from "@/sanity/lib/queries";
 import { fetchPortfolioData } from "@/lib/queries";
@@ -29,7 +28,7 @@ interface BlogPageProps {
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { lang, slug } = await params;
-  const { data: post } = await sanityFetch({ query: BLOG_BY_SLUG_QUERY, params: { slug }, stega: false });
+  const post = await client.fetch(BLOG_BY_SLUG_QUERY, { slug }, { stega: false });
   if (!post) return {};
   return buildBlogPostMetadata(post, lang as Locale);
 }
@@ -38,8 +37,13 @@ export default async function BlogPage({ params }: BlogPageProps) {
   const { lang, slug } = await params;
   const locale = lang as LangId;
 
-  const [{ data: post }, portfolio] = await Promise.all([
-    sanityFetch({ query: BLOG_BY_SLUG_QUERY, params: { slug } }),
+  // Plain client.fetch, not the Live Content API's sanityFetch: as of
+  // next-sanity 13 on Next 16, sanityFetch nulls out dereferenced (`asset->`)
+  // fields like coverImage inside this app's runtime — a raw client.fetch
+  // with identical project/dataset/token/query resolves them correctly. See
+  // the matching note in app/[lang]/blog/page.tsx.
+  const [post, portfolio] = await Promise.all([
+    client.fetch(BLOG_BY_SLUG_QUERY, { slug }),
     fetchPortfolioData("jatin-kumar"),
   ]);
 

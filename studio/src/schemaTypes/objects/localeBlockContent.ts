@@ -22,7 +22,49 @@ export const richTextBlock = defineArrayMember({
         name: 'link',
         type: 'object',
         title: 'Link',
-        fields: [{ name: 'href', type: 'url', title: 'URL' }],
+        fields: [
+          defineField({
+            name: 'linkType',
+            title: 'Link type',
+            type: 'string',
+            options: {
+              list: [
+                { title: 'External URL', value: 'external' },
+                { title: 'Internal page', value: 'internal' },
+              ],
+              layout: 'radio',
+            },
+            initialValue: 'external',
+            validation: (Rule) => Rule.required(),
+          }),
+          defineField({
+            name: 'href',
+            title: 'URL',
+            type: 'url',
+            hidden: ({ parent }) => parent?.linkType !== 'external',
+            validation: (Rule) =>
+              Rule.custom((value, context: any) =>
+                context.parent?.linkType === 'external' && !value ? 'Enter a URL' : true,
+              ).uri({ scheme: ['http', 'https', 'mailto'] }),
+          }),
+          defineField({
+            name: 'internalRef',
+            title: 'Page',
+            type: 'reference',
+            to: [{ type: 'blog' }, { type: 'project' }],
+            hidden: ({ parent }) => parent?.linkType !== 'internal',
+            validation: (Rule) =>
+              Rule.custom((value, context: any) =>
+                context.parent?.linkType === 'internal' && !value ? 'Select a page' : true,
+              ),
+          }),
+          defineField({
+            name: 'openInNewTab',
+            title: 'Open in new tab',
+            type: 'boolean',
+            initialValue: false,
+          }),
+        ],
       },
     ],
   },

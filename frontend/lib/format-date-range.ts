@@ -1,4 +1,4 @@
-export function formatProjectDateRange(startDate?: string, endDate?: string) {
+export function formatProjectDateRange(startDate?: string | null, endDate?: string | null) {
   if (!startDate) return null;
   const fmt = (iso: string) => new Date(iso).getFullYear();
   return endDate ? `${fmt(startDate)} — ${fmt(endDate)}` : `${fmt(startDate)}`;

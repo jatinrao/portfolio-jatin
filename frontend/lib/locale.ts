@@ -5,7 +5,7 @@ import type { PortableTextBlock } from '@portabletext/types'
 export const LANGUAGES = [
   { id: 'en', code: 'EN', label: 'English'            },
   { id: 'es', code: 'ES', label: 'Español'            },
-  { id: 'zh', code: '中文', label: '中文 (Simplified)' },
+  { id: 'zh', code: '中文', label: '中文' },
   { id: 'hi', code: 'हि', label: 'हिंदी'              },
   { id: 'fr', code: 'FR', label: 'Français'           },
   { id: 'ar', code: 'AR', label: 'العربية'            },

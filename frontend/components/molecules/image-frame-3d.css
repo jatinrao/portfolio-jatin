@@ -1,0 +1,283 @@
+/*
+ * 3D picture frame built from CSS cuboids (CSS-Tricks "Tackling awkward
+ * shapes" method: a flat front lip + two rotateX/rotateY planes per rail,
+ * all running back to the same depth as the back plate so mitred corners
+ * meet without gaps). All lengths derive from --if3d-u, one reference px
+ * expressed as a fraction of this element's own container-query width
+ * (100 / 940, the design's reference frame width) — resizing the component
+ * rescales the whole geometry together, so the perceived camera angle never
+ * changes with size. No JS, no resize observers.
+ */
+
+.if3d {
+  --if3d-ref-w: 940;
+  --if3d-ref-h: 552;
+  --if3d-thickness: 11;
+  --if3d-depth: 36;
+  --if3d-mat-recess: 13;
+  --if3d-photo-lift: 4;
+  --if3d-photo-inset-left: 52;
+  --if3d-photo-inset-top: 39;
+  --if3d-photo-inset-right: 56;
+  --if3d-photo-inset-bottom: 61;
+  --if3d-shadow-bleed-x: 3;
+  --if3d-shadow-bleed-top: 1;
+  --if3d-shadow-bleed-bottom: 5;
+  --if3d-perspective: 2900;
+  --if3d-rotate-x: 0.6deg;
+  --if3d-rotate-y: 3deg;
+  /* 1 reference px, in cqw of this element's own width (100 / 940). */
+  --if3d-u: 0.1063829787cqw;
+
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--if3d-ref-w) / var(--if3d-ref-h);
+}
+
+/* Ambient drop shadow, deliberately OUTSIDE the perspective/preserve-3d
+   scene (.if3d-stage/.if3d-frame below) rather than a plane within it. A
+   plane's apparent size under perspective depends on its Z depth relative
+   to whatever else is visible at the time — matching it to the back plate,
+   then to the front lip, each fixed one gap only to open another as
+   rotation/scale changed which face was visually dominant. A real ambient
+   shadow on a wall doesn't tilt in 3D the way the object casting it does
+   anyway; a flat, non-transformed shadow sized off the frame's own outer
+   box is both more correct and immune to perspective math entirely.
+   Bottom-weighted (per the reference: 1px bleed on top vs 5px on bottom)
+   so the frame reads as lit from above. Forced behind .if3d-stage with an
+   explicit z-index rather than relying on tree order: .if3d-stage's own
+   perspective/preserve-3d promotes it to its own compositing layer, which
+   painted over this pseudo-element despite coming first in the DOM.
+
+   The box itself hugs the frame closely (small bleed above); reach comes
+   from blur radius, not from a big box shrunk inward with negative spread.
+   A large negative spread pulls a shadow layer's un-blurred core well
+   inside the box before blur ever starts fading it back out, so right at
+   the frame's own edge the layer can still be near-zero density — visible
+   as a pale ring between the wood and where the shadow actually reads.
+   Smaller spreads + bigger blur keeps each layer's core close to the true
+   edge, so it's already at meaningful opacity right at the seam. */
+.if3d::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: calc(var(--if3d-shadow-bleed-x) * -1 * var(--if3d-u));
+  top: calc(var(--if3d-shadow-bleed-top) * -1 * var(--if3d-u));
+  width: calc((var(--if3d-ref-w) + 2 * var(--if3d-shadow-bleed-x)) * var(--if3d-u));
+  height: calc(
+    (var(--if3d-ref-h) + var(--if3d-shadow-bleed-top) + var(--if3d-shadow-bleed-bottom)) *
+      var(--if3d-u)
+  );
+  box-shadow:
+    0 calc(34 * var(--if3d-u)) calc(90 * var(--if3d-u)) calc(-16 * var(--if3d-u)) rgba(44, 40, 34, 0.26),
+    0 calc(12 * var(--if3d-u)) calc(42 * var(--if3d-u)) calc(-7 * var(--if3d-u)) rgba(44, 40, 34, 0.18),
+    0 calc(3 * var(--if3d-u)) calc(16 * var(--if3d-u)) calc(-1 * var(--if3d-u)) rgba(44, 40, 34, 0.16),
+    0 calc(1 * var(--if3d-u)) calc(6 * var(--if3d-u)) rgba(44, 40, 34, 0.18);
+}
+
+/* Container-query length units (cqw) are invalid on the element that
+   establishes the query container itself — browsers resolve them to 0,
+   which silently disables `perspective` if it lived on .if3d directly.
+   This wrapper sits one level in, so its cqw usage resolves against .if3d
+   (an ancestor) instead of itself. */
+.if3d-stage {
+  position: absolute;
+  inset: 0;
+  perspective: calc(var(--if3d-perspective) * var(--if3d-u));
+  perspective-origin: 52% 54%;
+}
+
+.if3d-frame {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--if3d-rotate-x)) rotateY(var(--if3d-rotate-y));
+}
+
+/* Back plate — the plane every rail's far edge (translateZ(-depth)) meets. */
+.if3d-back {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--if3d-ref-w) * var(--if3d-u));
+  height: calc(var(--if3d-ref-h) * var(--if3d-u));
+  transform: translateZ(calc(var(--if3d-depth) * -1 * var(--if3d-u)));
+  background: #a89376;
+}
+
+/* Recessed mat board. The faint paper-grain texture rides as a background
+   layer on the same plane (::after) rather than a separate 3D-composited
+   element — it never needs its own depth, so it costs no extra face. */
+.if3d-mat {
+  position: absolute;
+  left: calc(var(--if3d-thickness) * var(--if3d-u));
+  top: calc(var(--if3d-thickness) * var(--if3d-u));
+  width: calc((var(--if3d-ref-w) - 2 * var(--if3d-thickness)) * var(--if3d-u));
+  height: calc((var(--if3d-ref-h) - 2 * var(--if3d-thickness)) * var(--if3d-u));
+  transform: translateZ(calc(var(--if3d-mat-recess) * -1 * var(--if3d-u)));
+  background: linear-gradient(163deg, #fdfdfc 0%, #f9f8f6 62%, #f2f1ef 100%);
+  box-shadow:
+    inset 0 calc(7 * var(--if3d-u)) calc(12 * var(--if3d-u)) calc(-5 * var(--if3d-u)) rgba(58, 50, 38, 0.2),
+    inset calc(7 * var(--if3d-u)) 0 calc(12 * var(--if3d-u)) calc(-7 * var(--if3d-u)) rgba(58, 50, 38, 0.16),
+    inset calc(-5 * var(--if3d-u)) 0 calc(10 * var(--if3d-u)) calc(-7 * var(--if3d-u)) rgba(58, 50, 38, 0.11),
+    inset 0 calc(-5 * var(--if3d-u)) calc(10 * var(--if3d-u)) calc(-6 * var(--if3d-u)) rgba(58, 50, 38, 0.12);
+}
+
+.if3d-mat::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(96deg, rgba(120, 110, 95, 0.03) 0 1px, rgba(255, 255, 255, 0.028) 1px 3px),
+    repeating-linear-gradient(6deg, rgba(120, 110, 95, 0.022) 0 1px, rgba(255, 255, 255, 0.022) 1px 4px);
+  pointer-events: none;
+}
+
+/* Photo opening — recessed less than the mat so the print reads as sitting
+   slightly proud of the board. */
+.if3d-photo {
+  position: absolute;
+  left: calc((var(--if3d-thickness) + var(--if3d-photo-inset-left)) * var(--if3d-u));
+  top: calc((var(--if3d-thickness) + var(--if3d-photo-inset-top)) * var(--if3d-u));
+  width: calc(
+    (var(--if3d-ref-w) - 2 * var(--if3d-thickness) - var(--if3d-photo-inset-left) - var(--if3d-photo-inset-right)) *
+      var(--if3d-u)
+  );
+  height: calc(
+    (var(--if3d-ref-h) - 2 * var(--if3d-thickness) - var(--if3d-photo-inset-top) - var(--if3d-photo-inset-bottom)) *
+      var(--if3d-u)
+  );
+  transform: translateZ(calc((var(--if3d-mat-recess) - var(--if3d-photo-lift)) * -1 * var(--if3d-u)));
+  overflow: hidden;
+  background: #dcdad4;
+  box-shadow:
+    0 0 0 calc(1 * var(--if3d-u)) rgba(40, 34, 26, 0.1),
+    0 calc(3 * var(--if3d-u)) calc(8 * var(--if3d-u)) calc(-2 * var(--if3d-u)) rgba(40, 34, 26, 0.22),
+    0 calc(1 * var(--if3d-u)) calc(2 * var(--if3d-u)) rgba(40, 34, 26, 0.16);
+}
+
+.if3d-photo-img {
+  object-fit: contain;
+}
+
+/* Rails — each side is a front-facing lip plus two planes rotated 90deg
+   around their own top-left edge. Both rotated planes run back to the same
+   -depth as the back plate; the "inner" plane sits one lip-width further in,
+   reading as the rabbet's shadowed underside against the "outer" plane's lit
+   top edge. */
+.if3d-rail {
+  position: absolute;
+}
+
+.if3d-rail--top-lip {
+  left: 0;
+  top: 0;
+  width: calc(var(--if3d-ref-w) * var(--if3d-u));
+  height: calc(var(--if3d-thickness) * var(--if3d-u));
+  background: linear-gradient(to bottom, #e0cdb0 0%, #d6c0a0 55%, #c9b18e 100%);
+}
+
+.if3d-rail--top-outer {
+  left: 0;
+  top: 0;
+  width: calc(var(--if3d-ref-w) * var(--if3d-u));
+  height: calc(var(--if3d-depth) * var(--if3d-u));
+  transform-origin: 0 0;
+  transform: rotateX(-90deg);
+  background: linear-gradient(to bottom, #eadcc4 0%, #dcc5a6 60%, #cdb694 100%);
+}
+
+.if3d-rail--top-inner {
+  left: 0;
+  top: calc(var(--if3d-thickness) * var(--if3d-u));
+  width: calc(var(--if3d-ref-w) * var(--if3d-u));
+  height: calc(var(--if3d-depth) * var(--if3d-u));
+  transform-origin: 0 0;
+  transform: rotateX(-90deg);
+  background: linear-gradient(to bottom, #8b7758 0%, #a18e70 100%);
+}
+
+.if3d-rail--bottom-lip {
+  left: 0;
+  top: calc((var(--if3d-ref-h) - var(--if3d-thickness)) * var(--if3d-u));
+  width: calc(var(--if3d-ref-w) * var(--if3d-u));
+  height: calc(var(--if3d-thickness) * var(--if3d-u));
+  background: linear-gradient(to bottom, #c7ae8b 0%, #bda681 100%);
+}
+
+.if3d-rail--bottom-outer {
+  left: 0;
+  top: calc(var(--if3d-ref-h) * var(--if3d-u));
+  width: calc(var(--if3d-ref-w) * var(--if3d-u));
+  height: calc(var(--if3d-depth) * var(--if3d-u));
+  transform-origin: 0 0;
+  transform: rotateX(-90deg);
+  background: linear-gradient(to bottom, #9e8767 0%, #856f52 100%);
+}
+
+.if3d-rail--bottom-inner {
+  left: 0;
+  top: calc((var(--if3d-ref-h) - var(--if3d-thickness)) * var(--if3d-u));
+  width: calc(var(--if3d-ref-w) * var(--if3d-u));
+  height: calc(var(--if3d-depth) * var(--if3d-u));
+  transform-origin: 0 0;
+  transform: rotateX(-90deg);
+  background: linear-gradient(to bottom, #ab9576 0%, #baa384 100%);
+}
+
+.if3d-rail--left-lip {
+  left: 0;
+  top: calc(var(--if3d-thickness) * var(--if3d-u));
+  width: calc(var(--if3d-thickness) * var(--if3d-u));
+  height: calc((var(--if3d-ref-h) - 2 * var(--if3d-thickness)) * var(--if3d-u));
+  background: linear-gradient(to right, #cfb896 0%, #d6c09f 60%, #ccb391 100%);
+}
+
+.if3d-rail--left-outer {
+  left: 0;
+  top: calc(var(--if3d-thickness) * var(--if3d-u));
+  width: calc(var(--if3d-depth) * var(--if3d-u));
+  height: calc((var(--if3d-ref-h) - 2 * var(--if3d-thickness)) * var(--if3d-u));
+  transform-origin: 0 0;
+  transform: rotateY(90deg);
+  background: linear-gradient(to right, #c0a786 0%, #ae9370 100%);
+}
+
+.if3d-rail--left-inner {
+  left: calc(var(--if3d-thickness) * var(--if3d-u));
+  top: calc(var(--if3d-thickness) * var(--if3d-u));
+  width: calc(var(--if3d-depth) * var(--if3d-u));
+  height: calc((var(--if3d-ref-h) - 2 * var(--if3d-thickness)) * var(--if3d-u));
+  transform-origin: 0 0;
+  transform: rotateY(90deg);
+  background: linear-gradient(to right, #977f60 0%, #a68e70 100%);
+}
+
+.if3d-rail--right-lip {
+  left: calc((var(--if3d-ref-w) - var(--if3d-thickness)) * var(--if3d-u));
+  top: calc(var(--if3d-thickness) * var(--if3d-u));
+  width: calc(var(--if3d-thickness) * var(--if3d-u));
+  height: calc((var(--if3d-ref-h) - 2 * var(--if3d-thickness)) * var(--if3d-u));
+  background: linear-gradient(to right, #cab08e 0%, #c3a887 100%);
+}
+
+.if3d-rail--right-outer {
+  left: calc(var(--if3d-ref-w) * var(--if3d-u));
+  top: calc(var(--if3d-thickness) * var(--if3d-u));
+  width: calc(var(--if3d-depth) * var(--if3d-u));
+  height: calc((var(--if3d-ref-h) - 2 * var(--if3d-thickness)) * var(--if3d-u));
+  transform-origin: 0 0;
+  transform: rotateY(90deg);
+  background: linear-gradient(to right, #b39a78 0%, #9f8a6a 100%);
+}
+
+.if3d-rail--right-inner {
+  left: calc((var(--if3d-ref-w) - var(--if3d-thickness)) * var(--if3d-u));
+  top: calc(var(--if3d-thickness) * var(--if3d-u));
+  width: calc(var(--if3d-depth) * var(--if3d-u));
+  height: calc((var(--if3d-ref-h) - 2 * var(--if3d-thickness)) * var(--if3d-u));
+  transform-origin: 0 0;
+  transform: rotateY(90deg);
+  background: linear-gradient(to right, #8c7657 0%, #9b8567 100%);
+}

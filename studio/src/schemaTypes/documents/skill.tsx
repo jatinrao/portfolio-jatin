@@ -91,9 +91,9 @@ export const skill = defineType({
     // }),
     defineField({
       name: 'iconName',
-      title: 'Icon (picker)',
+      title: 'Skill Icon',
       type: 'iconRef',
-      description: 'Pick from the bundled icon set. Takes priority over the legacy SVG field on the frontend once set.',
+      description: 'Pick from the @web-portfolio/icons package.',
     }),
   ],
   preview: {

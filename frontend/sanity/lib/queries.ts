@@ -2,6 +2,58 @@ import {defineQuery} from 'next-sanity'
 
 export const settingsQuery = defineQuery(`*[_type == "settings"][0]`)
 
+// Shared by any `richTextBlock`-based body field (blog, project): dereferences
+// the `link` mark's internal-page reference so the frontend can resolve a
+// slug without a second round trip. External links carry their own `href`
+// already, no dereference needed there. Gated on `_type == "block"` — the
+// other array members (calloutBox, customImage, ...) have no `markDefs`
+// field at all, and projecting it unconditionally would tack a spurious
+// `markDefs: null` onto every one of them.
+const richTextLinkDeref = /* groq */ `
+  _type == "block" => {
+    markDefs[]{
+      ...,
+      _type == "link" => {
+        ...,
+        internalRef->{ _type, "slug": slug.current }
+      }
+    }
+  }
+`
+
+// blogBlockContent-only: dereferences an embedded image's asset, same shape
+// as coverImage elsewhere.
+const blogBodyImageDeref = /* groq */ `
+  _type == "customImage" => {
+    asset->{ _id, url, metadata { lqip, dimensions } }
+  }
+`
+
+// blogBlockContent/localeBlockContent are per-language OBJECTS (one array
+// per locale — en/es/fr/zh/hi/ar, see frontend/i18n/config.ts), not a single
+// flat array — GROQ has no wildcard-key projection, so every locale is
+// projected explicitly. (Typegen statically parses these query strings, so
+// this can't be built with `.map()`/`.join()` — it needs a literal template.)
+const blogBodyField = /* groq */ `body{
+  _type,
+  en[]{ ..., ${richTextLinkDeref}, ${blogBodyImageDeref} },
+  es[]{ ..., ${richTextLinkDeref}, ${blogBodyImageDeref} },
+  fr[]{ ..., ${richTextLinkDeref}, ${blogBodyImageDeref} },
+  zh[]{ ..., ${richTextLinkDeref}, ${blogBodyImageDeref} },
+  hi[]{ ..., ${richTextLinkDeref}, ${blogBodyImageDeref} },
+  ar[]{ ..., ${richTextLinkDeref}, ${blogBodyImageDeref} },
+}`
+
+const projectBodyField = /* groq */ `body{
+  _type,
+  en[]{ ..., ${richTextLinkDeref} },
+  es[]{ ..., ${richTextLinkDeref} },
+  fr[]{ ..., ${richTextLinkDeref} },
+  zh[]{ ..., ${richTextLinkDeref} },
+  hi[]{ ..., ${richTextLinkDeref} },
+  ar[]{ ..., ${richTextLinkDeref} },
+}`
+
 const linkReference = /* groq */ `
   _type == "link" => {
     "page": page->slug.current,
@@ -54,10 +106,11 @@ export const sitemapData = defineQuery(`
   }
 `)
 
-// Nothing inside `body` needs dereferencing — comparisonTable's per-cell
-// `icon` is a plain iconRef string (a registry key, not an asset
-// reference), same as skill.iconName elsewhere — so the whole per-language
-// block array can be passed through as-is, same as project.body.
+// `body` itself is projected separately (see blogBodyField) since its
+// embedded images and internal links need dereferencing — everything else
+// here needs no dereference: comparisonTable's per-cell `icon` is a plain
+// iconRef string (a registry key, not an asset reference), same as
+// skill.iconName elsewhere.
 const blogFields = /* groq */ `
   _id,
   title,
@@ -90,7 +143,7 @@ export const ALL_BLOGS_QUERY = defineQuery(`
 export const BLOG_BY_SLUG_QUERY = defineQuery(`
   *[_type == "blog" && slug.current == $slug][0]{
     ${blogFields}
-    body,
+    ${blogBodyField},
     footerLinks,
     seo{
       metaTitle,
@@ -126,7 +179,7 @@ export const PROJECT_BY_SLUG_QUERY = defineQuery(`
   title,
   slug,
   description,
-  body,
+  ${projectBodyField},
   projectUrl,
   repositoryUrl,
   startDate,

@@ -18,8 +18,15 @@
 .blog-card-image {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  box-sizing: border-box;
+  padding: 20px 24px 28px;
   background: var(--color-surface-container, #f2f2f7);
+}
+
+/* No cover photo to frame — reserve the same footprint a framed one would
+   have, instead of collapsing to just the padding. */
+.blog-card-image--empty {
+  aspect-ratio: 16 / 10;
 }
 
 .blog-card-body {

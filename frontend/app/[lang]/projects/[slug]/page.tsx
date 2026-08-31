@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/lib/live";
 import { client } from "@/sanity/lib/client";
 import { PROJECT_BY_SLUG_QUERY, projectSlugs } from "@/sanity/lib/queries";
-import type { Project } from "@/sanity.types";
 import { fetchPortfolioData } from "@/lib/queries";
 import type { HeroRawData } from "@/lib/queries";
 import { LangId, localize } from "@/lib/locale";
@@ -44,7 +43,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     <LanguageProvider lang={locale}>
       <Header data={portfolio?.data?.header as HeaderData | null} locale={locale} />
       <main>
-        <ProjectDetail project={project as unknown as Project} locale={locale} />
+        <ProjectDetail project={project} locale={locale} />
       </main>
       <Footer
         brandName={localize(portfolio?.data?.hero_section?.name, locale)}

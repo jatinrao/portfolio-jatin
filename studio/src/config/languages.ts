@@ -16,7 +16,7 @@ export interface LanguageDefinition {
 export const languages: LanguageDefinition[] = [
   { id: 'en', title: 'English', isDefault: true },
   { id: 'es', title: 'Spanish' },
-  { id: 'zh', title: 'Chinese (Simplified)' },
+  { id: 'zh', title: 'Chinese' },
   { id: 'hi', title: 'Hindi' },
   { id: 'fr', title: 'French' },
   { id: 'ar', title: 'Arabic' },

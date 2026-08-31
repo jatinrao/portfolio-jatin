@@ -2,37 +2,57 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import { PortableText } from "next-sanity";
 import { Icon } from "@web-portfolio/icons";
-import type { Project, CustomImage } from "@/sanity.types";
+import type { PROJECT_BY_SLUG_QUERY_RESULT } from "@/sanity.types";
 import { LangId, localize } from "@/lib/locale";
-import { urlForImage } from "@/sanity/lib/utils";
+import { urlForImage, resolveRichTextLink, type RichTextLinkMark } from "@/sanity/lib/utils";
 import { formatProjectDateRange } from "@/lib/format-date-range";
 import Button from "@/components/atoms/Button";
 import "./project-detail.css";
 
-const projectDetailPortableTextComponents = {
-  block: {
-    h2: ({ children }: { children?: ReactNode }) => (
-      <h2 className="project-detail-h2">{children}</h2>
-    ),
-    h3: ({ children }: { children?: ReactNode }) => (
-      <h3 className="project-detail-h3">{children}</h3>
-    ),
-    normal: ({ children }: { children?: ReactNode }) => (
-      <p className="project-detail-p">{children}</p>
-    ),
-    blockquote: ({ children }: { children?: ReactNode }) => (
-      <blockquote className="project-detail-quote">{children}</blockquote>
-    ),
-  },
-  list: {
-    bullet: ({ children }: { children?: ReactNode }) => (
-      <ul className="project-detail-list">{children}</ul>
-    ),
-    number: ({ children }: { children?: ReactNode }) => (
-      <ol className="project-detail-list">{children}</ol>
-    ),
-  },
-};
+function buildProjectDetailPortableTextComponents(locale: LangId) {
+  return {
+    block: {
+      h2: ({ children }: { children?: ReactNode }) => (
+        <h2 className="project-detail-h2">{children}</h2>
+      ),
+      h3: ({ children }: { children?: ReactNode }) => (
+        <h3 className="project-detail-h3">{children}</h3>
+      ),
+      normal: ({ children }: { children?: ReactNode }) => (
+        <p className="project-detail-p">{children}</p>
+      ),
+      blockquote: ({ children }: { children?: ReactNode }) => (
+        <blockquote className="project-detail-quote">{children}</blockquote>
+      ),
+    },
+    list: {
+      bullet: ({ children }: { children?: ReactNode }) => (
+        <ul className="project-detail-list">{children}</ul>
+      ),
+      number: ({ children }: { children?: ReactNode }) => (
+        <ol className="project-detail-list">{children}</ol>
+      ),
+    },
+    marks: {
+      link: ({ children, value }: { children?: ReactNode; value?: RichTextLinkMark }) => {
+        const resolved = resolveRichTextLink(value, locale);
+        if (!resolved) return <>{children}</>;
+        return (
+          <a
+            href={resolved.href}
+            className="project-detail-link-inline"
+            target={resolved.target}
+            rel={resolved.target === "_blank" ? "noopener noreferrer" : undefined}
+          >
+            {children}
+          </a>
+        );
+      },
+    },
+  };
+}
+
+type Project = NonNullable<PROJECT_BY_SLUG_QUERY_RESULT>;
 
 export interface ProjectDetailProps {
   project: Project;
@@ -45,7 +65,7 @@ export default function ProjectDetail({ project, locale }: ProjectDetailProps) {
   const dateRange = formatProjectDateRange(project.startDate, project.endDate);
   const heroUrl = project.coverImage?.asset ? urlForImage(project.coverImage)?.url() : undefined;
   const body = project.body?.[locale];
-  const gallery: CustomImage[] = project.gallery ?? [];
+  const gallery = project.gallery ?? [];
 
   return (
     <article className="project-detail">
@@ -89,7 +109,7 @@ export default function ProjectDetail({ project, locale }: ProjectDetailProps) {
 
         {body && (
           <div className="project-detail-body">
-            <PortableText value={body} components={projectDetailPortableTextComponents} />
+            <PortableText value={body} components={buildProjectDetailPortableTextComponents(locale)} />
           </div>
         )}
 

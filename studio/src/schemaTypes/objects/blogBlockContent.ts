@@ -6,10 +6,12 @@ import { richTextBlock } from './localeBlockContent'
 /**
  * Localized rich text for blog post bodies — same per-language array shape
  * as `localeBlockContent`, but its `of` array also accepts the blog-specific
- * content blocks (callout box, code snippet, comparison table) alongside
+ * content blocks (callout box, code snippet, comparison table, image) alongside
  * the standard paragraph/heading/quote/list block. Pull quotes reuse the
  * standard block's existing "Quote" style rather than a dedicated object
- * type, styled as a pull-quote on the front end.
+ * type, styled as a pull-quote on the front end. Images reuse `customImage`
+ * as-is (alt/caption/credit already localized) rather than a body-specific
+ * wrapper type.
  */
 export const blogBlockContent = defineType({
   name: 'blogBlockContent',
@@ -33,6 +35,7 @@ export const blogBlockContent = defineType({
         defineArrayMember({ type: 'calloutBox' }),
         defineArrayMember({ type: 'codeSnippet' }),
         defineArrayMember({ type: 'comparisonTable' }),
+        defineArrayMember({ type: 'customImage', title: 'Image' }),
       ],
       fieldset: lang.isDefault ? undefined : 'translations',
     }),

@@ -50,6 +50,45 @@ export function linkResolver(link: any | DereferencedLink | undefined) {
   }
 }
 
+/** Shape of the `link` Portable Text annotation (localeBlockContent.ts's
+ * richTextBlock), after BLOG_BY_SLUG_QUERY/PROJECT_BY_SLUG_QUERY's
+ * markDefs projection dereferences `internalRef`. */
+export interface RichTextLinkMark {
+  linkType?: 'external' | 'internal' | null
+  href?: string | null
+  internalRef?: { _type: 'blog' | 'project'; slug: string } | null
+  openInNewTab?: boolean | null
+}
+
+/**
+ * Resolves a rich-text `link` annotation to an href + target, for both
+ * external URLs and internal blog/project references. Links authored
+ * before `linkType` existed only ever had a bare `href`, so a missing
+ * `linkType` with an `href` present is treated as external (same
+ * accommodation the legacy `linkResolver` above made).
+ */
+export function resolveRichTextLink(
+  link: RichTextLinkMark | null | undefined,
+  locale: string,
+): {href: string; target?: '_blank'} | null {
+  if (!link) return null
+  const linkType = link.linkType ?? (link.href ? 'external' : null)
+
+  if (linkType === 'internal' && link.internalRef?.slug) {
+    const base = link.internalRef._type === 'project' ? 'projects' : 'blog'
+    return {
+      href: `/${locale}/${base}/${link.internalRef.slug}`,
+      target: link.openInNewTab ? '_blank' : undefined,
+    }
+  }
+
+  if (linkType === 'external' && link.href) {
+    return {href: link.href, target: link.openInNewTab ? '_blank' : undefined}
+  }
+
+  return null
+}
+
 type DataAttributeConfig = CreateDataAttributeProps &
   Required<Pick<CreateDataAttributeProps, 'id' | 'type' | 'path'>>
 

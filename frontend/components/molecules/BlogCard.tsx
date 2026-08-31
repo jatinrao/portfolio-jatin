@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { ALL_BLOGS_QUERY_RESULT } from "@/sanity.types";
 import { LangId, localize } from "@/lib/locale";
-import { urlForImage } from "@/sanity/lib/utils";
+import { urlForImage, dataAttr } from "@/sanity/lib/utils";
 import { formatBlogDate } from "@/lib/format-date-range";
+import { ImageFrame3D } from "@/components/molecules/ImageFrame3D";
 import "./blog-card.css";
 
 export interface BlogCardProps {
@@ -18,14 +18,13 @@ export function BlogCard({ post, locale }: BlogCardProps) {
 
   return (
     <Link href={`/${locale}/blog/${post.slug.current}`} className="blog-card">
-      <div className="blog-card-image">
+      <div className={`blog-card-image${coverUrl ? "" : " blog-card-image--empty"}`}>
         {coverUrl && (
-          <Image
+          <ImageFrame3D
             src={coverUrl}
             alt={localize(post.coverImage.alt, locale) ?? title}
-            fill
             sizes="(max-width: 734px) 100vw, 360px"
-            className="object-cover"
+            dataSanity={dataAttr({ id: post._id, type: "blog", path: "coverImage" }).toString()}
           />
         )}
       </div>

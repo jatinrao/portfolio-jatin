@@ -5,6 +5,7 @@ import { BlogCard } from './BlogCard'
 
 vi.mock('@/sanity/lib/utils', () => ({
   urlForImage: () => ({ url: () => '/hero/gift.png' }),
+  dataAttr: () => ({ toString: () => 'data-sanity-stub' }),
 }))
 
 describe('BlogCard', () => {

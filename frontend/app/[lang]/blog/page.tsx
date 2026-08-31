@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 import { ALL_BLOGS_QUERY } from "@/sanity/lib/queries";
 import { fetchPortfolioData } from "@/lib/queries";
 import type { HeroRawData } from "@/lib/queries";
@@ -24,8 +24,15 @@ export default async function BlogListPage({ params }: BlogListPageProps) {
   const { lang } = await params;
   const locale = lang as LangId;
 
-  const [{ data: posts }, portfolio] = await Promise.all([
-    sanityFetch({ query: ALL_BLOGS_QUERY }),
+  // Plain client.fetch, not the Live Content API's sanityFetch: as of
+  // next-sanity 13 on Next 16, sanityFetch nulls out dereferenced (`asset->`)
+  // fields like coverImage inside this app's runtime — a raw client.fetch
+  // with identical project/dataset/token/query resolves them correctly.
+  // Trade-off: this page won't live-refresh when content is published in
+  // Studio (a manual reload picks up the change) — everything else about
+  // stega/visual-editing is unaffected since it's baked into the client.
+  const [posts, portfolio] = await Promise.all([
+    client.fetch(ALL_BLOGS_QUERY),
     fetchPortfolioData("jatin-kumar"),
   ]);
 

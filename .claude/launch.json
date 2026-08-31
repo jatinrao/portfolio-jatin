@@ -12,6 +12,12 @@
       "runtimeExecutable": "sh",
       "runtimeArgs": ["-c", "cd studio && npx sanity dev"],
       "port": 3333
+    },
+    {
+      "name": "frontend-storybook",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd frontend && npx storybook dev -p 6006 --ci"],
+      "port": 6006
     }
   ]
 }

@@ -40,18 +40,41 @@ const heading = (key: string, text: string) => block(key, text, 'h3')
 
 const body = [
   block(
-    'lede',
-    "Every icon makes two decisions at once: where it hangs — the frame — and which picture fills it. Most icon systems let a developer decide both in one line. Fine, until the picture needs to change, and only a developer with a PR can touch it.",
+    'origin-lede',
+    "This started as a question, not a plan: should an icon be content, or code? A portfolio's skill list and contact links change more often than its components do — a new job means a new employer logo, a new blog means a new link — so treating icons as something Sanity could hold, editable without a redeploy, felt like the obvious call. It wasn't obvious for long.",
   ),
 
-  heading('h1', 'The glue, and the four ways everyone hides it'),
+  heading('origin-h1', "Where 'icon as content' actually led"),
   block(
-    'p1',
-    'Icon fonts glue frame and picture into a class name — <i class="fa fa-docker"> — and a typo just renders blank. Sprite sheets glue the same way, through an id instead. Inline SVG components glue hardest: the picture is baked into the import graph, so there\'s no registry at all. Third-party libraries like lucide-react get the DX right, but import { Docker } is still glued in, just in a nicer frame.',
+    'origin-p1',
+    "The first version stored an icon as raw SVG markup in a plain text field, because that's the obvious shape for \"icon as content\": an editor pastes what they have, the frontend renders it. That's also where it stopped being obvious.",
   ),
   block(
-    'pull1',
-    'Each is a perfectly reasonable way to write an icon. None lets which picture shows up change without touching code.',
+    'origin-p2',
+    'Every pasted icon came from somewhere different — one export with a clean two-color path, another with a hardcoded fill and a nested <g> full of inline styles no editor could see or remove. Some had a 24×24 viewBox, some 512×512, some none at all. There was no one shape to build a component around.',
+  ),
+  block(
+    'origin-p3',
+    "So the component tried to force one — a size, a color, a stroke — and that's the part that made uniformity worse, not better. currentColor only works if the source markup doesn't already hardcode its own fill. A stroke-width override only reaches paths that don't already set their own. Every newly pasted icon needed its own case, which defeats the point of a content field that's supposed to need no code changes at all.",
+  ),
+  block(
+    'origin-pull1',
+    "A content field that needs a code change every time someone uses it isn't really a content field.",
+    'blockquote',
+  ),
+  block(
+    'origin-p4',
+    'Underneath all of it was the actually dangerous part: that field was rendered with dangerouslySetInnerHTML. A text box any editor can type or paste into, injected straight into the DOM as markup, is an XSS vector with a content editor\'s name on it, not an attacker\'s. Mitigating all three — normalizing arbitrary SVG, sanitizing untrusted markup, and still trying to hold a consistent look — kept adding code without touching the actual problem: the field\'s value was still just whatever got pasted into it.',
+  ),
+
+  heading('code-h1', "The code-only fixes don't solve it either"),
+  block(
+    'code-p1',
+    'Falling back to how everyone else handles icons in code doesn\'t get the content question back, though. Icon fonts glue frame and picture into a class name — <i class="fa fa-docker"> — and a typo just renders blank. Sprite sheets glue the same way, through an id instead. Inline SVG components glue hardest: the picture is baked into the import graph, so there\'s no registry, and no field, at all. Third-party libraries like lucide-react get the developer experience right, but import { Docker } is still a code change, just a nicer one.',
+  ),
+  block(
+    'code-pull1',
+    'Each is a perfectly reasonable way to write an icon in code. None of them let which picture shows up change without touching code — which was the entire point.',
     'blockquote',
   ),
 
@@ -239,6 +262,10 @@ const body = [
   block(
     'p9',
     'This fits a CMS-backed project — portfolio, agency site, marketing page — where "which icon" is a content call, not an engineering one. If nothing\'s ever edited outside the codebase, just take the tree-shaken library: the picture was always going to stay the same, so there was no frame worth mounting in the first place.',
+  ),
+  block(
+    'p10',
+    "Get the frame precisely right once — squared, anchored, built for the wall it's actually going on — and swapping what hangs in it stops being a renovation. Pull the picture out, push a new one in; the frame never comes off the wall, no fresh holes, no risk of knocking it crooked and needing to patch and repaint just to try something else. That's what building the registry and the picker this deliberately buys: the frame — <Icon name>, the registry, IconPickerInput — never changes again. Only the name in it does.",
   ),
   block('pull3', 'Mount the frame, hand the picture over, get back to shipping.', 'blockquote'),
 ]

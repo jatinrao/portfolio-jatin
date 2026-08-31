@@ -803,30 +803,10 @@ export type Skill = {
     | 'soft-skill'
     | 'other'
   filter_category?: 'all' | 'frontend' | 'backend' | 'ai' | 'others'
-  icon?: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    _type: 'image'
-  }
-  svg_icon?: Svg
   iconName?: IconRef
 }
 
 export type IconRef = string
-
-export type Svg = {
-  _type: 'svg'
-  sourceSvg: InlineSvg
-  strokeColor?: string
-  fillColor?: string
-  size?: string
-  strokeWidth?: string
-  strokeLinecap?: string
-  strokeLinejoin?: string
-  svg?: string
-}
 
 export type SectionReference = {
   _ref: string
@@ -913,6 +893,18 @@ export type Person = {
   structuredData?: WebSchema
   websiteSchema?: WebSchema
   isSiteAuthor?: boolean
+}
+
+export type Svg = {
+  _type: 'svg'
+  sourceSvg: InlineSvg
+  strokeColor?: string
+  fillColor?: string
+  size?: string
+  strokeWidth?: string
+  strokeLinecap?: string
+  strokeLinejoin?: string
+  svg?: string
 }
 
 export type CtaButton = {
@@ -1318,9 +1310,9 @@ export type AllSanitySchemaTypes =
   | Organization
   | Skill
   | IconRef
-  | Svg
   | SectionReference
   | Person
+  | Svg
   | CtaButton
   | ComparisonTable
   | TableColumn

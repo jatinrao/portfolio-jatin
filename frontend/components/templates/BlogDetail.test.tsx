@@ -5,6 +5,23 @@ import BlogDetail from './BlogDetail'
 
 vi.mock('@/sanity/lib/utils', () => ({
   urlForImage: () => ({ url: () => '/hero/gift.png' }),
+  dataAttr: () => ({ toString: () => 'data-sanity-stub' }),
+  // Mirrors the real resolveRichTextLink (sanity/lib/utils.ts) closely enough
+  // for these tests — kept a plain stub rather than importOriginal so the
+  // real module's top-level createImageUrlBuilder() call (which needs
+  // NEXT_PUBLIC_SANITY_* env vars) never runs under jsdom.
+  resolveRichTextLink: (
+    link: { linkType?: string; href?: string; internalRef?: { _type: string; slug: string } | null } | null,
+    locale: string,
+  ) => {
+    if (!link) return null
+    if (link.linkType === 'internal' && link.internalRef?.slug) {
+      const base = link.internalRef._type === 'project' ? 'projects' : 'blog'
+      return { href: `/${locale}/${base}/${link.internalRef.slug}` }
+    }
+    if (link.linkType === 'external' && link.href) return { href: link.href }
+    return null
+  },
 }))
 
 describe('BlogDetail', () => {
@@ -48,6 +65,21 @@ describe('BlogDetail', () => {
     expect(screen.getByText('<Icon name="docker" size={32} />')).toBeInTheDocument()
     // comparisonTable (delegated to ComparisonTable)
     expect(screen.getByText('Evaluated against packages/core')).toBeInTheDocument()
+    // embedded image
+    expect(screen.getByAltText('A framed screenshot mid-body')).toBeInTheDocument()
+    expect(screen.getByText('Editors can drop images between paragraphs.')).toBeInTheDocument()
+    expect(screen.getByText('— Sanity Studio')).toBeInTheDocument()
+  })
+
+  it('resolves external and internal links inside body text', () => {
+    render(<BlogDetail post={mockBlogPost} locale="en" />)
+
+    const externalLink = screen.getByRole('link', { name: 'docs' })
+    expect(externalLink).toHaveAttribute('href', 'https://icons.getresume.dev')
+    expect(externalLink).not.toHaveAttribute('target')
+
+    const internalLink = screen.getByRole('link', { name: 'other post' })
+    expect(internalLink).toHaveAttribute('href', '/en/blog/a-minimal-post')
   })
 
   it('renders footer links when present, omits them when absent', () => {

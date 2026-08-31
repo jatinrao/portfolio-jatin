@@ -154,6 +154,12 @@
   color: var(--project-detail-ink);
 }
 
+.project-detail-link-inline {
+  color: var(--color-primary, #0071e3);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .project-detail-quote {
   margin: 32px 0;
   padding-left: 20px;
